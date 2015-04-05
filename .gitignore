@@ -1,0 +1,4 @@
+game/*.js
+game/states/*.js
+*.zip
+.idea
