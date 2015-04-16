@@ -1,6 +1,8 @@
 /// <reference path="../../lib/phaser.d.ts"/>
 /// <reference path="../Hero.ts"/>
 /// <reference path="../Badie.ts"/>
+/// <reference path="../Debug.ts"/>
+/// <reference path="../Config.ts"/>
 
 module Superhero {
 
@@ -15,7 +17,8 @@ module Superhero {
         badie: Superhero.Badie;
         background: Phaser.TileSprite;
         foregroundItems: Phaser.Group;
-
+        debug: Superhero.Debug;
+        drone: Phaser.Sprite;
 
 
         preload () {
@@ -30,18 +33,23 @@ module Superhero {
             //Configure Input type
             this.configureInput();
 
+
             //Configure Base Stage Options
             this.setBaseStage();
+
+
+            this.debug = new Debug(this.game);
 
         }
 
         update () {
             this.hero.diesWithGroup(this.badie.bullets);
+            this.hero.collideWithObject(this.hero.shadow);
+            this.hero.collideWithObject(this.drone);
+
+            this.badie.collideWithObject(this.badie.shadow);
             this.badie.diesWithGroup(this.hero.bullets);
 
-            //if (this.game.input.pointer.isDown()){
-            //
-            //}
 
             if (this.leftKey.isDown) {
                 this.hero.moveLeft();
@@ -54,26 +62,32 @@ module Superhero {
 
             }
 
-            if (this.downKey.isDown) {
-                this.hero.descend();
+            if (this.input.activePointer.isDown && this.hero.fuel > 0){
+                this.hero.climb();
+            }
 
-            } else if (this.upKey.isDown) {
+            if (this.upKey.isDown  && this.hero.fuel > 0) {
                 this.hero.climb();
             }
 
             this.hero.update();
+            console.log(this.hero.fuel);
             this.badie.update();
+            this.debug.update();
 
 
             var park = this.foregroundItems.getFirstDead();
 
             if (park) {
+
                 park.reset(this.world.width + 50, 600);
                 park.body.velocity.x = -900;
-                park.scale.setTo(0.5);
+                park.scale.setTo(Config.spriteScaling());
+                park.body.allowGravity = false;
                 park.angle = -90;
                 park.checkWorldBounds = true;
                 park.outOfBoundsKill = true;
+
             }
 
 
@@ -100,17 +114,20 @@ module Superhero {
 
         configurePhysics() {
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
+            this.game.physics.arcade.gravity.y = Config.worldGravity();
         }
 
         setBaseStage() {
             this.background = this.game.add.tileSprite(0, 0, 2061, 540, 'background');
-            this.background.autoScroll(-300, 0);
+            this.background.autoScroll(-500, 0);
+
 
             this.hero = new Hero(this.game);
             this.badie = new Badie(this.game);
 
             this.foregroundItems = this.game.add.group();
             this.foregroundItems.enableBody = true;
+
             this.foregroundItems.createMultiple(1,'env','parkimeter');
 
 
