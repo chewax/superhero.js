@@ -26,14 +26,30 @@ var Superhero;
     var Config = (function () {
         function Config() {
         }
-        Config.gameWidth = function () { return 1200; };
-        Config.gameHeight = function () { return 560; };
-        Config.playerGravityX = function () { return 0; };
-        Config.playerGravityY = function () { return 1750; };
-        Config.playerDrag = function () { return 1500; };
-        Config.spriteScaling = function () { return 0.5; };
-        Config.npcGravity = function () { return 1500; };
-        Config.worldGravity = function () { return 100; };
+        Config.gameWidth = function () {
+            return 1200;
+        };
+        Config.gameHeight = function () {
+            return 560;
+        };
+        Config.playerGravityX = function () {
+            return 0;
+        };
+        Config.playerGravityY = function () {
+            return 1750;
+        };
+        Config.playerDrag = function () {
+            return 1500;
+        };
+        Config.spriteScaling = function () {
+            return 0.5;
+        };
+        Config.npcGravity = function () {
+            return 1500;
+        };
+        Config.worldGravity = function () {
+            return 100;
+        };
         return Config;
     })();
     Superhero.Config = Config;
@@ -44,7 +60,7 @@ var Superhero;
  * @author Daniel Waksman
  */
 /// <reference path="../lib/phaser.d.ts"/>
-/// <reference path="Character.ts"/>
+/// <reference path="character/Character.ts"/>
 var Superhero;
 (function (Superhero) {
     var UI = (function () {
@@ -75,6 +91,179 @@ var Superhero;
     })();
     Superhero.UI = UI;
 })(Superhero || (Superhero = {}));
+/// <reference path="../../lib/phaser.d.ts"/>
+var Superhero;
+(function (Superhero) {
+    /**
+     * STATE_IDLE Class
+     */
+    var StateIdle = (function () {
+        function StateIdle(game, hero) {
+            this.game = game;
+            this.hero = hero;
+            this.sprintKey = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+            this.retreatKey = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
+            this.fireKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        }
+        StateIdle.prototype.update = function () {
+            if (this.fireKey.isDown) {
+                this.hero.fire();
+            }
+            if (this.game.input.activePointer.isDown && this.hero.fuel > 0) {
+                this.hero.climb();
+                return new StateFly(this.game, this.hero);
+            }
+            if (this.sprintKey.isDown) {
+                return new StateSprint(this.game, this.hero);
+            }
+            if (this.retreatKey.isDown) {
+                return new StateRetreating(this.game, this.hero);
+            }
+            return this;
+        };
+        StateIdle.prototype.enterState = function () {
+        };
+        StateIdle.prototype.exitState = function () {
+        };
+        return StateIdle;
+    })();
+    Superhero.StateIdle = StateIdle;
+    /**
+     * STATE_FLY Class
+     */
+    var StateFly = (function () {
+        function StateFly(game, hero) {
+            this.game = game;
+            this.hero = hero;
+            this.sprintKey = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+            this.retreatKey = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
+            this.fireKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        }
+        StateFly.prototype.update = function () {
+            if (this.fireKey.isDown) {
+                this.hero.fire();
+            }
+            if (this.sprintKey.isDown) {
+                return new StateSprint(this.game, this.hero);
+            }
+            if (this.retreatKey.isDown) {
+                return new StateRetreating(this.game, this.hero);
+            }
+            if (this.game.input.activePointer.isDown && this.hero.fuel > 0) {
+                this.hero.climb();
+                return this;
+            }
+            if (this.game.input.activePointer.isUp || this.hero.fuel == 0) {
+                return new StateDiving(this.game, this.hero);
+            }
+            return this;
+        };
+        StateFly.prototype.enterState = function () {
+        };
+        StateFly.prototype.exitState = function () {
+        };
+        return StateFly;
+    })();
+    Superhero.StateFly = StateFly;
+    /**
+     * STATE_SPRINT Class
+     */
+    var StateSprint = (function () {
+        function StateSprint(game, hero) {
+            this.game = game;
+            this.hero = hero;
+            this.sprintKey = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+            this.fireKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        }
+        StateSprint.prototype.update = function () {
+            this.hero.sprint();
+            if (this.fireKey.isDown) {
+                this.hero.fire();
+            }
+            if (this.game.input.activePointer.isDown && this.hero.fuel > 0) {
+                this.hero.climb();
+            }
+            if (this.sprintKey.isUp) {
+                return new StateIdle(this.game, this.hero);
+            }
+            return this;
+        };
+        StateSprint.prototype.enterState = function () {
+        };
+        StateSprint.prototype.exitState = function () {
+            this.hero.stop();
+        };
+        return StateSprint;
+    })();
+    Superhero.StateSprint = StateSprint;
+    /**
+     * STATE_RETREAT Class
+     */
+    var StateRetreating = (function () {
+        function StateRetreating(game, hero) {
+            this.game = game;
+            this.hero = hero;
+            this.retreatKey = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
+            this.fireKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        }
+        StateRetreating.prototype.update = function () {
+            this.hero.moveLeft();
+            if (this.fireKey.isDown) {
+                this.hero.fire();
+            }
+            if (this.game.input.activePointer.isDown && this.hero.fuel > 0) {
+                this.hero.climb();
+            }
+            if (this.retreatKey.isUp) {
+                return new StateIdle(this.game, this.hero);
+            }
+            return this;
+        };
+        StateRetreating.prototype.enterState = function () {
+        };
+        StateRetreating.prototype.exitState = function () {
+        };
+        return StateRetreating;
+    })();
+    Superhero.StateRetreating = StateRetreating;
+    /**
+     * STATE_DIVING Class
+     */
+    var StateDiving = (function () {
+        function StateDiving(game, hero) {
+            this.game = game;
+            this.hero = hero;
+            this.sprintKey = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+            this.retreatKey = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
+            this.fireKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        }
+        StateDiving.prototype.update = function () {
+            if (this.fireKey.isDown) {
+                this.hero.fire();
+            }
+            if (this.game.input.activePointer.isDown && this.hero.fuel > 0) {
+                this.hero.climb();
+                return new StateFly(this.game, this.hero);
+            }
+            if (this.hero.sprite.body.touching.down) {
+                return new StateIdle(this.game, this.hero);
+            }
+            if (this.sprintKey.isDown) {
+                return new StateSprint(this.game, this.hero);
+            }
+            if (this.retreatKey.isDown) {
+                return new StateRetreating(this.game, this.hero);
+            }
+            return this;
+        };
+        StateDiving.prototype.enterState = function () {
+        };
+        StateDiving.prototype.exitState = function () {
+        };
+        return StateDiving;
+    })();
+    Superhero.StateDiving = StateDiving;
+})(Superhero || (Superhero = {}));
 /**
  * Character class.
  * Wraps the logic of creating and upating a character. Should be extended from
@@ -82,11 +271,11 @@ var Superhero;
  *
  * @author Daniel Waksman
  */
-/// <reference path="../lib/phaser.d.ts"/>
-/// <reference path="Utils.ts"/>
-/// <reference path="Config.ts"/>
-/// <reference path="UI.ts"/>
-///
+/// <reference path="../../lib/phaser.d.ts"/>
+/// <reference path="../Utils.ts"/>
+/// <reference path="../Config.ts"/>
+/// <reference path="../UI.ts"/>
+/// <reference path="CharStates.ts"/>
 var Superhero;
 (function (Superhero) {
     var Character = (function () {
@@ -101,7 +290,7 @@ var Superhero;
             this.bulletVelocity = 1000;
             this.game = game;
             this.floor = this.game.height - 80;
-            ;
+            this._state = new Superhero.StateIdle(game, this);
             this.initShadow();
             this.initSprite(assetKey, x, y);
             this.initPhysics();
@@ -127,6 +316,8 @@ var Superhero;
         Character.prototype.initSprite = function (assetKey, x, y) {
             this.sprite = this.game.add.sprite(x, y, assetKey, 'stand1');
             this.sprite.anchor.setTo(0.5, 0);
+            //var spriteScale = (<Superhero.Game> this.game).conf.test();
+            //this.sprite.scale.setTo(spriteScale);
             this.sprite.scale.setTo(Superhero.Config.spriteScaling());
         };
         /**
@@ -332,7 +523,7 @@ var Superhero;
     })();
     Superhero.Character = Character;
 })(Superhero || (Superhero = {}));
-/// <reference path="../lib/phaser.d.ts"/>
+/// <reference path="../../lib/phaser.d.ts"/>
 /// <reference path="Character.ts"/>
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -348,11 +539,24 @@ var Superhero;
             _super.call(this, game, 'hero1', 100, 100);
             this.setBulletVelocity(1000);
         }
+        Hero.prototype.update = function () {
+            _super.prototype.update.call(this);
+            var newState = this._state.update();
+            console.log(newState.constructor.name);
+            // If the update returned a different state then
+            // we must exit the previous state, start the new one and assign the new one
+            if (newState !== this._state) {
+                this._state.exitState();
+                newState.enterState();
+                this._state = newState;
+            }
+        };
         return Hero;
     })(Superhero.Character);
     Superhero.Hero = Hero;
 })(Superhero || (Superhero = {}));
-/// <reference path="../lib/phaser.d.ts"/>
+/// <reference path="../../lib/phaser.d.ts"/>
+/// <reference path="Character.ts"/>
 var Superhero;
 (function (Superhero) {
     var Badie = (function (_super) {
@@ -397,8 +601,8 @@ var Superhero;
     Superhero.Debug = Debug;
 })(Superhero || (Superhero = {}));
 /// <reference path="../../lib/phaser.d.ts"/>
-/// <reference path="../Hero.ts"/>
-/// <reference path="../Badie.ts"/>
+/// <reference path="../character/Hero.ts"/>
+/// <reference path="../character/Badie.ts"/>
 /// <reference path="../Debug.ts"/>
 /// <reference path="../Config.ts"/>
 /// <reference path="../UI.ts"/>
@@ -414,8 +618,6 @@ var Superhero;
         Level1.prototype.create = function () {
             //Setup Physics Engine
             this.configurePhysics();
-            //Configure Input type
-            this.configureInput();
             //Configure Base Stage Options
             this.setBaseStage();
             this.debug = new Superhero.Debug(this.game);
@@ -425,20 +627,6 @@ var Superhero;
             this.hero.collideWithObject(this.hero.shadow);
             this.badie.collideWithObject(this.badie.shadow);
             this.badie.diesWithGroup(this.hero.bullets);
-            if (this.leftKey.isDown) {
-                this.hero.moveLeft();
-            }
-            else if (this.rightKey.isDown) {
-                if (!this.spaceKey.isDown) {
-                    this.hero.sprint();
-                }
-            }
-            if (this.input.activePointer.isDown && this.hero.fuel > 0) {
-                this.hero.climb();
-            }
-            if (this.upKey.isDown && this.hero.fuel > 0) {
-                this.hero.climb();
-            }
             //Updates
             this.hero.update();
             this.badie.update();
@@ -454,20 +642,6 @@ var Superhero;
                 park.checkWorldBounds = true;
                 park.outOfBoundsKill = true;
             }
-        };
-        Level1.prototype.configureInput = function () {
-            //Configure Keys
-            this.leftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
-            this.rightKey = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
-            this.upKey = this.game.input.keyboard.addKey(Phaser.Keyboard.UP);
-            this.downKey = this.game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
-            this.spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-            this.rightKey.onUp.add(function (key) {
-                this.hero.stop();
-            }, this);
-            this.spaceKey.onDown.add(function (key) {
-                this.hero.fire();
-            }, this);
         };
         Level1.prototype.configurePhysics = function () {
             this.game.physics.startSystem(Phaser.Physics.ARCADE);

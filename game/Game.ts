@@ -12,7 +12,6 @@ module Superhero{
     export class Game extends Phaser.Game{
 
         conf: Superhero.Config;
-        ui: Superhero.UI;
 
         constructor () {
 

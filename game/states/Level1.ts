@@ -1,6 +1,6 @@
 /// <reference path="../../lib/phaser.d.ts"/>
-/// <reference path="../Hero.ts"/>
-/// <reference path="../Badie.ts"/>
+/// <reference path="../character/Hero.ts"/>
+/// <reference path="../character/Badie.ts"/>
 /// <reference path="../Debug.ts"/>
 /// <reference path="../Config.ts"/>
 /// <reference path="../UI.ts"/>
@@ -9,11 +9,6 @@ module Superhero {
 
     export class Level1 extends Phaser.State {
 
-        leftKey: Phaser.Key;
-        rightKey: Phaser.Key;
-        upKey: Phaser.Key;
-        downKey: Phaser.Key;
-        spaceKey: Phaser.Key;
         hero: Superhero.Hero;
         badie: Superhero.Badie;
         background: Phaser.TileSprite;
@@ -31,10 +26,6 @@ module Superhero {
             //Setup Physics Engine
             this.configurePhysics();
 
-            //Configure Input type
-            this.configureInput();
-
-
             //Configure Base Stage Options
             this.setBaseStage();
 
@@ -49,26 +40,6 @@ module Superhero {
 
             this.badie.collideWithObject(this.badie.shadow);
             this.badie.diesWithGroup(this.hero.bullets);
-
-
-            if (this.leftKey.isDown) {
-                this.hero.moveLeft();
-            }
-
-            else if (this.rightKey.isDown) {
-                if (!this.spaceKey.isDown){
-                    this.hero.sprint();
-                }
-
-            }
-
-            if (this.input.activePointer.isDown && this.hero.fuel > 0){
-                this.hero.climb();
-            }
-
-            if (this.upKey.isDown  && this.hero.fuel > 0) {
-                this.hero.climb();
-            }
 
             //Updates
             this.hero.update();
@@ -87,25 +58,6 @@ module Superhero {
                 park.checkWorldBounds = true;
                 park.outOfBoundsKill = true;
             }
-
-        }
-
-        configureInput(){
-
-            //Configure Keys
-            this.leftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
-            this.rightKey = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
-            this.upKey = this.game.input.keyboard.addKey(Phaser.Keyboard.UP);
-            this.downKey = this.game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
-            this.spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-
-            this.rightKey.onUp.add( function (key) {
-                this.hero.stop();
-            }, this);
-
-            this.spaceKey.onDown.add( function (key) {
-                this.hero.fire();
-            }, this);
 
         }
 

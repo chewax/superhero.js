@@ -4,3 +4,5 @@ game/states/*.js
 .idea
 *.sublime-project
 *.sublime-workspace
+game/*.d.ts
+game/*.js.map

@@ -5,7 +5,7 @@
  */
 
 /// <reference path="../lib/phaser.d.ts"/>
-/// <reference path="Character.ts"/>
+/// <reference path="character/Character.ts"/>
 
 module Superhero {
 
