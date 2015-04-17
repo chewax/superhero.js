@@ -47,23 +47,23 @@ module Superhero {
             this.ui.update();
             // this.debug.update();
 
-            var park = this.foregroundItems.getFirstDead();
-
-            if (park) {
-                park.reset(this.world.width + 50, 600);
-                park.body.velocity.x = -900;
-                park.scale.setTo(Config.spriteScaling());
-                park.body.allowGravity = false;
-                park.angle = -90;
-                park.checkWorldBounds = true;
-                park.outOfBoundsKill = true;
-            }
+            //var park = this.foregroundItems.getFirstDead();
+            //
+            //if (park) {
+            //    park.reset(this.world.width + 50, 600);
+            //    park.body.velocity.x = -900;
+            //    park.scale.setTo(Config.spriteScaling());
+            //    park.body.allowGravity = false;
+            //    park.angle = -90;
+            //    park.checkWorldBounds = true;
+            //    park.outOfBoundsKill = true;
+            //}
 
         }
 
         configurePhysics() {
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
-            this.game.physics.arcade.gravity.y = Config.worldGravity();
+            this.game.physics.arcade.gravity.y = (<Superhero.Game> this.game).conf.physics.global.gravity.y;
         }
 
         setBaseStage() {
@@ -74,9 +74,9 @@ module Superhero {
             this.hero = new Hero(this.game);
             this.badie = new Badie(this.game);
 
-            this.foregroundItems = this.game.add.group();
-            this.foregroundItems.enableBody = true;
-            this.foregroundItems.createMultiple(1,'env','parkimeter');
+            //this.foregroundItems = this.game.add.group();
+            //this.foregroundItems.enableBody = true;
+            //this.foregroundItems.createMultiple(1,'env','parkimeter');
 
             this.ui = new Superhero.UI(this.game, this.hero);
 

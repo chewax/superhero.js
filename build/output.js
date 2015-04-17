@@ -20,40 +20,6 @@ var Superhero;
     })();
     Superhero.Utils = Utils;
 })(Superhero || (Superhero = {}));
-/// <reference path="../lib/phaser.d.ts"/>
-var Superhero;
-(function (Superhero) {
-    var Config = (function () {
-        function Config() {
-        }
-        Config.gameWidth = function () {
-            return 1200;
-        };
-        Config.gameHeight = function () {
-            return 560;
-        };
-        Config.playerGravityX = function () {
-            return 0;
-        };
-        Config.playerGravityY = function () {
-            return 1750;
-        };
-        Config.playerDrag = function () {
-            return 1500;
-        };
-        Config.spriteScaling = function () {
-            return 0.5;
-        };
-        Config.npcGravity = function () {
-            return 1500;
-        };
-        Config.worldGravity = function () {
-            return 100;
-        };
-        return Config;
-    })();
-    Superhero.Config = Config;
-})(Superhero || (Superhero = {}));
 /**
  * UI Class
  * Wraps the logic to setup and handle the ui
@@ -273,7 +239,6 @@ var Superhero;
  */
 /// <reference path="../../lib/phaser.d.ts"/>
 /// <reference path="../Utils.ts"/>
-/// <reference path="../Config.ts"/>
 /// <reference path="../UI.ts"/>
 /// <reference path="CharStates.ts"/>
 var Superhero;
@@ -316,9 +281,7 @@ var Superhero;
         Character.prototype.initSprite = function (assetKey, x, y) {
             this.sprite = this.game.add.sprite(x, y, assetKey, 'stand1');
             this.sprite.anchor.setTo(0.5, 0);
-            //var spriteScale = (<Superhero.Game> this.game).conf.test();
-            //this.sprite.scale.setTo(spriteScale);
-            this.sprite.scale.setTo(Superhero.Config.spriteScaling());
+            this.sprite.scale.setTo(this.game.conf.world.sprite_scaling);
         };
         /**
          * Initalizes the physics of the character
@@ -326,8 +289,8 @@ var Superhero;
         Character.prototype.initPhysics = function () {
             this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
             this.sprite.body.collideWorldBounds = true;
-            this.sprite.body.gravity.y = Superhero.Config.playerGravityY();
-            this.sprite.body.drag.x = Superhero.Config.playerDrag();
+            this.sprite.body.gravity.y = this.game.conf.physics.player.gravity.y;
+            this.sprite.body.drag.x = this.game.conf.physics.player.drag;
             this.sprite.body.setSize(100, 220);
         };
         /**
@@ -390,7 +353,7 @@ var Superhero;
                 bullet.outOfBoundsKill = true;
                 bullet.body.velocity.x = this.bulletVelocity;
                 bullet.body.allowGravity = false;
-                bullet.scale.setTo(Superhero.Config.spriteScaling());
+                bullet.scale.setTo(this.game.conf.world.sprite_scaling);
             }
         };
         /**
@@ -424,7 +387,7 @@ var Superhero;
         Character.prototype.initShadow = function () {
             //Sprite related
             this.shadow = this.game.add.sprite(100, this.floor, 'shadow');
-            this.shadow.scale.setTo(Superhero.Config.spriteScaling());
+            this.shadow.scale.setTo(this.game.conf.world.sprite_scaling);
             this.shadow.anchor.setTo(0.5, 0);
             //Physics
             this.game.physics.enable(this.shadow, Phaser.Physics.ARCADE);
@@ -600,6 +563,34 @@ var Superhero;
     })();
     Superhero.Debug = Debug;
 })(Superhero || (Superhero = {}));
+/// <reference path="../lib/phaser.d.ts"/>
+var Superhero;
+(function (Superhero) {
+    var Config = (function () {
+        function Config() {
+            this.world = {
+                width: 1200,
+                height: 550,
+                sprite_scaling: 0.5
+            };
+            this.physics = {
+                global: {
+                    gravity: { x: 0, y: 100 }
+                },
+                player: {
+                    gravity: { x: 0, y: 1750 },
+                    drag: 1500
+                },
+                npc: {
+                    gravity: { x: 0, y: 1500 },
+                    drag: 1500
+                }
+            };
+        }
+        return Config;
+    })();
+    Superhero.Config = Config;
+})(Superhero || (Superhero = {}));
 /// <reference path="../../lib/phaser.d.ts"/>
 /// <reference path="../character/Hero.ts"/>
 /// <reference path="../character/Badie.ts"/>
@@ -632,29 +623,30 @@ var Superhero;
             this.badie.update();
             this.ui.update();
             // this.debug.update();
-            var park = this.foregroundItems.getFirstDead();
-            if (park) {
-                park.reset(this.world.width + 50, 600);
-                park.body.velocity.x = -900;
-                park.scale.setTo(Superhero.Config.spriteScaling());
-                park.body.allowGravity = false;
-                park.angle = -90;
-                park.checkWorldBounds = true;
-                park.outOfBoundsKill = true;
-            }
+            //var park = this.foregroundItems.getFirstDead();
+            //
+            //if (park) {
+            //    park.reset(this.world.width + 50, 600);
+            //    park.body.velocity.x = -900;
+            //    park.scale.setTo(Config.spriteScaling());
+            //    park.body.allowGravity = false;
+            //    park.angle = -90;
+            //    park.checkWorldBounds = true;
+            //    park.outOfBoundsKill = true;
+            //}
         };
         Level1.prototype.configurePhysics = function () {
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
-            this.game.physics.arcade.gravity.y = Superhero.Config.worldGravity();
+            this.game.physics.arcade.gravity.y = this.game.conf.physics.global.gravity.y;
         };
         Level1.prototype.setBaseStage = function () {
             this.background = this.game.add.tileSprite(0, 0, 2061, 540, 'background');
             this.background.autoScroll(-500, 0);
             this.hero = new Superhero.Hero(this.game);
             this.badie = new Superhero.Badie(this.game);
-            this.foregroundItems = this.game.add.group();
-            this.foregroundItems.enableBody = true;
-            this.foregroundItems.createMultiple(1, 'env', 'parkimeter');
+            //this.foregroundItems = this.game.add.group();
+            //this.foregroundItems.enableBody = true;
+            //this.foregroundItems.createMultiple(1,'env','parkimeter');
             this.ui = new Superhero.UI(this.game, this.hero);
         };
         return Level1;
@@ -755,8 +747,8 @@ var Superhero;
     var Game = (function (_super) {
         __extends(Game, _super);
         function Game() {
-            _super.call(this, Superhero.Config.gameWidth(), Superhero.Config.gameHeight(), Phaser.CANVAS, 'sh', null);
             this.conf = new Superhero.Config();
+            _super.call(this, this.conf.world.width, this.conf.world.height, Phaser.CANVAS, 'sh', null);
             this.state.add('Boot', Superhero.Boot, false);
             this.state.add('Preloader', Superhero.Preloader, false);
             this.state.add('Menu', Superhero.Menu, false);

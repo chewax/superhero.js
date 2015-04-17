@@ -15,9 +15,8 @@ module Superhero{
 
         constructor () {
 
-            super(Config.gameWidth(), Config.gameHeight(), Phaser.CANVAS, 'sh', null);
-
             this.conf = new Superhero.Config();
+            super(this.conf.world.width, this.conf.world.height, Phaser.CANVAS, 'sh', null);
 
             this.state.add('Boot', Boot, false);
             this.state.add('Preloader', Preloader, false);

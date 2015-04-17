@@ -8,7 +8,6 @@
 
 /// <reference path="../../lib/phaser.d.ts"/>
 /// <reference path="../Utils.ts"/>
-/// <reference path="../Config.ts"/>
 /// <reference path="../UI.ts"/>
 /// <reference path="CharStates.ts"/>
 
@@ -68,10 +67,7 @@ module Superhero {
             this.sprite = this.game.add.sprite(x, y, assetKey, 'stand1');
             this.sprite.anchor.setTo(0.5,0);
 
-            //var spriteScale = (<Superhero.Game> this.game).conf.test();
-            //this.sprite.scale.setTo(spriteScale);
-
-            this.sprite.scale.setTo(Config.spriteScaling());
+            this.sprite.scale.setTo((<Superhero.Game> this.game).conf.world.sprite_scaling);
         }
 
         /**
@@ -81,8 +77,8 @@ module Superhero {
             this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
             this.sprite.body.collideWorldBounds = true;
 
-            this.sprite.body.gravity.y = Config.playerGravityY();
-            this.sprite.body.drag.x = Config.playerDrag();
+            this.sprite.body.gravity.y = (<Superhero.Game> this.game).conf.physics.player.gravity.y;
+            this.sprite.body.drag.x = (<Superhero.Game> this.game).conf.physics.player.drag;
             this.sprite.body.setSize(100,220);
         }
         /**
@@ -155,7 +151,7 @@ module Superhero {
                 bullet.outOfBoundsKill = true;
                 bullet.body.velocity.x = this.bulletVelocity;
                 bullet.body.allowGravity = false;
-                bullet.scale.setTo(Config.spriteScaling());
+                bullet.scale.setTo((<Superhero.Game> this.game).conf.world.sprite_scaling);
             }
         }
 
@@ -199,7 +195,7 @@ module Superhero {
 
             //Sprite related
             this.shadow = this.game.add.sprite(100, this.floor, 'shadow');
-            this.shadow.scale.setTo(Config.spriteScaling());
+            this.shadow.scale.setTo((<Superhero.Game> this.game).conf.world.sprite_scaling);
             this.shadow.anchor.setTo(0.5,0);
 
             //Physics

@@ -2,20 +2,62 @@
 
 module Superhero {
 
+    interface IPhysicsConfig {
+
+        global: {
+            gravity: {x:number; y:number}
+        };
+
+        player: {
+            gravity: {x:number; y:number}
+            drag: number
+        };
+
+        npc: {
+            gravity: {x:number; y:number}
+            drag: number
+        }
+
+    }
+
+    interface IWorldConfig {
+        width: number;
+        height: number;
+        sprite_scaling: number
+    }
+
     export class Config {
+
+        world: IWorldConfig;
+        physics: IPhysicsConfig;
 
         constructor () {
 
-        }
+            this.world = {
 
-        static gameWidth () :number { return 1200 }
-        static gameHeight () :number { return 560 }
-        static playerGravityX () :number { return 0 }
-        static playerGravityY () :number { return 1750 }
-        static playerDrag () :number { return 1500 }
-        static spriteScaling () :number { return 0.5 }
-        static npcGravity () :number { return 1500 }
-        static worldGravity ():number { return 100 }
+                width: 1200,
+                height: 550,
+                sprite_scaling: 0.5
+            };
+
+            this.physics = {
+
+                global: {
+                    gravity: {x: 0, y: 100}
+                },
+
+                player: {
+                    gravity: {x: 0, y: 1750},
+                    drag: 1500
+                },
+
+                npc: {
+                    gravity: {x: 0, y: 1500},
+                    drag: 1500
+                }
+            }
+
+        }
 
     }
 }
