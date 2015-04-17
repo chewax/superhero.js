@@ -58,18 +58,38 @@ var Superhero;
     Superhero.UI = UI;
 })(Superhero || (Superhero = {}));
 /// <reference path="../../lib/phaser.d.ts"/>
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
 var Superhero;
 (function (Superhero) {
-    /**
-     * STATE_IDLE Class
-     */
-    var StateIdle = (function () {
-        function StateIdle(game, hero) {
+    var BaseState = (function () {
+        function BaseState(game, hero) {
             this.game = game;
             this.hero = hero;
             this.sprintKey = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
             this.retreatKey = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
             this.fireKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        }
+        BaseState.prototype.update = function () {
+            return null;
+        };
+        BaseState.prototype.enterState = function () {
+        };
+        BaseState.prototype.exitState = function () {
+        };
+        return BaseState;
+    })();
+    /**
+     * STATE_IDLE Class
+     */
+    var StateIdle = (function (_super) {
+        __extends(StateIdle, _super);
+        function StateIdle() {
+            _super.apply(this, arguments);
         }
         StateIdle.prototype.update = function () {
             if (this.fireKey.isDown) {
@@ -92,18 +112,15 @@ var Superhero;
         StateIdle.prototype.exitState = function () {
         };
         return StateIdle;
-    })();
+    })(BaseState);
     Superhero.StateIdle = StateIdle;
     /**
      * STATE_FLY Class
      */
-    var StateFly = (function () {
-        function StateFly(game, hero) {
-            this.game = game;
-            this.hero = hero;
-            this.sprintKey = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
-            this.retreatKey = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
-            this.fireKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+    var StateFly = (function (_super) {
+        __extends(StateFly, _super);
+        function StateFly() {
+            _super.apply(this, arguments);
         }
         StateFly.prototype.update = function () {
             if (this.fireKey.isDown) {
@@ -129,17 +146,15 @@ var Superhero;
         StateFly.prototype.exitState = function () {
         };
         return StateFly;
-    })();
+    })(BaseState);
     Superhero.StateFly = StateFly;
     /**
      * STATE_SPRINT Class
      */
-    var StateSprint = (function () {
-        function StateSprint(game, hero) {
-            this.game = game;
-            this.hero = hero;
-            this.sprintKey = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
-            this.fireKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+    var StateSprint = (function (_super) {
+        __extends(StateSprint, _super);
+        function StateSprint() {
+            _super.apply(this, arguments);
         }
         StateSprint.prototype.update = function () {
             this.hero.sprint();
@@ -160,17 +175,15 @@ var Superhero;
             this.hero.stop();
         };
         return StateSprint;
-    })();
+    })(BaseState);
     Superhero.StateSprint = StateSprint;
     /**
      * STATE_RETREAT Class
      */
-    var StateRetreating = (function () {
-        function StateRetreating(game, hero) {
-            this.game = game;
-            this.hero = hero;
-            this.retreatKey = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
-            this.fireKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+    var StateRetreating = (function (_super) {
+        __extends(StateRetreating, _super);
+        function StateRetreating() {
+            _super.apply(this, arguments);
         }
         StateRetreating.prototype.update = function () {
             this.hero.moveLeft();
@@ -190,18 +203,15 @@ var Superhero;
         StateRetreating.prototype.exitState = function () {
         };
         return StateRetreating;
-    })();
+    })(BaseState);
     Superhero.StateRetreating = StateRetreating;
     /**
      * STATE_DIVING Class
      */
-    var StateDiving = (function () {
-        function StateDiving(game, hero) {
-            this.game = game;
-            this.hero = hero;
-            this.sprintKey = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
-            this.retreatKey = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
-            this.fireKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+    var StateDiving = (function (_super) {
+        __extends(StateDiving, _super);
+        function StateDiving() {
+            _super.apply(this, arguments);
         }
         StateDiving.prototype.update = function () {
             if (this.fireKey.isDown) {
@@ -227,7 +237,7 @@ var Superhero;
         StateDiving.prototype.exitState = function () {
         };
         return StateDiving;
-    })();
+    })(BaseState);
     Superhero.StateDiving = StateDiving;
 })(Superhero || (Superhero = {}));
 /**
@@ -488,12 +498,6 @@ var Superhero;
 })(Superhero || (Superhero = {}));
 /// <reference path="../../lib/phaser.d.ts"/>
 /// <reference path="Character.ts"/>
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
 var Superhero;
 (function (Superhero) {
     var Hero = (function (_super) {

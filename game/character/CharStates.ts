@@ -14,10 +14,7 @@ module Superhero {
         exitState():void;
     }
 
-    /**
-     * STATE_IDLE Class
-     */
-    export class StateIdle implements CharState {
+    class BaseState implements CharState {
 
         game: Phaser.Game;
         hero: Superhero.Character;
@@ -32,6 +29,20 @@ module Superhero {
             this.retreatKey = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
             this.fireKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         }
+
+        public update (): CharState {
+            return null;
+        }
+
+        public enterState(): void {}
+        public exitState(): void {}
+
+    }
+
+    /**
+     * STATE_IDLE Class
+     */
+    export class StateIdle extends BaseState{
 
         public update ():CharState {
 
@@ -62,21 +73,7 @@ module Superhero {
     /**
      * STATE_FLY Class
      */
-    export class StateFly implements CharState {
-
-        game: Phaser.Game;
-        hero: Superhero.Character;
-        sprintKey: Phaser.Key;
-        retreatKey: Phaser.Key;
-        fireKey: Phaser.Key;
-
-        constructor (game: Phaser.Game, hero: Superhero.Character){
-            this.game = game;
-            this.hero = hero;
-            this.sprintKey = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
-            this.retreatKey = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
-            this.fireKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-        }
+    export class StateFly extends BaseState {
 
         public update ():CharState {
 
@@ -111,19 +108,7 @@ module Superhero {
     /**
      * STATE_SPRINT Class
      */
-    export class StateSprint implements CharState {
-
-        game: Phaser.Game;
-        hero: Superhero.Character;
-        sprintKey: Phaser.Key;
-        fireKey: Phaser.Key;
-
-        constructor (game: Phaser.Game, hero: Superhero.Character){
-            this.game = game;
-            this.hero = hero;
-            this.sprintKey = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
-            this.fireKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-        }
+    export class StateSprint extends BaseState {
 
         public update ():CharState {
 
@@ -154,19 +139,7 @@ module Superhero {
     /**
      * STATE_RETREAT Class
      */
-    export class StateRetreating implements CharState {
-
-        game: Phaser.Game;
-        hero: Superhero.Character;
-        retreatKey: Phaser.Key;
-        fireKey: Phaser.Key;
-
-        constructor (game: Phaser.Game, hero: Superhero.Character){
-            this.game = game;
-            this.hero = hero;
-            this.retreatKey = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
-            this.fireKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-        }
+    export class StateRetreating extends BaseState {
 
         public update ():CharState {
 
@@ -194,21 +167,7 @@ module Superhero {
     /**
      * STATE_DIVING Class
      */
-    export class StateDiving implements CharState {
-
-        game: Phaser.Game;
-        hero: Superhero.Character;
-        sprintKey: Phaser.Key;
-        retreatKey: Phaser.Key;
-        fireKey: Phaser.Key;
-
-        constructor (game: Phaser.Game, hero: Superhero.Character){
-            this.game = game;
-            this.hero = hero;
-            this.sprintKey = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
-            this.retreatKey = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
-            this.fireKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-        }
+    export class StateDiving extends BaseState {
 
         public update ():CharState {
 
