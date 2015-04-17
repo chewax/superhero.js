@@ -9,7 +9,8 @@
 /// <reference path="../lib/phaser.d.ts"/>
 /// <reference path="Utils.ts"/>
 /// <reference path="Config.ts"/>
-
+/// <reference path="UI.ts"/>
+///
 module Superhero {
 
     export class Character {
@@ -19,6 +20,7 @@ module Superhero {
         bullets: Phaser.Group;
         shadow: Phaser.Sprite;
         fuel: number;
+        maxFuel: number;
         fuelTimer: number;
 
         bulletVelocity: number = 1000;
@@ -47,7 +49,8 @@ module Superhero {
          * Starts the character default behaviour
          */
         startChar(): void {
-            this.fuel = 100;
+            this.fuel = 2000;
+            this.maxFuel = 2000;
             this.fuelTimer = this.game.time.time;
             this.sprite.play('flystill');
         }
@@ -226,12 +229,15 @@ module Superhero {
                 this.fuelTimer = this.game.time.time;
 
                 if (this.sprite.body.touching.down){
-                    if (this.fuel < 100) {
+                    if (this.fuel < this.maxFuel) {
                         this.fuel += 1;
+
                     }
                 } else {
-                    if (this.fuel > 0) {
-                        this.fuel -= 1;
+                    if (this.fuel > 5) {
+                        this.fuel -= 5;
+                    } else {
+                        this.fuel = 0;
                     }
                 }
             }

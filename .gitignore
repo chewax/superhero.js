@@ -2,3 +2,5 @@ game/*.js
 game/states/*.js
 *.zip
 .idea
+*.sublime-project
+*.sublime-workspace

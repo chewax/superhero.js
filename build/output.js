@@ -39,6 +39,43 @@ var Superhero;
     Superhero.Config = Config;
 })(Superhero || (Superhero = {}));
 /**
+ * UI Class
+ * Wraps the logic to setup and handle the ui
+ * @author Daniel Waksman
+ */
+/// <reference path="../lib/phaser.d.ts"/>
+/// <reference path="Character.ts"/>
+var Superhero;
+(function (Superhero) {
+    var UI = (function () {
+        function UI(game, player) {
+            this.game = game;
+            this.player = player;
+            this.createFuelBar();
+        }
+        UI.prototype.update = function () {
+            this.updateFuelBar();
+        };
+        UI.prototype.updateFuelBar = function () {
+            var currentValue = this.player.fuel;
+            var maxValue = this.player.maxFuel;
+            var barWidth = 200;
+            this.fuelBar.cropRect.width = (currentValue / maxValue) * barWidth;
+            this.fuelBar.updateCrop();
+            this.fuelRemaining.text = Math.ceil(currentValue * 100 / maxValue).toString();
+        };
+        UI.prototype.createFuelBar = function () {
+            this.fuelBar = this.game.add.sprite(20, 20, 'fuelbar');
+            this.fuelBar.cropRect = new Phaser.Rectangle(0, 0, 0, 20);
+            var style = { font: "14px Arial", fill: "#000", align: "center" };
+            this.fuelRemaining = this.game.add.text(25, 30, ' ', style);
+            this.fuelRemaining.anchor.y = 0.5;
+        };
+        return UI;
+    })();
+    Superhero.UI = UI;
+})(Superhero || (Superhero = {}));
+/**
  * Character class.
  * Wraps the logic of creating and upating a character. Should be extended from
  * Hero and Badie
@@ -48,6 +85,8 @@ var Superhero;
 /// <reference path="../lib/phaser.d.ts"/>
 /// <reference path="Utils.ts"/>
 /// <reference path="Config.ts"/>
+/// <reference path="UI.ts"/>
+///
 var Superhero;
 (function (Superhero) {
     var Character = (function () {
@@ -74,7 +113,8 @@ var Superhero;
          * Starts the character default behaviour
          */
         Character.prototype.startChar = function () {
-            this.fuel = 100;
+            this.fuel = 2000;
+            this.maxFuel = 2000;
             this.fuelTimer = this.game.time.time;
             this.sprite.play('flystill');
         };
@@ -222,13 +262,16 @@ var Superhero;
             if (elapsedTime > 0.02) {
                 this.fuelTimer = this.game.time.time;
                 if (this.sprite.body.touching.down) {
-                    if (this.fuel < 100) {
+                    if (this.fuel < this.maxFuel) {
                         this.fuel += 1;
                     }
                 }
                 else {
-                    if (this.fuel > 0) {
-                        this.fuel -= 1;
+                    if (this.fuel > 5) {
+                        this.fuel -= 5;
+                    }
+                    else {
+                        this.fuel = 0;
                     }
                 }
             }
@@ -358,6 +401,7 @@ var Superhero;
 /// <reference path="../Badie.ts"/>
 /// <reference path="../Debug.ts"/>
 /// <reference path="../Config.ts"/>
+/// <reference path="../UI.ts"/>
 var Superhero;
 (function (Superhero) {
     var Level1 = (function (_super) {
@@ -379,7 +423,6 @@ var Superhero;
         Level1.prototype.update = function () {
             this.hero.diesWithGroup(this.badie.bullets);
             this.hero.collideWithObject(this.hero.shadow);
-            this.hero.collideWithObject(this.drone);
             this.badie.collideWithObject(this.badie.shadow);
             this.badie.diesWithGroup(this.hero.bullets);
             if (this.leftKey.isDown) {
@@ -396,10 +439,11 @@ var Superhero;
             if (this.upKey.isDown && this.hero.fuel > 0) {
                 this.hero.climb();
             }
+            //Updates
             this.hero.update();
-            console.log(this.hero.fuel);
             this.badie.update();
-            this.debug.update();
+            this.ui.update();
+            // this.debug.update();
             var park = this.foregroundItems.getFirstDead();
             if (park) {
                 park.reset(this.world.width + 50, 600);
@@ -437,6 +481,7 @@ var Superhero;
             this.foregroundItems = this.game.add.group();
             this.foregroundItems.enableBody = true;
             this.foregroundItems.createMultiple(1, 'env', 'parkimeter');
+            this.ui = new Superhero.UI(this.game, this.hero);
         };
         return Level1;
     })(Phaser.State);
@@ -494,6 +539,7 @@ var Superhero;
             this.game.load.atlasJSONHash('bullets', '/assets/bullets.png', '/assets/bullets.json');
             this.game.load.atlasJSONHash('env', '/assets/environment.png', '/assets/environment.json');
             this.game.load.image('background', '/assets/Background.png');
+            this.game.load.image('fuelbar', '/assets/fuel.png');
             this.game.load.image('shadow', '/assets/shadow.png');
         };
         return Preloader;
@@ -529,6 +575,7 @@ var Superhero;
 /// <reference path="states/Menu.ts"/>
 /// <reference path="states/Level1.ts"/>
 /// <reference path="Config.ts"/>
+/// <reference path="UI.ts"/>
 var Superhero;
 (function (Superhero) {
     var Game = (function (_super) {

@@ -15,6 +15,7 @@ module Superhero {
             this.load.setPreloadSprite(this.preloadBar);
             this.loadAssets();
         }
+
         create () {
 
             this.game.state.start('Menu', true, false);
@@ -26,8 +27,10 @@ module Superhero {
             this.game.load.atlasJSONHash('bullets', '/assets/bullets.png', '/assets/bullets.json');
             this.game.load.atlasJSONHash('env', '/assets/environment.png', '/assets/environment.json');
             this.game.load.image('background', '/assets/Background.png');
+            this.game.load.image('fuelbar', '/assets/fuel.png');
             this.game.load.image('shadow', '/assets/shadow.png');
 
         }
     }
+
 }

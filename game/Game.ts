@@ -4,6 +4,7 @@
 /// <reference path="states/Menu.ts"/>
 /// <reference path="states/Level1.ts"/>
 /// <reference path="Config.ts"/>
+/// <reference path="UI.ts"/>
 
 
 module Superhero{
@@ -11,6 +12,7 @@ module Superhero{
     export class Game extends Phaser.Game{
 
         conf: Superhero.Config;
+        ui: Superhero.UI;
 
         constructor () {
 

@@ -3,6 +3,7 @@
 /// <reference path="../Badie.ts"/>
 /// <reference path="../Debug.ts"/>
 /// <reference path="../Config.ts"/>
+/// <reference path="../UI.ts"/>
 
 module Superhero {
 
@@ -18,7 +19,7 @@ module Superhero {
         background: Phaser.TileSprite;
         foregroundItems: Phaser.Group;
         debug: Superhero.Debug;
-        drone: Phaser.Sprite;
+        ui: Superhero.UI;
 
 
         preload () {
@@ -45,7 +46,6 @@ module Superhero {
         update () {
             this.hero.diesWithGroup(this.badie.bullets);
             this.hero.collideWithObject(this.hero.shadow);
-            this.hero.collideWithObject(this.drone);
 
             this.badie.collideWithObject(this.badie.shadow);
             this.badie.diesWithGroup(this.hero.bullets);
@@ -70,16 +70,15 @@ module Superhero {
                 this.hero.climb();
             }
 
+            //Updates
             this.hero.update();
-            console.log(this.hero.fuel);
             this.badie.update();
-            this.debug.update();
-
+            this.ui.update();
+            // this.debug.update();
 
             var park = this.foregroundItems.getFirstDead();
 
             if (park) {
-
                 park.reset(this.world.width + 50, 600);
                 park.body.velocity.x = -900;
                 park.scale.setTo(Config.spriteScaling());
@@ -87,9 +86,7 @@ module Superhero {
                 park.angle = -90;
                 park.checkWorldBounds = true;
                 park.outOfBoundsKill = true;
-
             }
-
 
         }
 
@@ -127,9 +124,9 @@ module Superhero {
 
             this.foregroundItems = this.game.add.group();
             this.foregroundItems.enableBody = true;
-
             this.foregroundItems.createMultiple(1,'env','parkimeter');
 
+            this.ui = new Superhero.UI(this.game, this.hero);
 
         }
     }
