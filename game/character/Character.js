@@ -7,20 +7,11 @@
  */
 /// <reference path="../../lib/phaser.d.ts"/>
 /// <reference path="../Utils.ts"/>
-/// <reference path="../Config.ts"/>
 /// <reference path="../UI.ts"/>
-///
+/// <reference path="../Game.ts"/>
+/// <reference path="CharStates.ts"/>
 var Superhero;
 (function (Superhero) {
-    (function (CharState) {
-        CharState[CharState["STATE_IDLE"] = 0] = "STATE_IDLE";
-        CharState[CharState["STATE_FLY"] = 1] = "STATE_FLY";
-        CharState[CharState["STATE_SPRINT"] = 2] = "STATE_SPRINT";
-        CharState[CharState["STATE_RUNNING"] = 3] = "STATE_RUNNING";
-        CharState[CharState["STATE_DIVING"] = 4] = "STATE_DIVING";
-    })(Superhero.CharState || (Superhero.CharState = {}));
-    var CharState = Superhero.CharState;
-    ;
     var Character = (function () {
         /**
          * Constructor. Creates the Character
@@ -33,7 +24,7 @@ var Superhero;
             this.bulletVelocity = 1000;
             this.game = game;
             this.floor = this.game.height - 80;
-            this._state = 0 /* STATE_IDLE */;
+            this._state = new Superhero.StateIdle(game, this);
             this.initShadow();
             this.initSprite(assetKey, x, y);
             this.initPhysics();
@@ -59,7 +50,7 @@ var Superhero;
         Character.prototype.initSprite = function (assetKey, x, y) {
             this.sprite = this.game.add.sprite(x, y, assetKey, 'stand1');
             this.sprite.anchor.setTo(0.5, 0);
-            this.sprite.scale.setTo(Superhero.Config.spriteScaling());
+            this.sprite.scale.setTo(this.game.conf.world.sprite_scaling);
         };
         /**
          * Initalizes the physics of the character
@@ -67,8 +58,8 @@ var Superhero;
         Character.prototype.initPhysics = function () {
             this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
             this.sprite.body.collideWorldBounds = true;
-            this.sprite.body.gravity.y = Superhero.Config.playerGravityY();
-            this.sprite.body.drag.x = Superhero.Config.playerDrag();
+            this.sprite.body.gravity.y = this.game.conf.physics.player.gravity.y;
+            this.sprite.body.drag.x = this.game.conf.physics.player.drag;
             this.sprite.body.setSize(100, 220);
         };
         /**
@@ -131,7 +122,7 @@ var Superhero;
                 bullet.outOfBoundsKill = true;
                 bullet.body.velocity.x = this.bulletVelocity;
                 bullet.body.allowGravity = false;
-                bullet.scale.setTo(Superhero.Config.spriteScaling());
+                bullet.scale.setTo(this.game.conf.world.sprite_scaling);
             }
         };
         /**
@@ -165,7 +156,7 @@ var Superhero;
         Character.prototype.initShadow = function () {
             //Sprite related
             this.shadow = this.game.add.sprite(100, this.floor, 'shadow');
-            this.shadow.scale.setTo(Superhero.Config.spriteScaling());
+            this.shadow.scale.setTo(this.game.conf.world.sprite_scaling);
             this.shadow.anchor.setTo(0.5, 0);
             //Physics
             this.game.physics.enable(this.shadow, Phaser.Physics.ARCADE);

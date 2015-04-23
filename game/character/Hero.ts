@@ -1,5 +1,6 @@
 /// <reference path="../../lib/phaser.d.ts"/>
 /// <reference path="Character.ts"/>
+/// <reference path="../plugins/GamePad.ts"/>
 
 
 module Superhero {
@@ -13,8 +14,6 @@ module Superhero {
         update () {
             super.update();
             var newState = this._state.update();
-
-            console.log(newState.constructor.name);
 
             // If the update returned a different state then
             // we must exit the previous state, start the new one and assign the new one

@@ -4,8 +4,8 @@
  * @author Daniel Waksman
  */
 
-/// <reference path="../lib/phaser.d.ts"/>
-/// <reference path="character/Character.ts"/>
+/// <reference path="../../lib/phaser.d.ts"/>
+/// <reference path="../character/Character.ts"/>
 
 module Superhero {
 

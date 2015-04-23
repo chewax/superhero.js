@@ -1,9 +1,12 @@
 /// <reference path="../../lib/phaser.d.ts"/>
 /// <reference path="../character/Hero.ts"/>
 /// <reference path="../character/Badie.ts"/>
-/// <reference path="../Debug.ts"/>
-/// <reference path="../Config.ts"/>
-/// <reference path="../UI.ts"/>
+/// <reference path="../utils/Debug.ts"/>
+/// <reference path="../utils/Config.ts"/>
+/// <reference path="../ui/UI.ts"/>
+/// <reference path="../core/Game.ts"/>
+/// <reference path="../plugins/Gamepad.ts"/>
+
 
 module Superhero {
 
@@ -29,7 +32,6 @@ module Superhero {
             //Configure Base Stage Options
             this.setBaseStage();
 
-
             this.debug = new Debug(this.game);
 
         }
@@ -47,18 +49,6 @@ module Superhero {
             this.ui.update();
             // this.debug.update();
 
-            //var park = this.foregroundItems.getFirstDead();
-            //
-            //if (park) {
-            //    park.reset(this.world.width + 50, 600);
-            //    park.body.velocity.x = -900;
-            //    park.scale.setTo(Config.spriteScaling());
-            //    park.body.allowGravity = false;
-            //    park.angle = -90;
-            //    park.checkWorldBounds = true;
-            //    park.outOfBoundsKill = true;
-            //}
-
         }
 
         configurePhysics() {
@@ -70,14 +60,12 @@ module Superhero {
             this.background = this.game.add.tileSprite(0, 0, 2061, 540, 'background');
             this.background.autoScroll(-500, 0);
 
+            (<Superhero.Game> this.game).gamepad = new Gamepads.GamePad(this.game, Gamepads.GampadType.STICK_BUTTON, Gamepads.ButtonPadType.ONE_FIXED);
+            (<Superhero.Game> this.game).gamepad.stick1.settings.analog = false;
+            (<Superhero.Game> this.game).gamepad.buttonPad.button1.type = Gamepads.ButtonType.CUSTOM;
 
             this.hero = new Hero(this.game);
             this.badie = new Badie(this.game);
-
-            //this.foregroundItems = this.game.add.group();
-            //this.foregroundItems.enableBody = true;
-            //this.foregroundItems.createMultiple(1,'env','parkimeter');
-
             this.ui = new Superhero.UI(this.game, this.hero);
 
         }

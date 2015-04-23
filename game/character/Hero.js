@@ -16,14 +16,14 @@ var Superhero;
         }
         Hero.prototype.update = function () {
             _super.prototype.update.call(this);
-            switch (this._state) {
-                case 0 /* STATE_IDLE */: var a = 10;
-                case 1 /* STATE_FLY */: var a = 10;
-                case 2 /* STATE_SPRINT */: var a = 10;
-                case 3 /* STATE_RUNNING */: var a = 10;
-                case 4 /* STATE_DIVING */: var a = 10;
+            var newState = this._state.update();
+            // If the update returned a different state then
+            // we must exit the previous state, start the new one and assign the new one
+            if (newState !== this._state) {
+                this._state.exitState();
+                newState.enterState();
+                this._state = newState;
             }
-            ;
         };
         return Hero;
     })(Superhero.Character);

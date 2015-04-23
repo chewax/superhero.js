@@ -1,5 +1,6 @@
 /// <reference path="../../lib/phaser.d.ts"/>
 /// <reference path="Level1.ts"/>
+/// <reference path="../plugins/GamePad.ts"/>
 
 module Superhero {
 

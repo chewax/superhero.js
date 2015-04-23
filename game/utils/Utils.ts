@@ -1,4 +1,4 @@
-/// <reference path="../lib/phaser.d.ts"/>
+/// <reference path="../../lib/phaser.d.ts"/>
 
 module Superhero {
 

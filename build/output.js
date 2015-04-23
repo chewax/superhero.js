@@ -1,4 +1,4 @@
-/// <reference path="../lib/phaser.d.ts"/>
+/// <reference path="../../lib/phaser.d.ts"/>
 var Superhero;
 (function (Superhero) {
     var Utils = (function () {
@@ -25,8 +25,8 @@ var Superhero;
  * Wraps the logic to setup and handle the ui
  * @author Daniel Waksman
  */
-/// <reference path="../lib/phaser.d.ts"/>
-/// <reference path="character/Character.ts"/>
+/// <reference path="../../lib/phaser.d.ts"/>
+/// <reference path="../character/Character.ts"/>
 var Superhero;
 (function (Superhero) {
     var UI = (function () {
@@ -57,6 +57,14 @@ var Superhero;
     })();
     Superhero.UI = UI;
 })(Superhero || (Superhero = {}));
+/**
+ * Phaser joystick plugin.
+ * Usage: In your preloader function call the static method preloadAssets. It will handle the preload of the necessary
+ * assets. Then in the Stage in which you want to use the joystick, in the create method, instantiate the class and add such
+ * object to the Phaser plugin manager (eg: this.game.plugins.add( myPlugin ))
+ * Use the cursor.up / cursor.down / cursor.left / cursor.right methods to check for inputs
+ * Use the speed dictionary to retrieve the input speed (if you are going to use an analog joystick)
+ */
 /// <reference path="../../lib/phaser.d.ts"/>
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -64,15 +72,727 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+var Gamepads;
+(function (Gamepads) {
+    (function (Sectors) {
+        Sectors[Sectors["HALF_LEFT"] = 1] = "HALF_LEFT";
+        Sectors[Sectors["HALF_TOP"] = 2] = "HALF_TOP";
+        Sectors[Sectors["HALF_RIGHT"] = 3] = "HALF_RIGHT";
+        Sectors[Sectors["HALF_BOTTOM"] = 4] = "HALF_BOTTOM";
+        Sectors[Sectors["TOP_LEFT"] = 5] = "TOP_LEFT";
+        Sectors[Sectors["TOP_RIGHT"] = 6] = "TOP_RIGHT";
+        Sectors[Sectors["BOTTOM_RIGHT"] = 7] = "BOTTOM_RIGHT";
+        Sectors[Sectors["BOTTOM_LEFT"] = 8] = "BOTTOM_LEFT";
+        Sectors[Sectors["ALL"] = 9] = "ALL";
+    })(Gamepads.Sectors || (Gamepads.Sectors = {}));
+    var Sectors = Gamepads.Sectors;
+    /**
+     * @class Joystick
+     * @extends Phaser.Plugin
+     *
+     * Implements a floating joystick for touch screen devices
+     */
+    var Joystick = (function (_super) {
+        __extends(Joystick, _super);
+        function Joystick(game, sector, gamepadMode) {
+            if (gamepadMode === void 0) { gamepadMode = true; }
+            _super.call(this, game, new PIXI.DisplayObject());
+            this.imageGroup = [];
+            this.doUpdate = false;
+            this.gamepadMode = true;
+            this.game = game;
+            this.sector = sector;
+            this.gamepadMode = gamepadMode;
+            this.pointer = this.game.input.pointer1;
+            //Setup the images
+            this.imageGroup.push(this.game.add.sprite(0, 0, 'joystick_base'));
+            this.imageGroup.push(this.game.add.sprite(0, 0, 'joystick_segment'));
+            this.imageGroup.push(this.game.add.sprite(0, 0, 'joystick_knob'));
+            this.imageGroup.forEach(function (e) {
+                e.anchor.set(0.5);
+                e.visible = false;
+                e.fixedToCamera = true;
+            });
+            //Setup Default Settings
+            this.settings = {
+                maxDistanceInPixels: 60,
+                singleDirection: false,
+                float: true,
+                analog: true,
+                topSpeed: 200
+            };
+            //Setup Default State
+            this.cursors = {
+                up: false,
+                down: false,
+                left: false,
+                right: false
+            };
+            this.speed = {
+                x: 0,
+                y: 0
+            };
+            this.inputEnable();
+        }
+        /**
+         * @function inputEnable
+         * enables the plugin actions
+         */
+        Joystick.prototype.inputEnable = function () {
+            this.game.input.onDown.add(this.createStick, this);
+            this.game.input.onUp.add(this.removeStick, this);
+            this.active = true;
+        };
+        /**
+         * @function inputDisable
+         * disables the plugin actions
+         */
+        Joystick.prototype.inputDisable = function () {
+            this.game.input.onDown.remove(this.createStick, this);
+            this.game.input.onUp.remove(this.removeStick, this);
+            this.active = false;
+        };
+        Joystick.prototype.inSector = function (pointer) {
+            var half_bottom = pointer.position.y > this.game.height / 2;
+            var half_top = pointer.position.y < this.game.height / 2;
+            var half_right = pointer.position.x > this.game.width / 2;
+            var half_left = pointer.position.x < this.game.width / 2;
+            if (this.sector == 9 /* ALL */)
+                return true;
+            if (this.sector == 1 /* HALF_LEFT */ && half_left)
+                return true;
+            if (this.sector == 3 /* HALF_RIGHT */ && half_right)
+                return true;
+            if (this.sector == 4 /* HALF_BOTTOM */ && half_bottom)
+                return true;
+            if (this.sector == 2 /* HALF_TOP */ && half_top)
+                return true;
+            if (this.sector == 5 /* TOP_LEFT */ && half_top && half_left)
+                return true;
+            if (this.sector == 6 /* TOP_RIGHT */ && half_top && half_right)
+                return true;
+            if (this.sector == 7 /* BOTTOM_RIGHT */ && half_bottom && half_right)
+                return true;
+            if (this.sector == 8 /* BOTTOM_LEFT */ && half_bottom && half_left)
+                return true;
+            return false;
+        };
+        /**
+         * @function createStick
+         * @param pointer
+         *
+         * visually creates the pad and starts accepting the inputs
+         */
+        Joystick.prototype.createStick = function (pointer) {
+            //If this joystick is not in charge of monitoring the sector that was touched --> return
+            if (!this.inSector(pointer))
+                return;
+            //Else update the pointer (it may be the first touch)
+            this.pointer = pointer;
+            this.imageGroup.forEach(function (e) {
+                e.visible = true;
+                e.bringToTop();
+                e.cameraOffset.x = this.pointer.worldX;
+                e.cameraOffset.y = this.pointer.worldY;
+            }, this);
+            //Allow updates on the stick while the screen is being touched
+            this.doUpdate = true;
+            //Start the Stick on the position that is being touched right now
+            this.initialPoint = this.pointer.position.clone();
+        };
+        /**
+         * @function removeStick
+         * @param pointer
+         *
+         * Visually removes the stick and stops paying atention to input
+         */
+        Joystick.prototype.removeStick = function (pointer) {
+            if (pointer.id != this.pointer.id)
+                return;
+            //Deny updates on the stick
+            this.doUpdate = false;
+            this.imageGroup.forEach(function (e) {
+                e.visible = false;
+            });
+            this.cursors.up = false;
+            this.cursors.down = false;
+            this.cursors.left = false;
+            this.cursors.right = false;
+            this.speed.x = 0;
+            this.speed.y = 0;
+        };
+        /**
+         * @function receivingInput
+         * @returns {boolean}
+         *
+         * Returns true if any of the joystick "contacts" is activated
+         */
+        Joystick.prototype.receivingInput = function () {
+            return (this.cursors.up || this.cursors.down || this.cursors.left || this.cursors.right);
+        };
+        /**
+         * @function preUpdate
+         * Performs the preUpdate plugin actions
+         */
+        Joystick.prototype.preUpdate = function () {
+            if (this.doUpdate) {
+                this.setDirection();
+            }
+        };
+        Joystick.prototype.setSingleDirection = function () {
+            var d = this.initialPoint.distance(this.pointer.position);
+            var maxDistanceInPixels = this.settings.maxDistanceInPixels;
+            var deltaX = this.pointer.position.x - this.initialPoint.x;
+            var deltaY = this.pointer.position.y - this.initialPoint.y;
+            if (d < maxDistanceInPixels) {
+                this.cursors.up = false;
+                this.cursors.down = false;
+                this.cursors.left = false;
+                this.cursors.right = false;
+                this.speed.x = 0;
+                this.speed.y = 0;
+                this.imageGroup.forEach(function (e, i) {
+                    e.cameraOffset.x = this.initialPoint.x + (deltaX) * i / (this.imageGroup.length - 1);
+                    e.cameraOffset.y = this.initialPoint.y + (deltaY) * i / (this.imageGroup.length - 1);
+                }, this);
+                return;
+            }
+            ;
+            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                deltaY = 0;
+                this.pointer.position.y = this.initialPoint.y;
+            }
+            else {
+                deltaX = 0;
+                this.pointer.position.x = this.initialPoint.x;
+            }
+            var angle = this.initialPoint.angle(this.pointer.position);
+            if (d > maxDistanceInPixels) {
+                deltaX = Math.cos(angle) * maxDistanceInPixels;
+                deltaY = Math.sin(angle) * maxDistanceInPixels;
+                if (this.settings.float) {
+                    this.initialPoint.x = this.pointer.x - deltaX;
+                    this.initialPoint.y = this.pointer.y - deltaY;
+                }
+            }
+            this.speed.x = Math.round(Math.cos(angle) * this.settings.topSpeed);
+            this.speed.y = Math.round(Math.sin(angle) * this.settings.topSpeed);
+            angle = angle * 180 / Math.PI;
+            this.cursors.up = angle == -90;
+            this.cursors.down = angle == 90;
+            this.cursors.left = angle == 180;
+            this.cursors.right = angle == 0;
+            this.imageGroup.forEach(function (e, i) {
+                e.cameraOffset.x = this.initialPoint.x + (deltaX) * i / (this.imageGroup.length - 1);
+                e.cameraOffset.y = this.initialPoint.y + (deltaY) * i / (this.imageGroup.length - 1);
+            }, this);
+        };
+        /**
+         * @function setDirection
+         * Main Plugin function. Performs the calculations and updates the sprite positions
+         */
+        Joystick.prototype.setDirection = function () {
+            if (this.settings.singleDirection) {
+                this.setSingleDirection();
+                return;
+            }
+            var d = this.initialPoint.distance(this.pointer.position);
+            var maxDistanceInPixels = this.settings.maxDistanceInPixels;
+            var deltaX = this.pointer.position.x - this.initialPoint.x;
+            var deltaY = this.pointer.position.y - this.initialPoint.y;
+            if (!this.settings.analog) {
+                if (d < maxDistanceInPixels) {
+                    this.cursors.up = false;
+                    this.cursors.down = false;
+                    this.cursors.left = false;
+                    this.cursors.right = false;
+                    this.speed.x = 0;
+                    this.speed.y = 0;
+                    this.imageGroup.forEach(function (e, i) {
+                        e.cameraOffset.x = this.initialPoint.x + (deltaX) * i / (this.imageGroup.length - 1);
+                        e.cameraOffset.y = this.initialPoint.y + (deltaY) * i / (this.imageGroup.length - 1);
+                    }, this);
+                    return;
+                }
+            }
+            var angle = this.initialPoint.angle(this.pointer.position);
+            if (d > maxDistanceInPixels) {
+                deltaX = Math.cos(angle) * maxDistanceInPixels;
+                deltaY = Math.sin(angle) * maxDistanceInPixels;
+                if (this.settings.float) {
+                    this.initialPoint.x = this.pointer.x - deltaX;
+                    this.initialPoint.y = this.pointer.y - deltaY;
+                }
+            }
+            if (this.settings.analog) {
+                this.speed.x = Math.round((deltaX / maxDistanceInPixels) * this.settings.topSpeed);
+                this.speed.y = Math.round((deltaY / maxDistanceInPixels) * this.settings.topSpeed);
+            }
+            else {
+                this.speed.x = Math.round(Math.cos(angle) * this.settings.topSpeed);
+                this.speed.y = Math.round(Math.sin(angle) * this.settings.topSpeed);
+            }
+            this.cursors.up = (deltaY < 0);
+            this.cursors.down = (deltaY > 0);
+            this.cursors.left = (deltaX < 0);
+            this.cursors.right = (deltaX > 0);
+            this.imageGroup.forEach(function (e, i) {
+                e.cameraOffset.x = this.initialPoint.x + (deltaX) * i / (this.imageGroup.length - 1);
+                e.cameraOffset.y = this.initialPoint.y + (deltaY) * i / (this.imageGroup.length - 1);
+            }, this);
+        };
+        /**
+         * @function preloadAssets
+         * @static
+         * @param game {Phaser.Game} - An instance of the current Game object
+         * @param assets_path {String} - A relative path to the assets directory
+         *
+         * Static class that preloads all the necesary assets for the joystick. Should be called on the game
+         * preload method
+         */
+        Joystick.preloadAssets = function (game, assets_path) {
+            game.load.image('joystick_base', assets_path + '/joystick_base.png');
+            game.load.image('joystick_segment', assets_path + '/joystick_segment.png');
+            game.load.image('joystick_knob', assets_path + '/joystick_knob.png');
+        };
+        return Joystick;
+    })(Phaser.Plugin);
+    Gamepads.Joystick = Joystick;
+})(Gamepads || (Gamepads = {}));
+/// <reference path="../../lib/phaser.d.ts"/>
+var Gamepads;
+(function (Gamepads) {
+    (function (ButtonType) {
+        ButtonType[ButtonType["SINGLE"] = 1] = "SINGLE";
+        ButtonType[ButtonType["TURBO"] = 2] = "TURBO";
+        ButtonType[ButtonType["DELAYED_TURBO"] = 3] = "DELAYED_TURBO";
+        ButtonType[ButtonType["SINGLE_THEN_TURBO"] = 4] = "SINGLE_THEN_TURBO";
+        ButtonType[ButtonType["CUSTOM"] = 5] = "CUSTOM";
+    })(Gamepads.ButtonType || (Gamepads.ButtonType = {}));
+    var ButtonType = Gamepads.ButtonType;
+    var Button = (function (_super) {
+        __extends(Button, _super);
+        function Button(game, x, y, key, onPressedCallback, listenerContext, type, width, height) {
+            if (type === void 0) { type = 4 /* SINGLE_THEN_TURBO */; }
+            _super.call(this, game, new PIXI.DisplayObject());
+            this.pressed = false;
+            this.game = game;
+            this.type = type;
+            this.sprite = this.game.add.sprite(x, y, key);
+            this.width = width || this.sprite.width;
+            this.height = height || this.sprite.height;
+            this.sprite.inputEnabled = true;
+            if (onPressedCallback == undefined) {
+                this.onPressedCallback = this.empty;
+            }
+            else {
+                this.onPressedCallback = onPressedCallback.bind(listenerContext);
+            }
+            this.sprite.events.onInputDown.add(this.pressButton, this);
+            this.sprite.events.onInputUp.add(this.releaseButton, this);
+            this.sprite.anchor.setTo(1, 1);
+            this.active = true;
+        }
+        Button.prototype.empty = function () {
+        };
+        Button.prototype.pressButton = function () {
+            switch (this.type) {
+                case 1 /* SINGLE */:
+                    this.onPressedCallback();
+                    break;
+                case 2 /* TURBO */:
+                    this.pressed = true;
+                    break;
+                case 3 /* DELAYED_TURBO */:
+                    this.timerId = setTimeout(function () {
+                        this.pressed = true;
+                    }.bind(this), 300);
+                    break;
+                case 4 /* SINGLE_THEN_TURBO */:
+                    this.onPressedCallback();
+                    this.timerId = setTimeout(function () {
+                        this.pressed = true;
+                    }.bind(this), 300);
+                    break;
+                default:
+                    this.pressed = true;
+            }
+        };
+        Button.prototype.releaseButton = function () {
+            this.pressed = false;
+            clearTimeout(this.timerId);
+        };
+        Button.prototype.setOnPressedCallback = function (listener, listenerContext) {
+            this.onPressedCallback = listener.bind(listenerContext);
+        };
+        Button.prototype.update = function () {
+            //If it is custom, we assume the programmer will check for the state in his own update,
+            //we just set the state to pressed
+            if (this.pressed && this.type != 5 /* CUSTOM */) {
+                this.onPressedCallback();
+            }
+        };
+        return Button;
+    })(Phaser.Plugin);
+    Gamepads.Button = Button;
+})(Gamepads || (Gamepads = {}));
+/// <reference path="../../lib/phaser.d.ts"/>
+/// <reference path="Button.ts"/>
+var Gamepads;
+(function (Gamepads) {
+    (function (ButtonPadType) {
+        ButtonPadType[ButtonPadType["ONE_FIXED"] = 1] = "ONE_FIXED";
+        ButtonPadType[ButtonPadType["TWO_INLINE_X"] = 2] = "TWO_INLINE_X";
+        ButtonPadType[ButtonPadType["TWO_INLINE_Y"] = 3] = "TWO_INLINE_Y";
+        ButtonPadType[ButtonPadType["THREE_INLINE_X"] = 4] = "THREE_INLINE_X";
+        ButtonPadType[ButtonPadType["THREE_INLINE_Y"] = 5] = "THREE_INLINE_Y";
+        ButtonPadType[ButtonPadType["THREE_FAN"] = 6] = "THREE_FAN";
+        ButtonPadType[ButtonPadType["FOUR_STACK"] = 7] = "FOUR_STACK";
+        ButtonPadType[ButtonPadType["FOUR_INLINE_X"] = 8] = "FOUR_INLINE_X";
+        ButtonPadType[ButtonPadType["FOUR_INLINE_Y"] = 9] = "FOUR_INLINE_Y";
+        ButtonPadType[ButtonPadType["FOUR_FAN"] = 10] = "FOUR_FAN";
+        ButtonPadType[ButtonPadType["FIVE_FAN"] = 11] = "FIVE_FAN";
+    })(Gamepads.ButtonPadType || (Gamepads.ButtonPadType = {}));
+    var ButtonPadType = Gamepads.ButtonPadType;
+    var ButtonPad = (function (_super) {
+        __extends(ButtonPad, _super);
+        function ButtonPad(game, type, buttonSize) {
+            _super.call(this, game, new PIXI.DisplayObject());
+            this.padding = 10;
+            this.game = game;
+            this.type = type;
+            this.buttonSize = buttonSize;
+            switch (this.type) {
+                case 1 /* ONE_FIXED */:
+                    this.initOneFixed();
+                    break;
+                case 2 /* TWO_INLINE_X */:
+                    this.initTwoInlineX();
+                    break;
+                case 4 /* THREE_INLINE_X */:
+                    this.initThreeInlineX();
+                    break;
+                case 8 /* FOUR_INLINE_X */:
+                    this.initFourInlineX();
+                    break;
+                case 3 /* TWO_INLINE_Y */:
+                    this.initTwoInlineY();
+                    break;
+                case 5 /* THREE_INLINE_Y */:
+                    this.initThreeInlineY();
+                    break;
+                case 9 /* FOUR_INLINE_Y */:
+                    this.initFourInlineY();
+                    break;
+                case 7 /* FOUR_STACK */:
+                    this.initFourStack();
+                    break;
+                case 6 /* THREE_FAN */:
+                    this.initThreeFan();
+                    break;
+                case 10 /* FOUR_FAN */:
+                    this.initFourFan();
+                    break;
+                case 11 /* FIVE_FAN */:
+                    this.initFiveFan();
+                    break;
+            }
+        }
+        ButtonPad.prototype.initOneFixed = function () {
+            var offsetX = this.game.width - this.padding;
+            var offsetY = this.game.height - this.padding;
+            this.button1 = new Gamepads.Button(this.game, offsetX, offsetY, 'button1');
+            this.game.add.plugin(this.button1);
+            return offsetX;
+        };
+        ButtonPad.prototype.initTwoInlineX = function () {
+            var offsetX = this.initOneFixed();
+            var offsetY = this.game.height - this.padding;
+            offsetX = offsetX - this.buttonSize - this.padding;
+            this.button2 = new Gamepads.Button(this.game, offsetX, offsetY, 'button2');
+            this.game.add.plugin(this.button2);
+            return offsetX;
+        };
+        ButtonPad.prototype.initThreeInlineX = function () {
+            var offsetX = this.initTwoInlineX();
+            var offsetY = this.game.height - this.padding;
+            offsetX = offsetX - this.buttonSize - this.padding;
+            this.button3 = new Gamepads.Button(this.game, offsetX, offsetY, 'button3');
+            this.game.add.plugin(this.button3);
+            return offsetX;
+        };
+        ButtonPad.prototype.initFourInlineX = function () {
+            var offsetX = this.initThreeInlineX();
+            var offsetY = this.game.height - this.padding;
+            offsetX = offsetX - this.buttonSize - this.padding;
+            this.button4 = new Gamepads.Button(this.game, offsetX, offsetY, 'button4');
+            this.game.add.plugin(this.button4);
+            return offsetX;
+        };
+        ButtonPad.prototype.initTwoInlineY = function () {
+            var offsetX = this.game.width - this.padding;
+            var offsetY = this.game.height - this.padding;
+            this.button1 = new Gamepads.Button(this.game, offsetX, offsetY, 'button1');
+            offsetY = offsetY - this.buttonSize - this.padding;
+            this.button2 = new Gamepads.Button(this.game, offsetX, offsetY, 'button2');
+            this.game.add.plugin(this.button1);
+            this.game.add.plugin(this.button2);
+            return offsetY;
+        };
+        ButtonPad.prototype.initThreeInlineY = function () {
+            var offsetX = this.game.width - this.padding;
+            var offsetY = this.initTwoInlineY();
+            offsetY = offsetY - this.buttonSize - this.padding;
+            this.button3 = new Gamepads.Button(this.game, offsetX, offsetY, 'button3');
+            this.game.add.plugin(this.button3);
+            return offsetY;
+        };
+        ButtonPad.prototype.initFourInlineY = function () {
+            var offsetX = this.game.width - this.padding;
+            var offsetY = this.initThreeInlineY();
+            offsetY = offsetY - this.buttonSize - this.padding;
+            this.button4 = new Gamepads.Button(this.game, offsetX, offsetY, 'button4');
+            this.game.add.plugin(this.button4);
+            return offsetY;
+        };
+        ButtonPad.prototype.initFourStack = function () {
+            var offsetX = this.game.width - this.padding;
+            var offsetY = this.game.height - this.padding;
+            this.button1 = new Gamepads.Button(this.game, offsetX, offsetY, 'button1');
+            offsetY = offsetY - this.buttonSize - this.padding;
+            this.button2 = new Gamepads.Button(this.game, offsetX, offsetY, 'button2');
+            var offsetX = offsetX - this.buttonSize - this.padding;
+            var offsetY = this.game.height - this.padding;
+            this.button3 = new Gamepads.Button(this.game, offsetX, offsetY, 'button3');
+            offsetY = offsetY - this.buttonSize - this.padding;
+            this.button4 = new Gamepads.Button(this.game, offsetX, offsetY, 'button4');
+            this.game.add.plugin(this.button1);
+            this.game.add.plugin(this.button2);
+            this.game.add.plugin(this.button3);
+            this.game.add.plugin(this.button4);
+        };
+        ButtonPad.prototype.toRadians = function (angle) {
+            return angle * (Math.PI / 180);
+        };
+        ButtonPad.prototype.toDegrees = function (angle) {
+            return angle * (180 / Math.PI);
+        };
+        ButtonPad.prototype.initThreeFan = function () {
+            //Arc Center X,Y Coordinates
+            var cx = this.game.width - 3 * this.padding;
+            var cy = this.game.height - 3 * this.padding;
+            var radius = this.buttonSize * 1.5;
+            var angleStep = 100 / 2;
+            var angle = 175;
+            angle = this.toRadians(angle);
+            angleStep = this.toRadians(angleStep);
+            //Button 1
+            var bx = cx + Math.cos(angle) * radius;
+            var by = cy + Math.sin(angle) * radius;
+            this.button1 = new Gamepads.Button(this.game, bx, by, 'button1');
+            this.button1.sprite.scale.setTo(0.7);
+            //Button 2
+            bx = cx + Math.cos(angle + angleStep) * radius;
+            by = cy + Math.sin(angle + angleStep) * radius;
+            this.button2 = new Gamepads.Button(this.game, bx, by, 'button2');
+            this.button2.sprite.scale.setTo(0.7);
+            //Button 3
+            bx = cx + Math.cos(angle + (angleStep * 2)) * radius;
+            by = cy + Math.sin(angle + (angleStep * 2)) * radius;
+            this.button3 = new Gamepads.Button(this.game, bx, by, 'button3');
+            this.button3.sprite.scale.setTo(0.7);
+            this.game.add.plugin(this.button1);
+            this.game.add.plugin(this.button2);
+            this.game.add.plugin(this.button3);
+        };
+        ButtonPad.prototype.initFourFan = function () {
+            //Arc Center X,Y Coordinates
+            var cx = this.game.width - 3 * this.padding;
+            var cy = this.game.height - 3 * this.padding;
+            var radius = this.buttonSize * 1.5;
+            var angleStep = 100 / 2;
+            var angle = 175;
+            angle = this.toRadians(angle);
+            angleStep = this.toRadians(angleStep);
+            this.button1 = new Gamepads.Button(this.game, cx - this.padding, cy - this.padding, 'button1');
+            this.button1.sprite.scale.setTo(1.2);
+            //Button 2
+            var bx = cx + Math.cos(angle) * radius;
+            var by = cy + Math.sin(angle) * radius;
+            this.button2 = new Gamepads.Button(this.game, bx, by, 'button2');
+            this.button2.sprite.scale.setTo(0.7);
+            //Button 3
+            bx = cx + Math.cos(angle + angleStep) * radius;
+            by = cy + Math.sin(angle + angleStep) * radius;
+            this.button3 = new Gamepads.Button(this.game, bx, by, 'button3');
+            this.button3.sprite.scale.setTo(0.7);
+            //Button 4
+            bx = cx + Math.cos(angle + (angleStep * 2)) * radius;
+            by = cy + Math.sin(angle + (angleStep * 2)) * radius;
+            this.button4 = new Gamepads.Button(this.game, bx, by, 'button4');
+            this.button4.sprite.scale.setTo(0.7);
+            this.game.add.plugin(this.button1);
+            this.game.add.plugin(this.button2);
+            this.game.add.plugin(this.button3);
+            this.game.add.plugin(this.button4);
+        };
+        ButtonPad.prototype.initFiveFan = function () {
+            //Arc Center X,Y Coordinates
+            var cx = this.game.width - 3 * this.padding;
+            var cy = this.game.height - 3 * this.padding;
+            var radius = this.buttonSize * 1.5;
+            var angleStep = 100 / 3;
+            var angle = 175;
+            angle = this.toRadians(angle);
+            angleStep = this.toRadians(angleStep);
+            this.button1 = new Gamepads.Button(this.game, cx, cy, 'button1');
+            this.button1.sprite.scale.setTo(1.2);
+            //Button 2
+            var bx = cx + Math.cos(angle) * radius;
+            var by = cy + Math.sin(angle) * radius;
+            this.button2 = new Gamepads.Button(this.game, bx, by, 'button2');
+            this.button2.sprite.scale.setTo(0.7);
+            //Button 3
+            bx = cx + Math.cos(angle + angleStep) * radius;
+            by = cy + Math.sin(angle + angleStep) * radius;
+            this.button3 = new Gamepads.Button(this.game, bx, by, 'button3');
+            this.button3.sprite.scale.setTo(0.7);
+            //Button 4
+            bx = cx + Math.cos(angle + (angleStep * 2)) * radius;
+            by = cy + Math.sin(angle + (angleStep * 2)) * radius;
+            this.button4 = new Gamepads.Button(this.game, bx, by, 'button4');
+            this.button4.sprite.scale.setTo(0.7);
+            //Button 5
+            bx = cx + Math.cos(angle + (angleStep * 3)) * radius;
+            by = cy + Math.sin(angle + (angleStep * 3)) * radius;
+            this.button5 = new Gamepads.Button(this.game, bx, by, 'button5');
+            this.button5.sprite.scale.setTo(0.7);
+            this.game.add.plugin(this.button1);
+            this.game.add.plugin(this.button2);
+            this.game.add.plugin(this.button3);
+            this.game.add.plugin(this.button4);
+            this.game.add.plugin(this.button5);
+        };
+        ButtonPad.preloadAssets = function (game, assets_path) {
+            game.load.image('button1', assets_path + '/button1.png');
+            game.load.image('button2', assets_path + '/button2.png');
+            game.load.image('button3', assets_path + '/button3.png');
+            game.load.image('button4', assets_path + '/button4.png');
+            game.load.image('button5', assets_path + '/button5.png');
+        };
+        return ButtonPad;
+    })(Phaser.Plugin);
+    Gamepads.ButtonPad = ButtonPad;
+})(Gamepads || (Gamepads = {}));
+/// <reference path="../../lib/phaser.d.ts"/>
+/// <reference path="Joystick.ts"/>
+/// <reference path="Button.ts"/>
+/// <reference path="ButtonPad.ts"/>
+var Gamepads;
+(function (Gamepads) {
+    (function (GampadType) {
+        GampadType[GampadType["SINGLE_STICK"] = 1] = "SINGLE_STICK";
+        GampadType[GampadType["DOUBLE_STICK"] = 2] = "DOUBLE_STICK";
+        GampadType[GampadType["STICK_BUTTON"] = 3] = "STICK_BUTTON";
+        GampadType[GampadType["CORNER_STICKS"] = 4] = "CORNER_STICKS";
+    })(Gamepads.GampadType || (Gamepads.GampadType = {}));
+    var GampadType = Gamepads.GampadType;
+    var GamePad = (function (_super) {
+        __extends(GamePad, _super);
+        function GamePad(game, type, buttonPadType) {
+            _super.call(this, game, new PIXI.DisplayObject());
+            this.test = 0;
+            this.game = game;
+            switch (type) {
+                case 2 /* DOUBLE_STICK */:
+                    this.initDoublStick();
+                    break;
+                case 1 /* SINGLE_STICK */:
+                    this.initSingleStick();
+                    break;
+                case 3 /* STICK_BUTTON */:
+                    this.initStickButton(buttonPadType);
+                    break;
+                case 4 /* CORNER_STICKS */:
+                    this.initCornerSticks();
+                    break;
+            }
+        }
+        GamePad.prototype.initDoublStick = function () {
+            this.stick1 = new Gamepads.Joystick(this.game, 1 /* HALF_LEFT */);
+            this.stick2 = new Gamepads.Joystick(this.game, 3 /* HALF_RIGHT */);
+            this.game.add.plugin(this.stick1, null);
+            this.game.add.plugin(this.stick2, null);
+        };
+        GamePad.prototype.initCornerSticks = function () {
+            //Add 2 extra pointers (2 by default + 2 Extra)
+            this.game.input.addPointer();
+            this.game.input.addPointer();
+            this.stick1 = new Gamepads.Joystick(this.game, 8 /* BOTTOM_LEFT */);
+            this.stick2 = new Gamepads.Joystick(this.game, 5 /* TOP_LEFT */);
+            this.stick3 = new Gamepads.Joystick(this.game, 6 /* TOP_RIGHT */);
+            this.stick4 = new Gamepads.Joystick(this.game, 7 /* BOTTOM_RIGHT */);
+            this.game.add.plugin(this.stick1, null);
+            this.game.add.plugin(this.stick2, null);
+            this.game.add.plugin(this.stick3, null);
+            this.game.add.plugin(this.stick4, null);
+        };
+        GamePad.prototype.initSingleStick = function () {
+            this.stick1 = new Gamepads.Joystick(this.game, 9 /* ALL */);
+            this.game.add.plugin(this.stick1, null);
+        };
+        GamePad.prototype.initStickButton = function (buttonPadType) {
+            var style = { font: "14px Courier", fill: "#ffffff", align: "left" };
+            this.info = this.game.add.text(this.game.world.centerX, this.game.world.centerY, '0', style);
+            this.stick1 = new Gamepads.Joystick(this.game, 1 /* HALF_LEFT */);
+            this.game.add.plugin(this.stick1, null);
+            this.buttonPad = new Gamepads.ButtonPad(this.game, buttonPadType, 100);
+            function pressTest() {
+                this.test += 1;
+                this.info.text = this.test.toString();
+            }
+            //FOR TESTING
+            this.buttonPad.button1.setOnPressedCallback(pressTest, this);
+            //this.buttonPad.button2.setOnPressedCallback(pressTest,this);
+            //this.buttonPad.button3.setOnPressedCallback(pressTest,this);
+            //this.buttonPad.button4.setOnPressedCallback(pressTest,this);
+            //this.buttonPad.button5.setOnPressedCallback(pressTest,this);
+        };
+        GamePad.preloadAssets = function (game, assets_path) {
+            Gamepads.Joystick.preloadAssets(game, assets_path);
+            Gamepads.ButtonPad.preloadAssets(game, assets_path);
+        };
+        return GamePad;
+    })(Phaser.Plugin);
+    Gamepads.GamePad = GamePad;
+})(Gamepads || (Gamepads = {}));
+/**
+ * @author Daniel Waksman
+ */
+/// <reference path="../../lib/phaser.d.ts"/>
+/// <reference path="Character.ts"/>
+/// <reference path="../plugins/GamePad.ts"/>
 var Superhero;
 (function (Superhero) {
+    /**
+     * Contains all the generic behaviour for the States.
+     * @class BaseState
+     * @implements CharState
+     * @param {Phaser.Game} game - the instance of the current game
+     * @param {Superhero.Character} hero - the instance of the player character
+     *
+     */
     var BaseState = (function () {
+        /**
+         * @param {Phaser.game} game instance
+         * @param {Superher.Character} hero instance
+         */
         function BaseState(game, hero) {
             this.game = game;
             this.hero = hero;
-            this.sprintKey = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
-            this.retreatKey = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
-            this.fireKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+            this.gamepad = this.game.gamepad;
+            this.fireButton = this.gamepad.buttonPad.button1;
+            this.heroStick = this.gamepad.stick1;
         }
         BaseState.prototype.update = function () {
             return null;
@@ -91,20 +811,34 @@ var Superhero;
         function StateIdle() {
             _super.apply(this, arguments);
         }
+        /**
+         * @function update
+         * Manages input for state idle.
+         * STATE_IDLE + FIRE      --> (fire) IDLE
+         * STATE_IDLE + TOUCH     --> FLY
+         * STATE_IDLE + SPRINT    --> SPRINT
+         * STATE_IDLE + RETREAT   --> RETREAT
+         * STATE_IDLE + NULL      --> IDLE
+         * @returns {CharState}
+         */
         StateIdle.prototype.update = function () {
-            if (this.fireKey.isDown) {
+            //If fire on idle. Fire and remain in same state
+            if (this.fireButton.pressed) {
                 this.hero.fire();
             }
-            if (this.game.input.activePointer.isDown && this.hero.fuel > 0) {
-                this.hero.climb();
+            //If commanded to climb and hero still has fuel then change state to STATE_FLY
+            if (this.heroStick.cursors.up && this.hero.fuel > 0) {
                 return new StateFly(this.game, this.hero);
             }
-            if (this.sprintKey.isDown) {
+            //If commanded to sprint then change state to STATE_SPRINT
+            if (this.heroStick.cursors.right) {
                 return new StateSprint(this.game, this.hero);
             }
-            if (this.retreatKey.isDown) {
+            //If commanded to retreat then change state to STATE_RETREAT
+            if (this.heroStick.cursors.left) {
                 return new StateRetreating(this.game, this.hero);
             }
+            //If nothing was commanded remain on the same state
             return this;
         };
         StateIdle.prototype.enterState = function () {
@@ -123,20 +857,22 @@ var Superhero;
             _super.apply(this, arguments);
         }
         StateFly.prototype.update = function () {
-            if (this.fireKey.isDown) {
+            //This state is all about climbing, so climb!
+            this.hero.climb();
+            //If fire on idle. Fire and remain in same state
+            if (this.fireButton.pressed) {
                 this.hero.fire();
             }
-            if (this.sprintKey.isDown) {
+            //If commanded to sprint then change state to STATE_SPRINT
+            if (this.heroStick.cursors.right) {
                 return new StateSprint(this.game, this.hero);
             }
-            if (this.retreatKey.isDown) {
+            //If commanded to retreat then change state to STATE_RETREAT
+            if (this.heroStick.cursors.left) {
                 return new StateRetreating(this.game, this.hero);
             }
-            if (this.game.input.activePointer.isDown && this.hero.fuel > 0) {
-                this.hero.climb();
-                return this;
-            }
-            if (this.game.input.activePointer.isUp || this.hero.fuel == 0) {
+            //If climb command has stopped or run out of fuel then change state to STATE_DIVING
+            if (!this.heroStick.receivingInput() || this.hero.fuel == 0) {
                 return new StateDiving(this.game, this.hero);
             }
             return this;
@@ -158,13 +894,13 @@ var Superhero;
         }
         StateSprint.prototype.update = function () {
             this.hero.sprint();
-            if (this.fireKey.isDown) {
+            if (this.fireButton.pressed) {
                 this.hero.fire();
             }
-            if (this.game.input.activePointer.isDown && this.hero.fuel > 0) {
+            if (this.heroStick.cursors.up && this.hero.fuel > 0) {
                 this.hero.climb();
             }
-            if (this.sprintKey.isUp) {
+            if (!this.heroStick.receivingInput()) {
                 return new StateIdle(this.game, this.hero);
             }
             return this;
@@ -187,13 +923,13 @@ var Superhero;
         }
         StateRetreating.prototype.update = function () {
             this.hero.moveLeft();
-            if (this.fireKey.isDown) {
+            if (this.fireButton.pressed) {
                 this.hero.fire();
             }
-            if (this.game.input.activePointer.isDown && this.hero.fuel > 0) {
+            if (this.heroStick.cursors.up && this.hero.fuel > 0) {
                 this.hero.climb();
             }
-            if (this.retreatKey.isUp) {
+            if (!this.heroStick.receivingInput()) {
                 return new StateIdle(this.game, this.hero);
             }
             return this;
@@ -214,20 +950,19 @@ var Superhero;
             _super.apply(this, arguments);
         }
         StateDiving.prototype.update = function () {
-            if (this.fireKey.isDown) {
+            if (this.fireButton.pressed) {
                 this.hero.fire();
             }
-            if (this.game.input.activePointer.isDown && this.hero.fuel > 0) {
-                this.hero.climb();
+            if (this.heroStick.cursors.up && this.hero.fuel > 0) {
                 return new StateFly(this.game, this.hero);
             }
             if (this.hero.sprite.body.touching.down) {
                 return new StateIdle(this.game, this.hero);
             }
-            if (this.sprintKey.isDown) {
+            if (this.heroStick.cursors.right) {
                 return new StateSprint(this.game, this.hero);
             }
-            if (this.retreatKey.isDown) {
+            if (this.heroStick.cursors.left) {
                 return new StateRetreating(this.game, this.hero);
             }
             return this;
@@ -248,8 +983,9 @@ var Superhero;
  * @author Daniel Waksman
  */
 /// <reference path="../../lib/phaser.d.ts"/>
-/// <reference path="../Utils.ts"/>
-/// <reference path="../UI.ts"/>
+/// <reference path="../utils/Utils.ts"/>
+/// <reference path="../ui/UI.ts"/>
+/// <reference path="../core/Game.ts"/>
 /// <reference path="CharStates.ts"/>
 var Superhero;
 (function (Superhero) {
@@ -498,6 +1234,7 @@ var Superhero;
 })(Superhero || (Superhero = {}));
 /// <reference path="../../lib/phaser.d.ts"/>
 /// <reference path="Character.ts"/>
+/// <reference path="../plugins/GamePad.ts"/>
 var Superhero;
 (function (Superhero) {
     var Hero = (function (_super) {
@@ -509,7 +1246,6 @@ var Superhero;
         Hero.prototype.update = function () {
             _super.prototype.update.call(this);
             var newState = this._state.update();
-            console.log(newState.constructor.name);
             // If the update returned a different state then
             // we must exit the previous state, start the new one and assign the new one
             if (newState !== this._state) {
@@ -536,7 +1272,7 @@ var Superhero;
     })(Superhero.Character);
     Superhero.Badie = Badie;
 })(Superhero || (Superhero = {}));
-/// <reference path="../lib/phaser.d.ts"/>
+/// <reference path="../../lib/phaser.d.ts"/>
 var Superhero;
 (function (Superhero) {
     var Debug = (function () {
@@ -567,7 +1303,7 @@ var Superhero;
     })();
     Superhero.Debug = Debug;
 })(Superhero || (Superhero = {}));
-/// <reference path="../lib/phaser.d.ts"/>
+/// <reference path="../../lib/phaser.d.ts"/>
 var Superhero;
 (function (Superhero) {
     var Config = (function () {
@@ -598,9 +1334,11 @@ var Superhero;
 /// <reference path="../../lib/phaser.d.ts"/>
 /// <reference path="../character/Hero.ts"/>
 /// <reference path="../character/Badie.ts"/>
-/// <reference path="../Debug.ts"/>
-/// <reference path="../Config.ts"/>
-/// <reference path="../UI.ts"/>
+/// <reference path="../utils/Debug.ts"/>
+/// <reference path="../utils/Config.ts"/>
+/// <reference path="../ui/UI.ts"/>
+/// <reference path="../core/Game.ts"/>
+/// <reference path="../plugins/Gamepad.ts"/>
 var Superhero;
 (function (Superhero) {
     var Level1 = (function (_super) {
@@ -627,17 +1365,6 @@ var Superhero;
             this.badie.update();
             this.ui.update();
             // this.debug.update();
-            //var park = this.foregroundItems.getFirstDead();
-            //
-            //if (park) {
-            //    park.reset(this.world.width + 50, 600);
-            //    park.body.velocity.x = -900;
-            //    park.scale.setTo(Config.spriteScaling());
-            //    park.body.allowGravity = false;
-            //    park.angle = -90;
-            //    park.checkWorldBounds = true;
-            //    park.outOfBoundsKill = true;
-            //}
         };
         Level1.prototype.configurePhysics = function () {
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -646,11 +1373,11 @@ var Superhero;
         Level1.prototype.setBaseStage = function () {
             this.background = this.game.add.tileSprite(0, 0, 2061, 540, 'background');
             this.background.autoScroll(-500, 0);
+            this.game.gamepad = new Gamepads.GamePad(this.game, 3 /* STICK_BUTTON */, 1 /* ONE_FIXED */);
+            this.game.gamepad.stick1.settings.analog = false;
+            this.game.gamepad.buttonPad.button1.type = 5 /* CUSTOM */;
             this.hero = new Superhero.Hero(this.game);
             this.badie = new Superhero.Badie(this.game);
-            //this.foregroundItems = this.game.add.group();
-            //this.foregroundItems.enableBody = true;
-            //this.foregroundItems.createMultiple(1,'env','parkimeter');
             this.ui = new Superhero.UI(this.game, this.hero);
         };
         return Level1;
@@ -659,6 +1386,7 @@ var Superhero;
 })(Superhero || (Superhero = {}));
 /// <reference path="../../lib/phaser.d.ts"/>
 /// <reference path="Level1.ts"/>
+/// <reference path="../plugins/GamePad.ts"/>
 var Superhero;
 (function (Superhero) {
     var Menu = (function (_super) {
@@ -687,6 +1415,7 @@ var Superhero;
 })(Superhero || (Superhero = {}));
 /// <reference path="../../lib/phaser.d.ts"/>
 /// <reference path="Menu.ts"/>
+/// <reference path="../plugins/Gamepad.ts"/>
 var Superhero;
 (function (Superhero) {
     var Preloader = (function (_super) {
@@ -711,6 +1440,7 @@ var Superhero;
             this.game.load.image('background', '/assets/Background.png');
             this.game.load.image('fuelbar', '/assets/fuel.png');
             this.game.load.image('shadow', '/assets/shadow.png');
+            Gamepads.GamePad.preloadAssets(this.game, '/assets');
         };
         return Preloader;
     })(Phaser.State);
@@ -739,15 +1469,26 @@ var Superhero;
     })(Phaser.State);
     Superhero.Boot = Boot;
 })(Superhero || (Superhero = {}));
-/// <reference path="../lib/phaser.d.ts"/>
-/// <reference path="states/Boot.ts"/>
-/// <reference path="states/Preloader.ts"/>
-/// <reference path="states/Menu.ts"/>
-/// <reference path="states/Level1.ts"/>
-/// <reference path="Config.ts"/>
-/// <reference path="UI.ts"/>
+/// <reference path="../../lib/phaser.d.ts"/>
+/// <reference path="../states/Boot.ts"/>
+/// <reference path="../states/Preloader.ts"/>
+/// <reference path="../states/Menu.ts"/>
+/// <reference path="../states/Level1.ts"/>
+/// <reference path="../utils/Config.ts"/>
+/// <reference path="../ui/UI.ts"/>
+/// <reference path="../plugins/GamePad.ts"/>
 var Superhero;
 (function (Superhero) {
+    /**
+     * Main game class. Create the states of the game, inits the config object and starts the boot.
+     * @class Game
+     * @extends Phaser.Game
+     *
+     * @param {number} width - The viewport width. It originally sets the width of the world too.
+     * @param {number} height - The viewport height. It originally sets the height of the world too.
+     * @param {number} render - One of the Phaser render styles available [Phaser.CANVAS | Phaser.WEBGL | PHASER.AUTO]
+     * @param {string} sh - The div name to the DOM object that will contain the instance of the game
+     */
     var Game = (function (_super) {
         __extends(Game, _super);
         function Game() {
@@ -768,3 +1509,4 @@ var sh;
 window.onload = function () {
     sh = new Superhero.Game();
 };
+//# sourceMappingURL=output.js.map

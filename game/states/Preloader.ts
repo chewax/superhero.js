@@ -1,5 +1,6 @@
 /// <reference path="../../lib/phaser.d.ts"/>
 /// <reference path="Menu.ts"/>
+/// <reference path="../plugins/Gamepad.ts"/>
 
 module Superhero {
 
@@ -29,6 +30,8 @@ module Superhero {
             this.game.load.image('background', '/assets/Background.png');
             this.game.load.image('fuelbar', '/assets/fuel.png');
             this.game.load.image('shadow', '/assets/shadow.png');
+
+            Gamepads.GamePad.preloadAssets(this.game, '/assets');
 
         }
     }

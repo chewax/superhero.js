@@ -7,8 +7,9 @@
  */
 
 /// <reference path="../../lib/phaser.d.ts"/>
-/// <reference path="../Utils.ts"/>
-/// <reference path="../UI.ts"/>
+/// <reference path="../utils/Utils.ts"/>
+/// <reference path="../ui/UI.ts"/>
+/// <reference path="../core/Game.ts"/>
 /// <reference path="CharStates.ts"/>
 
 module Superhero {
