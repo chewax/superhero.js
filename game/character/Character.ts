@@ -121,6 +121,11 @@ module Superhero {
             }
         }
 
+        move (speed:{x:number ; y:number}): void {
+            this.sprite.body.velocity.x = speed.x;
+            if (this.fuel) this.sprite.body.velocity.y = speed.y;
+        }
+
         /**
          * Wraps the stop logic
          */

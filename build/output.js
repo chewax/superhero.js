@@ -742,21 +742,9 @@ var Gamepads;
             this.game.add.plugin(this.stick1, null);
         };
         GamePad.prototype.initStickButton = function (buttonPadType) {
-            var style = { font: "14px Courier", fill: "#ffffff", align: "left" };
-            this.info = this.game.add.text(this.game.world.centerX, this.game.world.centerY, '0', style);
             this.stick1 = new Gamepads.Joystick(this.game, 1 /* HALF_LEFT */);
             this.game.add.plugin(this.stick1, null);
             this.buttonPad = new Gamepads.ButtonPad(this.game, buttonPadType, 100);
-            function pressTest() {
-                this.test += 1;
-                this.info.text = this.test.toString();
-            }
-            //FOR TESTING
-            this.buttonPad.button1.setOnPressedCallback(pressTest, this);
-            //this.buttonPad.button2.setOnPressedCallback(pressTest,this);
-            //this.buttonPad.button3.setOnPressedCallback(pressTest,this);
-            //this.buttonPad.button4.setOnPressedCallback(pressTest,this);
-            //this.buttonPad.button5.setOnPressedCallback(pressTest,this);
         };
         GamePad.preloadAssets = function (game, assets_path) {
             Gamepads.Joystick.preloadAssets(game, assets_path);
@@ -803,40 +791,21 @@ var Superhero;
         };
         return BaseState;
     })();
-    /**
-     * STATE_IDLE Class
-     */
+    ///**
+    // * STATE_IDLE Class
+    // */
     var StateIdle = (function (_super) {
         __extends(StateIdle, _super);
         function StateIdle() {
             _super.apply(this, arguments);
         }
-        /**
-         * @function update
-         * Manages input for state idle.
-         * STATE_IDLE + FIRE      --> (fire) IDLE
-         * STATE_IDLE + TOUCH     --> FLY
-         * STATE_IDLE + SPRINT    --> SPRINT
-         * STATE_IDLE + RETREAT   --> RETREAT
-         * STATE_IDLE + NULL      --> IDLE
-         * @returns {CharState}
-         */
         StateIdle.prototype.update = function () {
             //If fire on idle. Fire and remain in same state
             if (this.fireButton.pressed) {
                 this.hero.fire();
             }
-            //If commanded to climb and hero still has fuel then change state to STATE_FLY
-            if (this.heroStick.cursors.up && this.hero.fuel > 0) {
+            if (this.heroStick.receivingInput()) {
                 return new StateFly(this.game, this.hero);
-            }
-            //If commanded to sprint then change state to STATE_SPRINT
-            if (this.heroStick.cursors.right) {
-                return new StateSprint(this.game, this.hero);
-            }
-            //If commanded to retreat then change state to STATE_RETREAT
-            if (this.heroStick.cursors.left) {
-                return new StateRetreating(this.game, this.hero);
             }
             //If nothing was commanded remain on the same state
             return this;
@@ -848,32 +817,25 @@ var Superhero;
         return StateIdle;
     })(BaseState);
     Superhero.StateIdle = StateIdle;
-    /**
-     * STATE_FLY Class
-     */
+    ///**
+    // * STATE_FLY Class
+    // */
     var StateFly = (function (_super) {
         __extends(StateFly, _super);
         function StateFly() {
             _super.apply(this, arguments);
         }
         StateFly.prototype.update = function () {
-            //This state is all about climbing, so climb!
-            this.hero.climb();
+            this.hero.move(this.heroStick.speed);
+            if (this.heroStick.cursors.right) {
+                return new StateSprint(this.game, this.hero);
+            }
             //If fire on idle. Fire and remain in same state
             if (this.fireButton.pressed) {
                 this.hero.fire();
             }
-            //If commanded to sprint then change state to STATE_SPRINT
-            if (this.heroStick.cursors.right) {
-                return new StateSprint(this.game, this.hero);
-            }
-            //If commanded to retreat then change state to STATE_RETREAT
-            if (this.heroStick.cursors.left) {
-                return new StateRetreating(this.game, this.hero);
-            }
-            //If climb command has stopped or run out of fuel then change state to STATE_DIVING
-            if (!this.heroStick.receivingInput() || this.hero.fuel == 0) {
-                return new StateDiving(this.game, this.hero);
+            if (!this.heroStick.receivingInput()) {
+                return new StateIdle(this.game, this.hero);
             }
             return this;
         };
@@ -884,24 +846,28 @@ var Superhero;
         return StateFly;
     })(BaseState);
     Superhero.StateFly = StateFly;
-    /**
-     * STATE_SPRINT Class
-     */
+    ///**
+    // * STATE_SPRINT Class
+    // */
     var StateSprint = (function (_super) {
         __extends(StateSprint, _super);
         function StateSprint() {
             _super.apply(this, arguments);
         }
         StateSprint.prototype.update = function () {
-            this.hero.sprint();
+            this.hero.sprite.play('fly');
+            var speed = this.heroStick.speed;
+            speed.x *= 2;
+            this.hero.move(speed);
+            //If fire on idle. Fire and remain in same state
             if (this.fireButton.pressed) {
                 this.hero.fire();
             }
-            if (this.heroStick.cursors.up && this.hero.fuel > 0) {
-                this.hero.climb();
-            }
             if (!this.heroStick.receivingInput()) {
                 return new StateIdle(this.game, this.hero);
+            }
+            if (!this.heroStick.cursors.right) {
+                return new StateFly(this.game, this.hero);
             }
             return this;
         };
@@ -913,67 +879,6 @@ var Superhero;
         return StateSprint;
     })(BaseState);
     Superhero.StateSprint = StateSprint;
-    /**
-     * STATE_RETREAT Class
-     */
-    var StateRetreating = (function (_super) {
-        __extends(StateRetreating, _super);
-        function StateRetreating() {
-            _super.apply(this, arguments);
-        }
-        StateRetreating.prototype.update = function () {
-            this.hero.moveLeft();
-            if (this.fireButton.pressed) {
-                this.hero.fire();
-            }
-            if (this.heroStick.cursors.up && this.hero.fuel > 0) {
-                this.hero.climb();
-            }
-            if (!this.heroStick.receivingInput()) {
-                return new StateIdle(this.game, this.hero);
-            }
-            return this;
-        };
-        StateRetreating.prototype.enterState = function () {
-        };
-        StateRetreating.prototype.exitState = function () {
-        };
-        return StateRetreating;
-    })(BaseState);
-    Superhero.StateRetreating = StateRetreating;
-    /**
-     * STATE_DIVING Class
-     */
-    var StateDiving = (function (_super) {
-        __extends(StateDiving, _super);
-        function StateDiving() {
-            _super.apply(this, arguments);
-        }
-        StateDiving.prototype.update = function () {
-            if (this.fireButton.pressed) {
-                this.hero.fire();
-            }
-            if (this.heroStick.cursors.up && this.hero.fuel > 0) {
-                return new StateFly(this.game, this.hero);
-            }
-            if (this.hero.sprite.body.touching.down) {
-                return new StateIdle(this.game, this.hero);
-            }
-            if (this.heroStick.cursors.right) {
-                return new StateSprint(this.game, this.hero);
-            }
-            if (this.heroStick.cursors.left) {
-                return new StateRetreating(this.game, this.hero);
-            }
-            return this;
-        };
-        StateDiving.prototype.enterState = function () {
-        };
-        StateDiving.prototype.exitState = function () {
-        };
-        return StateDiving;
-    })(BaseState);
-    Superhero.StateDiving = StateDiving;
 })(Superhero || (Superhero = {}));
 /**
  * Character class.
@@ -1072,6 +977,11 @@ var Superhero;
             if (this.sprite.animations.currentAnim.isFinished) {
                 this.sprite.play('flystill');
             }
+        };
+        Character.prototype.move = function (speed) {
+            this.sprite.body.velocity.x = speed.x;
+            if (this.fuel)
+                this.sprite.body.velocity.y = speed.y;
         };
         /**
          * Wraps the stop logic
@@ -1240,11 +1150,12 @@ var Superhero;
     var Hero = (function (_super) {
         __extends(Hero, _super);
         function Hero(game) {
-            _super.call(this, game, 'hero1', 100, 100);
+            _super.call(this, game, 'hero1', game.world.centerX - 200, 100);
             this.setBulletVelocity(1000);
         }
         Hero.prototype.update = function () {
             _super.prototype.update.call(this);
+            //console.log((<Superhero.Game> this.game).gamepad.stick1.cursors);
             var newState = this._state.update();
             // If the update returned a different state then
             // we must exit the previous state, start the new one and assign the new one
@@ -1374,8 +1285,8 @@ var Superhero;
             this.background = this.game.add.tileSprite(0, 0, 2061, 540, 'background');
             this.background.autoScroll(-500, 0);
             this.game.gamepad = new Gamepads.GamePad(this.game, 3 /* STICK_BUTTON */, 1 /* ONE_FIXED */);
-            this.game.gamepad.stick1.settings.analog = false;
             this.game.gamepad.buttonPad.button1.type = 5 /* CUSTOM */;
+            this.game.gamepad.stick1.settings.topSpeed = 500;
             this.hero = new Superhero.Hero(this.game);
             this.badie = new Superhero.Badie(this.game);
             this.ui = new Superhero.UI(this.game, this.hero);

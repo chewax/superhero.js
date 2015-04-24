@@ -87,27 +87,10 @@ module Gamepads {
 
         initStickButton(buttonPadType: Gamepads.ButtonPadType): void{
 
-            var style = { font: "14px Courier", fill: "#ffffff", align: "left" };
-            this.info = this.game.add.text(this.game.world.centerX, this.game.world.centerY, '0', style);
-
-
             this.stick1 = new Gamepads.Joystick(this.game, Gamepads.Sectors.HALF_LEFT);
             this.game.add.plugin(this.stick1, null);
 
             this.buttonPad = new Gamepads.ButtonPad(this.game, buttonPadType, 100);
-
-
-            function pressTest() {
-                this.test += 1;
-                this.info.text = this.test.toString();
-            }
-
-            //FOR TESTING
-            this.buttonPad.button1.setOnPressedCallback(pressTest,this);
-            //this.buttonPad.button2.setOnPressedCallback(pressTest,this);
-            //this.buttonPad.button3.setOnPressedCallback(pressTest,this);
-            //this.buttonPad.button4.setOnPressedCallback(pressTest,this);
-            //this.buttonPad.button5.setOnPressedCallback(pressTest,this);
 
         }
 

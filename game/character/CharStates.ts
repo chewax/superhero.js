@@ -42,14 +42,9 @@ module Superhero {
 
         game: Phaser.Game;
         hero: Superhero.Character;
-        sprintKey: Phaser.Key;
 
         fireButton: Gamepads.Button;
         heroStick: Gamepads.Joystick;
-
-
-        //retreatKey: Phaser.Key;
-        //fireKey: Phaser.Key;
 
 
         gamepad: Gamepads.GamePad;
@@ -75,21 +70,11 @@ module Superhero {
 
     }
 
-    /**
-     * STATE_IDLE Class
-     */
+    ///**
+    // * STATE_IDLE Class
+    // */
     export class StateIdle extends BaseState{
 
-        /**
-         * @function update
-         * Manages input for state idle.
-         * STATE_IDLE + FIRE      --> (fire) IDLE
-         * STATE_IDLE + TOUCH     --> FLY
-         * STATE_IDLE + SPRINT    --> SPRINT
-         * STATE_IDLE + RETREAT   --> RETREAT
-         * STATE_IDLE + NULL      --> IDLE
-         * @returns {CharState}
-         */
         public update ():CharState {
 
             //If fire on idle. Fire and remain in same state
@@ -97,21 +82,9 @@ module Superhero {
                 this.hero.fire();
             }
 
-            //If commanded to climb and hero still has fuel then change state to STATE_FLY
-            if (this.heroStick.cursors.up && this.hero.fuel > 0){
+            if (this.heroStick.receivingInput()) {
                 return new StateFly(this.game, this.hero);
             }
-
-            //If commanded to sprint then change state to STATE_SPRINT
-            if (this.heroStick.cursors.right){
-                return new StateSprint(this.game, this.hero);
-            }
-
-            //If commanded to retreat then change state to STATE_RETREAT
-            if (this.heroStick.cursors.left){
-                return new StateRetreating(this.game, this.hero);
-            }
-
             //If nothing was commanded remain on the same state
             return this;
         }
@@ -120,58 +93,23 @@ module Superhero {
         public exitState () {}
     }
 
-    /**
-     * STATE_FLY Class
-     */
-    export class StateFly extends BaseState {
+
+    ///**
+    // * STATE_FLY Class
+    // */
+    export class StateFly extends BaseState{
 
         public update ():CharState {
 
-            //This state is all about climbing, so climb!
-            this.hero.climb();
+            this.hero.move(this.heroStick.speed);
+
+            if (this.heroStick.cursors.right) {
+                return new StateSprint(this.game, this.hero);
+            }
 
             //If fire on idle. Fire and remain in same state
             if (this.fireButton.pressed) {
                 this.hero.fire();
-            }
-
-            //If commanded to sprint then change state to STATE_SPRINT
-            if (this.heroStick.cursors.right){
-                return new StateSprint(this.game, this.hero);
-            }
-
-            //If commanded to retreat then change state to STATE_RETREAT
-            if (this.heroStick.cursors.left){
-                return new StateRetreating(this.game, this.hero);
-            }
-
-            //If climb command has stopped or run out of fuel then change state to STATE_DIVING
-            if (!this.heroStick.receivingInput() || this.hero.fuel == 0) {
-                return new StateDiving(this.game, this.hero);
-            }
-
-            return this;
-        }
-
-        public enterState () {}
-        public exitState () {}
-    }
-
-    /**
-     * STATE_SPRINT Class
-     */
-    export class StateSprint extends BaseState {
-
-        public update ():CharState {
-
-            this.hero.sprint();
-
-            if (this.fireButton.pressed) {
-                this.hero.fire();
-            }
-
-            if (this.heroStick.cursors.up && this.hero.fuel > 0) {
-                this.hero.climb();
             }
 
             if (!this.heroStick.receivingInput()) {
@@ -182,73 +120,42 @@ module Superhero {
         }
 
         public enterState () {}
-
-        public exitState () {
-            this.hero.stop();
-        }
-    }
-
-    /**
-     * STATE_RETREAT Class
-     */
-    export class StateRetreating extends BaseState {
-
-        public update ():CharState {
-
-            this.hero.moveLeft();
-
-            if (this.fireButton.pressed) {
-                this.hero.fire();
-            }
-
-            if (this.heroStick.cursors.up && this.hero.fuel > 0) {
-                this.hero.climb();
-            }
-
-            if (!this.heroStick.receivingInput()){
-                return new StateIdle(this.game, this.hero);
-            }
-
-            return this;
-        }
-
-        public enterState () {}
         public exitState () {}
     }
 
-    /**
-     * STATE_DIVING Class
-     */
-    export class StateDiving extends BaseState {
+
+    ///**
+    // * STATE_SPRINT Class
+    // */
+    export class StateSprint extends BaseState{
 
         public update ():CharState {
 
+            this.hero.sprite.play('fly');
+            var speed = this.heroStick.speed;
+            speed.x *= 2;
+            this.hero.move(speed);
+
+            //If fire on idle. Fire and remain in same state
             if (this.fireButton.pressed) {
                 this.hero.fire();
             }
 
-            if (this.heroStick.cursors.up && this.hero.fuel > 0){
+            if (!this.heroStick.receivingInput()) {
+                return new StateIdle(this.game, this.hero);
+            }
+
+            if (!this.heroStick.cursors.right) {
                 return new StateFly(this.game, this.hero);
             }
 
-            if (this.hero.sprite.body.touching.down) {
-                return new StateIdle(this.game, this.hero);
-            }
-
-            if (this.heroStick.cursors.right){
-                return new StateSprint(this.game, this.hero);
-            }
-
-            if (this.heroStick.cursors.left){
-                return new StateRetreating(this.game, this.hero);
-            }
-
             return this;
-
         }
 
         public enterState () {}
-        public exitState () {}
+        public exitState () {
+            this.hero.stop();
+        }
     }
 
 
