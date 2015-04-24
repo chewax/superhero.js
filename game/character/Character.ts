@@ -11,6 +11,7 @@
 /// <reference path="../ui/UI.ts"/>
 /// <reference path="../core/Game.ts"/>
 /// <reference path="CharStates.ts"/>
+/// <reference path="../collectables/Collectables.ts"/>
 
 module Superhero {
 
@@ -280,6 +281,14 @@ module Superhero {
         }
 
         /**
+         * Sets collection of the character with a group
+         * @param {Phaser.Group} group Group that the character will collect
+         */
+        collectsGroup (group:Phaser.Group): void{
+            this.game.physics.arcade.collide(group, this.sprite, this.collect, null, this);
+        }
+
+        /**
          * Sets the collitions of the character with an object
          * @param {Phaser.Sprite} object Object upon which the character sould collide
          */
@@ -314,6 +323,16 @@ module Superhero {
             this.shadow.kill();
             object.kill();
 
+        }
+
+        /**
+         * Callback method when the character collides with a collectable object
+         * @param {Phaser.Sprite} char   An instance of the character
+         * @param {any}           object An instance of the collided object
+         */
+        collect (char:Phaser.Sprite, object:Collectables.Collectable) {
+            object.updateCharacter(this);
+            object.kill();
         }
 
     }

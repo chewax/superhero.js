@@ -5,7 +5,7 @@ module Superhero {
 
     export class Boot extends Phaser.State {
         preload () {
-            this.load.image('loadbar','../../assets/progress.jpg');
+            this.load.image('loadbar','../../assets/preloader-bar.png');
         }
         create () {
 
@@ -14,8 +14,8 @@ module Superhero {
             this.scale.pageAlignHorizontally = true;
             this.scale.pageAlignVertically = true;
 
-
             this.game.state.start('Preloader', true, false);
+
         }
     }
 }

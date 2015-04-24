@@ -1043,6 +1043,41 @@ var Superhero;
     })(BaseState);
     Superhero.StateSprint = StateSprint;
 })(Superhero || (Superhero = {}));
+/// <reference path="../../lib/phaser.d.ts"/>
+/// <reference path="../character/Character.ts"/>
+var Collectables;
+(function (Collectables) {
+    var FuelPowerUps = (function (_super) {
+        __extends(FuelPowerUps, _super);
+        function FuelPowerUps(game) {
+            _super.call(this, game, -10, -10, 'heart', 'frame-1');
+            //In Pertentage
+            this.potency = 50;
+            var anim = this.animations.add('base', ['frame-1', 'frame-2', 'frame-3', 'frame-4', 'frame-5', 'frame-6', 'frame-7', 'frame-8'], 10, false, false);
+            anim.onComplete.add(this.restartAnimation, this);
+        }
+        FuelPowerUps.prototype.restartAnimation = function () {
+            setTimeout(function () {
+                this.play('base');
+            }.bind(this), 1000);
+        };
+        FuelPowerUps.prototype.resetFloatation = function () {
+            this.restartAnimation();
+            this.game.add.tween(this).to({ y: '+100' }, 1500, Phaser.Easing.Sinusoidal.InOut, true, 400, -1, true);
+            this.body.velocity.x = -100;
+            this.scale.setTo(0.1);
+            this.checkWorldBounds = true;
+            this.outOfBoundsKill = true;
+        };
+        FuelPowerUps.prototype.updateCharacter = function (character) {
+            character.fuel += character.maxFuel * this.potency / 100;
+            if (character.fuel > character.maxFuel)
+                character.fuel = character.maxFuel;
+        };
+        return FuelPowerUps;
+    })(Phaser.Sprite);
+    Collectables.FuelPowerUps = FuelPowerUps;
+})(Collectables || (Collectables = {}));
 /**
  * Character class.
  * Wraps the logic of creating and upating a character. Should be extended from
@@ -1055,6 +1090,7 @@ var Superhero;
 /// <reference path="../ui/UI.ts"/>
 /// <reference path="../core/Game.ts"/>
 /// <reference path="CharStates.ts"/>
+/// <reference path="../collectables/Collectables.ts"/>
 var Superhero;
 (function (Superhero) {
     var Character = (function () {
@@ -1271,6 +1307,13 @@ var Superhero;
             this.game.physics.arcade.collide(group, this.sprite, null, null, this);
         };
         /**
+         * Sets collection of the character with a group
+         * @param {Phaser.Group} group Group that the character will collect
+         */
+        Character.prototype.collectsGroup = function (group) {
+            this.game.physics.arcade.collide(group, this.sprite, this.collect, null, this);
+        };
+        /**
          * Sets the collitions of the character with an object
          * @param {Phaser.Sprite} object Object upon which the character sould collide
          */
@@ -1299,6 +1342,15 @@ var Superhero;
         Character.prototype.die = function (char, object) {
             char.play('takehit', 4, false, true);
             this.shadow.kill();
+            object.kill();
+        };
+        /**
+         * Callback method when the character collides with a collectable object
+         * @param {Phaser.Sprite} char   An instance of the character
+         * @param {any}           object An instance of the collided object
+         */
+        Character.prototype.collect = function (char, object) {
+            object.updateCharacter(this);
             object.kill();
         };
         return Character;
@@ -1388,7 +1440,7 @@ var Superhero;
             };
             this.physics = {
                 global: {
-                    gravity: { x: 0, y: 100 }
+                    gravity: { x: 0, y: 0 }
                 },
                 player: {
                     gravity: { x: 0, y: 1750 },
@@ -1412,6 +1464,7 @@ var Superhero;
 /// <reference path="../ui/UI.ts"/>
 /// <reference path="../core/Game.ts"/>
 /// <reference path="../plugins/Gamepad.ts"/>
+/// <reference path="../collectables/Collectables.ts"/>
 var Superhero;
 (function (Superhero) {
     var Level1 = (function (_super) {
@@ -1426,16 +1479,20 @@ var Superhero;
             this.configurePhysics();
             //Configure Base Stage Options
             this.setBaseStage();
-            this.debug = new Superhero.Debug(this.game);
+            this.configureInput();
+            this.setActors();
+            //this.debug = new Debug(this.game);
+            this.game.time.events.add(this.game.rnd.integerInRange(5000, 20000), this.createPowerUp, this);
         };
         Level1.prototype.update = function () {
-            //this.hero.diesWithGroup(this.badie.bullets);
+            this.hero.diesWithGroup(this.badie.bullets);
             this.hero.collideWithObject(this.hero.shadow);
-            //this.badie.collideWithObject(this.badie.shadow);
-            //this.badie.diesWithGroup(this.hero.bullets);
+            this.hero.collectsGroup(this.fuelPowerUps);
+            this.badie.collideWithObject(this.badie.shadow);
+            this.badie.diesWithGroup(this.hero.bullets);
             //Updates
             this.hero.update();
-            //this.badie.update();
+            this.badie.update();
             this.ui.update();
             // this.debug.update();
         };
@@ -1446,12 +1503,28 @@ var Superhero;
         Level1.prototype.setBaseStage = function () {
             this.background = this.game.add.tileSprite(0, 0, 2061, 540, 'background');
             this.background.autoScroll(-500, 0);
+            this.fuelPowerUps = this.game.add.group();
+            this.fuelPowerUps.classType = Collectables.FuelPowerUps;
+            this.fuelPowerUps.enableBody = true;
+            this.fuelPowerUps.createMultiple(1, 'heart');
+        };
+        Level1.prototype.configureInput = function () {
             this.game.gamepad = new Gamepads.GamePad(this.game, 3 /* STICK_BUTTON */, 1 /* ONE_FIXED */);
             this.game.gamepad.buttonPad.button1.type = 5 /* CUSTOM */;
             this.game.gamepad.stick1.settings.topSpeed = 500;
+        };
+        Level1.prototype.setActors = function () {
             this.hero = new Superhero.Hero(this.game);
-            //this.badie = new Badie(this.game);
+            this.badie = new Superhero.Badie(this.game);
             this.ui = new Superhero.UI(this.game, this.hero);
+        };
+        Level1.prototype.createPowerUp = function () {
+            this.game.time.events.add(this.game.rnd.integerInRange(5000, 20000), this.createPowerUp, this);
+            var pu = this.fuelPowerUps.getFirstDead();
+            if (pu) {
+                pu.reset(this.game.world.width, this.game.world.centerY - 200);
+                pu.resetFloatation();
+            }
         };
         return Level1;
     })(Phaser.State);
@@ -1508,6 +1581,7 @@ var Superhero;
         Preloader.prototype.loadAssets = function () {
             this.game.load.atlasJSONHash('hero1', '/assets/hero1.png', '/assets/hero1.json');
             this.game.load.atlasJSONHash('badie', '/assets/badie.png', '/assets/badie.json');
+            this.game.load.atlasJSONHash('heart', '/assets/heart.png', '/assets/heart.json');
             this.game.load.atlasJSONHash('bullets', '/assets/bullets.png', '/assets/bullets.json');
             this.game.load.atlasJSONHash('env', '/assets/environment.png', '/assets/environment.json');
             this.game.load.image('background', '/assets/Background.png');
@@ -1529,7 +1603,7 @@ var Superhero;
             _super.apply(this, arguments);
         }
         Boot.prototype.preload = function () {
-            this.load.image('loadbar', '../../assets/progress.jpg');
+            this.load.image('loadbar', '../../assets/preloader-bar.png');
         };
         Boot.prototype.create = function () {
             this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;

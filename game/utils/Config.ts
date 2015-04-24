@@ -43,7 +43,7 @@ module Superhero {
             this.physics = {
 
                 global: {
-                    gravity: {x: 0, y: 100}
+                    gravity: {x: 0, y: 0}
                 },
 
                 player: {
