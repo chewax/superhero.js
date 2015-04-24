@@ -4,7 +4,6 @@
 /// <reference path="../states/Menu.ts"/>
 /// <reference path="../states/Level1.ts"/>
 /// <reference path="../utils/Config.ts"/>
-/// <reference path="../ui/UI.ts"/>
 /// <reference path="../plugins/GamePad.ts"/>
 
 

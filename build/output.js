@@ -686,17 +686,167 @@ var Gamepads;
 })(Gamepads || (Gamepads = {}));
 /// <reference path="../../lib/phaser.d.ts"/>
 /// <reference path="Joystick.ts"/>
-/// <reference path="Button.ts"/>
-/// <reference path="ButtonPad.ts"/>
 var Gamepads;
 (function (Gamepads) {
-    (function (GampadType) {
-        GampadType[GampadType["SINGLE_STICK"] = 1] = "SINGLE_STICK";
-        GampadType[GampadType["DOUBLE_STICK"] = 2] = "DOUBLE_STICK";
-        GampadType[GampadType["STICK_BUTTON"] = 3] = "STICK_BUTTON";
-        GampadType[GampadType["CORNER_STICKS"] = 4] = "CORNER_STICKS";
-    })(Gamepads.GampadType || (Gamepads.GampadType = {}));
-    var GampadType = Gamepads.GampadType;
+    (function (TouchInputType) {
+        TouchInputType[TouchInputType["TOUCH"] = 1] = "TOUCH";
+        TouchInputType[TouchInputType["SWIPE"] = 2] = "SWIPE";
+    })(Gamepads.TouchInputType || (Gamepads.TouchInputType = {}));
+    var TouchInputType = Gamepads.TouchInputType;
+    var TouchInput = (function (_super) {
+        __extends(TouchInput, _super);
+        function TouchInput(game, sector, type) {
+            if (type === void 0) { type = 2 /* SWIPE */; }
+            _super.call(this, game, new PIXI.DisplayObject());
+            this.screenPressed = false;
+            this.swipeThreshold = 100;
+            this.game = game;
+            this.sector = sector;
+            this.touchType = type;
+            this.pointer = this.game.input.pointer1;
+            this.swipeDownCallback = this.empty;
+            this.swipeLeftCallback = this.empty;
+            this.swipeRightCallback = this.empty;
+            this.swipeUpCallback = this.empty;
+            this.onTouchDownCallback = this.empty;
+            this.onTouchReleaseCallback = this.empty;
+            //Setup Default State
+            this.swipe = {
+                up: false,
+                down: false,
+                left: false,
+                right: false
+            };
+            this.inputEnable();
+        }
+        TouchInput.prototype.inputEnable = function () {
+            this.game.input.onDown.add(this.startGesture, this);
+            this.game.input.onUp.add(this.endGesture, this);
+            this.active = true;
+        };
+        TouchInput.prototype.inputDisable = function () {
+            this.game.input.onDown.remove(this.startGesture, this);
+            this.game.input.onUp.remove(this.endGesture, this);
+            this.active = false;
+        };
+        TouchInput.prototype.inSector = function (pointer) {
+            var half_bottom = pointer.position.y > this.game.height / 2;
+            var half_top = pointer.position.y < this.game.height / 2;
+            var half_right = pointer.position.x > this.game.width / 2;
+            var half_left = pointer.position.x < this.game.width / 2;
+            if (this.sector == 9 /* ALL */)
+                return true;
+            if (this.sector == 1 /* HALF_LEFT */ && half_left)
+                return true;
+            if (this.sector == 3 /* HALF_RIGHT */ && half_right)
+                return true;
+            if (this.sector == 4 /* HALF_BOTTOM */ && half_bottom)
+                return true;
+            if (this.sector == 2 /* HALF_TOP */ && half_top)
+                return true;
+            if (this.sector == 5 /* TOP_LEFT */ && half_top && half_left)
+                return true;
+            if (this.sector == 6 /* TOP_RIGHT */ && half_top && half_right)
+                return true;
+            if (this.sector == 7 /* BOTTOM_RIGHT */ && half_bottom && half_right)
+                return true;
+            if (this.sector == 8 /* BOTTOM_LEFT */ && half_bottom && half_left)
+                return true;
+            return false;
+        };
+        TouchInput.prototype.startGesture = function (pointer) {
+            //If this joystick is not in charge of monitoring the sector that was touched --> return
+            if (!this.inSector(pointer))
+                return;
+            this.touchTimer = this.game.time.time;
+            this.screenPressed = true;
+            //Else update the pointer (it may be the first touch)
+            this.pointer = pointer;
+            //Start the Stick on the position that is being touched right now
+            this.initialPoint = this.pointer.position.clone();
+            if (this.touchType == 1 /* TOUCH */) {
+                this.onTouchDownCallback();
+            }
+        };
+        /**
+         * @function removeStick
+         * @param pointer
+         *
+         * Visually removes the stick and stops paying atention to input
+         */
+        TouchInput.prototype.endGesture = function (pointer) {
+            if (pointer.id != this.pointer.id)
+                return;
+            this.screenPressed = false;
+            var elapsedTime = this.game.time.elapsedSecondsSince(this.touchTimer);
+            console.log(elapsedTime);
+            if (this.touchType == 1 /* TOUCH */) {
+                this.onTouchReleaseCallback(elapsedTime);
+                return;
+            }
+            var d = this.initialPoint.distance(this.pointer.position);
+            if (d < this.swipeThreshold)
+                return;
+            var deltaX = this.pointer.position.x - this.initialPoint.x;
+            var deltaY = this.pointer.position.y - this.initialPoint.y;
+            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                this.pointer.position.y = this.initialPoint.y;
+            }
+            else {
+                this.pointer.position.x = this.initialPoint.x;
+            }
+            var angle = this.initialPoint.angle(this.pointer.position);
+            angle = angle * 180 / Math.PI;
+            this.swipe.up = angle == -90;
+            this.swipe.down = angle == 90;
+            this.swipe.left = angle == 180;
+            this.swipe.right = angle == 0;
+            console.log(this.swipe);
+            if (this.swipe.up)
+                this.swipeUpCallback();
+            if (this.swipe.down)
+                this.swipeDownCallback();
+            if (this.swipe.left)
+                this.swipeLeftCallback();
+            if (this.swipe.right)
+                this.swipeRightCallback();
+        };
+        TouchInput.prototype.empty = function (par) {
+        };
+        /**
+         * @function preloadAssets
+         * @static
+         * @param game {Phaser.Game} - An instance of the current Game object
+         * @param assets_path {String} - A relative path to the assets directory
+         *
+         * Static class that preloads all the necesary assets for the joystick. Should be called on the game
+         * preload method
+         */
+        TouchInput.preloadAssets = function (game, assets_path) {
+            game.load.image('joystick_base', assets_path + '/joystick_base.png');
+            game.load.image('joystick_segment', assets_path + '/joystick_segment.png');
+            game.load.image('joystick_knob', assets_path + '/joystick_knob.png');
+        };
+        return TouchInput;
+    })(Phaser.Plugin);
+    Gamepads.TouchInput = TouchInput;
+})(Gamepads || (Gamepads = {}));
+/// <reference path="../../lib/phaser.d.ts"/>
+/// <reference path="Joystick.ts"/>
+/// <reference path="Button.ts"/>
+/// <reference path="ButtonPad.ts"/>
+/// <reference path="TouchInput.ts"/>
+var Gamepads;
+(function (Gamepads) {
+    (function (GamepadType) {
+        GamepadType[GamepadType["SINGLE_STICK"] = 1] = "SINGLE_STICK";
+        GamepadType[GamepadType["DOUBLE_STICK"] = 2] = "DOUBLE_STICK";
+        GamepadType[GamepadType["STICK_BUTTON"] = 3] = "STICK_BUTTON";
+        GamepadType[GamepadType["CORNER_STICKS"] = 4] = "CORNER_STICKS";
+        GamepadType[GamepadType["GESTURE_BUTTON"] = 5] = "GESTURE_BUTTON";
+        GamepadType[GamepadType["GESTURE"] = 6] = "GESTURE";
+    })(Gamepads.GamepadType || (Gamepads.GamepadType = {}));
+    var GamepadType = Gamepads.GamepadType;
     var GamePad = (function (_super) {
         __extends(GamePad, _super);
         function GamePad(game, type, buttonPadType) {
@@ -715,6 +865,12 @@ var Gamepads;
                     break;
                 case 4 /* CORNER_STICKS */:
                     this.initCornerSticks();
+                    break;
+                case 5 /* GESTURE_BUTTON */:
+                    this.initGestureButton();
+                    break;
+                case 6 /* GESTURE */:
+                    this.initGesture();
                     break;
             }
         }
@@ -745,6 +901,13 @@ var Gamepads;
             this.stick1 = new Gamepads.Joystick(this.game, 1 /* HALF_LEFT */);
             this.game.add.plugin(this.stick1, null);
             this.buttonPad = new Gamepads.ButtonPad(this.game, buttonPadType, 100);
+        };
+        GamePad.prototype.initGestureButton = function (buttonPadType) {
+            this.touchInput = new Gamepads.TouchInput(this.game, 1 /* HALF_LEFT */);
+            this.buttonPad = new Gamepads.ButtonPad(this.game, buttonPadType, 100);
+        };
+        GamePad.prototype.initGesture = function () {
+            this.touchInput = new Gamepads.TouchInput(this.game, 9 /* ALL */);
         };
         GamePad.preloadAssets = function (game, assets_path) {
             Gamepads.Joystick.preloadAssets(game, assets_path);
@@ -1155,7 +1318,6 @@ var Superhero;
         }
         Hero.prototype.update = function () {
             _super.prototype.update.call(this);
-            //console.log((<Superhero.Game> this.game).gamepad.stick1.cursors);
             var newState = this._state.update();
             // If the update returned a different state then
             // we must exit the previous state, start the new one and assign the new one
@@ -1267,13 +1429,13 @@ var Superhero;
             this.debug = new Superhero.Debug(this.game);
         };
         Level1.prototype.update = function () {
-            this.hero.diesWithGroup(this.badie.bullets);
+            //this.hero.diesWithGroup(this.badie.bullets);
             this.hero.collideWithObject(this.hero.shadow);
-            this.badie.collideWithObject(this.badie.shadow);
-            this.badie.diesWithGroup(this.hero.bullets);
+            //this.badie.collideWithObject(this.badie.shadow);
+            //this.badie.diesWithGroup(this.hero.bullets);
             //Updates
             this.hero.update();
-            this.badie.update();
+            //this.badie.update();
             this.ui.update();
             // this.debug.update();
         };
@@ -1288,7 +1450,7 @@ var Superhero;
             this.game.gamepad.buttonPad.button1.type = 5 /* CUSTOM */;
             this.game.gamepad.stick1.settings.topSpeed = 500;
             this.hero = new Superhero.Hero(this.game);
-            this.badie = new Superhero.Badie(this.game);
+            //this.badie = new Badie(this.game);
             this.ui = new Superhero.UI(this.game, this.hero);
         };
         return Level1;
@@ -1386,7 +1548,6 @@ var Superhero;
 /// <reference path="../states/Menu.ts"/>
 /// <reference path="../states/Level1.ts"/>
 /// <reference path="../utils/Config.ts"/>
-/// <reference path="../ui/UI.ts"/>
 /// <reference path="../plugins/GamePad.ts"/>
 var Superhero;
 (function (Superhero) {

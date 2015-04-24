@@ -37,15 +37,15 @@ module Superhero {
         }
 
         update () {
-            this.hero.diesWithGroup(this.badie.bullets);
+            //this.hero.diesWithGroup(this.badie.bullets);
             this.hero.collideWithObject(this.hero.shadow);
 
-            this.badie.collideWithObject(this.badie.shadow);
-            this.badie.diesWithGroup(this.hero.bullets);
+            //this.badie.collideWithObject(this.badie.shadow);
+            //this.badie.diesWithGroup(this.hero.bullets);
 
             //Updates
             this.hero.update();
-            this.badie.update();
+            //this.badie.update();
             this.ui.update();
             // this.debug.update();
 
@@ -60,12 +60,13 @@ module Superhero {
             this.background = this.game.add.tileSprite(0, 0, 2061, 540, 'background');
             this.background.autoScroll(-500, 0);
 
-            (<Superhero.Game> this.game).gamepad = new Gamepads.GamePad(this.game, Gamepads.GampadType.STICK_BUTTON, Gamepads.ButtonPadType.ONE_FIXED);
+            (<Superhero.Game> this.game).gamepad = new Gamepads.GamePad(this.game, Gamepads.GamepadType.STICK_BUTTON, Gamepads.ButtonPadType.ONE_FIXED);
             (<Superhero.Game> this.game).gamepad.buttonPad.button1.type = Gamepads.ButtonType.CUSTOM;
             (<Superhero.Game> this.game).gamepad.stick1.settings.topSpeed = 500;
 
+
             this.hero = new Hero(this.game);
-            this.badie = new Badie(this.game);
+            //this.badie = new Badie(this.game);
             this.ui = new Superhero.UI(this.game, this.hero);
 
         }

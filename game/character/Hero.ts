@@ -13,10 +13,8 @@ module Superhero {
 
         update () {
             super.update();
-
-            //console.log((<Superhero.Game> this.game).gamepad.stick1.cursors);
             var newState = this._state.update();
-            
+
             // If the update returned a different state then
             // we must exit the previous state, start the new one and assign the new one
             if (newState !== this._state) {
