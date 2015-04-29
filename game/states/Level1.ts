@@ -26,7 +26,6 @@ module Superhero {
         }
 
         create () {
-
             //Setup Physics Engine
             this.configurePhysics();
 
@@ -76,6 +75,11 @@ module Superhero {
             (<Superhero.Game> this.game).gamepad = new Gamepads.GamePad(this.game, Gamepads.GamepadType.STICK_BUTTON, Gamepads.ButtonPadType.ONE_FIXED);
             (<Superhero.Game> this.game).gamepad.buttonPad.button1.type = Gamepads.ButtonType.CUSTOM;
             (<Superhero.Game> this.game).gamepad.stick1.settings.topSpeed = 500;
+
+            function test(elapsedTime:number){
+                alert('elapsedTime = ' + elapsedTime);
+            }
+
         }
 
         setActors(): void {

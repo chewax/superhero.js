@@ -1,8 +1,7 @@
-game/*.js
-game/states/*.js
+game/*/*.js
+game/*/*.js.map
+game/*/*.d.ts
+build
 *.zip
 .idea
-*.sublime-project
-*.sublime-workspace
-game/*.d.ts
-game/*.js.map
+.DS_Store
