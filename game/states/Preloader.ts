@@ -33,6 +33,8 @@ module Superhero {
             this.game.load.image('fuelbar', '/assets/fuel.png');
             this.game.load.image('shadow', '/assets/shadow.png');
 
+            this.game.load.audio('theme', '/assets/sounds/demon_destroyer.mp3');
+
             Gamepads.GamePad.preloadAssets(this.game, '/assets');
 
         }

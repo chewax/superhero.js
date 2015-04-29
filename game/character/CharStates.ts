@@ -82,6 +82,10 @@ module Superhero {
                 this.hero.fire();
             }
 
+            if (this.hero.sprite.body.touching.down) {
+                this.hero.sprite.play('flywalk');
+            }
+
             if (this.heroStick.receivingInput()) {
                 return new StateFly(this.game, this.hero);
             }
@@ -102,6 +106,7 @@ module Superhero {
         public update ():CharState {
 
             this.hero.move(this.heroStick.speed);
+            this.hero.sprite.play('flystill');
 
             if (this.heroStick.cursors.right) {
                 return new StateSprint(this.game, this.hero);

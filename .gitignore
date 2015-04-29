@@ -3,5 +3,9 @@ game/*/*.js.map
 game/*/*.d.ts
 build
 *.zip
-.idea
 .DS_Store
+
+#Webstorm
+.idea
+#Visual Studio
+.settings

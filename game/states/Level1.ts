@@ -19,6 +19,7 @@ module Superhero {
         fuelPowerUps: Phaser.Group;
         debug: Superhero.Debug;
         ui: Superhero.UI;
+        theme: Phaser.Sound;
 
 
         preload () {
@@ -33,6 +34,7 @@ module Superhero {
             this.setBaseStage();
             this.configureInput();
             this.setActors();
+            //this.startMusic();
 
             //this.debug = new Debug(this.game);
             this.game.time.events.add(this.game.rnd.integerInRange(5000, 20000), this.createPowerUp, this);
@@ -75,10 +77,7 @@ module Superhero {
             (<Superhero.Game> this.game).gamepad = new Gamepads.GamePad(this.game, Gamepads.GamepadType.STICK_BUTTON, Gamepads.ButtonPadType.ONE_FIXED);
             (<Superhero.Game> this.game).gamepad.buttonPad.button1.type = Gamepads.ButtonType.CUSTOM;
             (<Superhero.Game> this.game).gamepad.stick1.settings.topSpeed = 500;
-
-            function test(elapsedTime:number){
-                alert('elapsedTime = ' + elapsedTime);
-            }
+         
 
         }
 
@@ -96,6 +95,11 @@ module Superhero {
                 pu.reset(this.game.world.width, this.game.world.centerY - 200);
                 pu.resetFloatation();
             }
+        }
+
+        startMusic () :void{
+            this.theme = this.game.add.audio('theme');
+            this.theme.play();
         }
     }
 }
