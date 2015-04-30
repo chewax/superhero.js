@@ -16,6 +16,7 @@ module Superhero {
         hero: Superhero.Hero;
         badie: Superhero.Badie;
         background: Phaser.TileSprite;
+        paralax1: Phaser.TileSprite;
         fuelPowerUps: Phaser.Group;
         debug: Superhero.Debug;
         ui: Superhero.UI;
@@ -37,7 +38,7 @@ module Superhero {
             //this.startMusic();
 
             //this.debug = new Debug(this.game);
-            this.game.time.events.add(this.game.rnd.integerInRange(5000, 20000), this.createPowerUp, this);
+            //this.game.time.events.add(this.game.rnd.integerInRange(5000, 20000), this.createPowerUp, this);
 
         }
 
@@ -52,8 +53,8 @@ module Superhero {
             //Updates
             this.hero.update();
             this.badie.update();
-            this.ui.update();
-            // this.debug.update();
+            //this.ui.update();
+            //this.debug.update();
 
         }
 
@@ -63,20 +64,27 @@ module Superhero {
         }
 
         setBaseStage():void {
-            this.background = this.game.add.tileSprite(0, 0, 2061, 540, 'background');
-            this.background.autoScroll(-500, 0);
+            //this.background = this.game.add.tileSprite(0, 0, 2061, 540, 'background');
+            //this.background.autoScroll(-500, 0);
 
-            this.fuelPowerUps = this.game.add.group();
-            this.fuelPowerUps.classType = Collectables.FuelPowerUps;
-            this.fuelPowerUps.enableBody = true;
-            this.fuelPowerUps.createMultiple(1,'heart');
+            this.background = this.game.add.tileSprite(-1,-1,1800,600,'farback');
+            this.background.autoScroll(-60,0);
+
+            this.paralax1 = this.game.add.tileSprite(0,0,1800,600, 'starfield');
+            this.paralax1.autoScroll(-100,0);
+
+            //this.fuelPowerUps = this.game.add.group();
+            //this.fuelPowerUps.classType = Collectables.FuelPowerUps;
+            //this.fuelPowerUps.enableBody = true;
+            //this.fuelPowerUps.createMultiple(1,'heart');
 
         }
 
         configureInput(): void {
             (<Superhero.Game> this.game).gamepad = new Gamepads.GamePad(this.game, Gamepads.GamepadType.STICK_BUTTON, Gamepads.ButtonPadType.ONE_FIXED);
             (<Superhero.Game> this.game).gamepad.buttonPad.button1.type = Gamepads.ButtonType.CUSTOM;
-            (<Superhero.Game> this.game).gamepad.stick1.settings.topSpeed = 500;
+            (<Superhero.Game> this.game).gamepad.stick1.settings.topSpeed = 600;
+            //(<Superhero.Game> this.game).gamepad.stick1.settings.analog = false;
          
 
         }
@@ -84,7 +92,7 @@ module Superhero {
         setActors(): void {
             this.hero = new Hero(this.game);
             this.badie = new Badie(this.game);
-            this.ui = new Superhero.UI(this.game, this.hero);
+            //this.ui = new Superhero.UI(this.game, this.hero);
         }
 
         createPowerUp(): void {

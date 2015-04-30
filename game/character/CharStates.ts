@@ -82,10 +82,6 @@ module Superhero {
                 this.hero.fire();
             }
 
-            if (this.hero.sprite.body.touching.down) {
-                this.hero.sprite.play('flywalk');
-            }
-
             if (this.heroStick.receivingInput()) {
                 return new StateFly(this.game, this.hero);
             }
@@ -105,7 +101,10 @@ module Superhero {
 
         public update ():CharState {
 
-            this.hero.move(this.heroStick.speed);
+
+            if (Math.abs(this.heroStick.speed.x) > 0 || Math.abs(this.heroStick.speed.y > 0)) {
+                this.hero.move(this.heroStick.speed);
+            }
             this.hero.sprite.play('flystill');
 
             if (this.heroStick.cursors.right) {
@@ -137,9 +136,12 @@ module Superhero {
         public update ():CharState {
 
             this.hero.sprite.play('fly');
-            var speed = this.heroStick.speed;
-            speed.x *= 2;
-            this.hero.move(speed);
+            //var speed = this.heroStick.speed;
+            //speed.x *= 2;
+
+            if (Math.abs(this.heroStick.speed.x) > 0 || Math.abs(this.heroStick.speed.y > 0)) {
+                this.hero.move(this.heroStick.speed);
+            }
 
             //If fire on idle. Fire and remain in same state
             if (this.fireButton.pressed) {
