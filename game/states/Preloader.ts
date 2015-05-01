@@ -36,8 +36,13 @@ module Superhero {
             this.game.load.image('starfield', '/assets/starfield.png');
             this.game.load.image('shadow', '/assets/shadow.png');
             this.game.load.image('obstacleItem', '/assets/placeholder.png');
+            // TODO: get particle from json hash
+            this.game.load.image('meteorparticle', '/assets/meteor_particle.png');
 
-            this.game.load.audio('theme', '/assets/sounds/demon_destroyer.mp3');
+
+            //this.game.load.audio('theme', '/assets/sounds/demon_destroyer.mp3');
+            this.game.load.audio('theme', '/assets/sounds/demon_destroyer.ogg');
+
 
             Gamepads.GamePad.preloadAssets(this.game, '/assets');
 
