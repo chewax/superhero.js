@@ -165,7 +165,7 @@ module Superhero {
         setObstaclesEmitter(): void {
             this.obstacleEmitter = this.game.add.emitter(0, 0, 100);
 
-            this.obstacleEmitter.makeParticles('meteorparticle');
+            this.obstacleEmitter.makeParticles('meteors', 'brown10');
             this.obstacleEmitter.gravity = 200;
         }
 
