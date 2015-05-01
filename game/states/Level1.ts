@@ -6,6 +6,7 @@
 /// <reference path="../ui/UI.ts"/>
 /// <reference path="../core/Game.ts"/>
 /// <reference path="../plugins/Gamepad.ts"/>
+/// <reference path="../obstacles/Obstacles.ts"/>
 /// <reference path="../collectables/Collectables.ts"/>
 
 
@@ -21,6 +22,9 @@ module Superhero {
         debug: Superhero.Debug;
         ui: Superhero.UI;
         theme: Phaser.Sound;
+        wall: Obstacles.WallObstacle;
+        
+        obstacleTimer: number;
 
 
         preload () {
@@ -35,17 +39,42 @@ module Superhero {
             this.setBaseStage();
             this.configureInput();
             this.setActors();
-            //this.startMusic();
+            this.startMusic();
 
             //this.debug = new Debug(this.game);
             //this.game.time.events.add(this.game.rnd.integerInRange(5000, 20000), this.createPowerUp, this);
 
         }
 
+        killWall(wall:Phaser.Sprite, bullet:Phaser.Sprite):void{
+
+            var wallx = wall.x;
+            var wally = wall.y;
+
+            if (!(wall.frameName == "grey5")) {
+                wall.kill();
+            }
+
+            //one out of 30 must drop something
+            //if (this.game.rnd.integerInRange(0,30) == 15) {
+            //    this.spawnPU(wallx, wally)
+            //}
+
+            this.spawnPU(wallx, wally)
+
+            bullet.kill();
+        }
+
         update () {
             this.hero.diesWithGroup(this.badie.bullets);
             this.hero.collideWithObject(this.hero.shadow);
             this.hero.collectsGroup(this.fuelPowerUps);
+
+            this.hero.collideWithGroup(this.wall.upperObstacle.group);
+            this.hero.collideWithGroup(this.wall.lowerObstacle.group);
+
+            this.game.physics.arcade.overlap(this.wall.lowerObstacle.group, this.hero.bullets, this.killWall, null, this);
+            this.game.physics.arcade.overlap(this.wall.upperObstacle.group, this.hero.bullets, this.killWall, null, this);
 
             this.badie.collideWithObject(this.badie.shadow);
             this.badie.diesWithGroup(this.hero.bullets);
@@ -55,6 +84,13 @@ module Superhero {
             this.badie.update();
             //this.ui.update();
             //this.debug.update();
+            var elapsedTime = this.game.time.elapsedSince(this.obstacleTimer);
+            
+            if (elapsedTime > 1500 ) {
+                this.wall.resetAndRoll(30,-150)
+                this.obstacleTimer = this.game.time.time;
+            };
+            
 
         }
 
@@ -72,11 +108,14 @@ module Superhero {
 
             this.paralax1 = this.game.add.tileSprite(0,0,1800,600, 'starfield');
             this.paralax1.autoScroll(-100,0);
-
-            //this.fuelPowerUps = this.game.add.group();
-            //this.fuelPowerUps.classType = Collectables.FuelPowerUps;
-            //this.fuelPowerUps.enableBody = true;
-            //this.fuelPowerUps.createMultiple(1,'heart');
+            
+    	    this.wall = new Obstacles.WallObstacle(this.game);
+            this.obstacleTimer = this.game.time.time;
+           
+            this.fuelPowerUps = this.game.add.group();
+            this.fuelPowerUps.classType = Collectables.FuelPowerUps;
+            this.fuelPowerUps.enableBody = true;
+            this.fuelPowerUps.createMultiple(1,'heart');
 
         }
 
@@ -84,7 +123,6 @@ module Superhero {
             (<Superhero.Game> this.game).gamepad = new Gamepads.GamePad(this.game, Gamepads.GamepadType.STICK_BUTTON, Gamepads.ButtonPadType.ONE_FIXED);
             (<Superhero.Game> this.game).gamepad.buttonPad.button1.type = Gamepads.ButtonType.CUSTOM;
             (<Superhero.Game> this.game).gamepad.stick1.settings.topSpeed = 600;
-            //(<Superhero.Game> this.game).gamepad.stick1.settings.analog = false;
          
 
         }
@@ -105,8 +143,17 @@ module Superhero {
             }
         }
 
+        spawnPU(x:number, y:number): void {
+            var pu = this.fuelPowerUps.getFirstDead();
+
+            if (pu) {
+                pu.reset(x, y);
+                pu.resetFloatation(0,false);
+            }
+        }
+
         startMusic () :void{
-            this.theme = this.game.add.audio('theme');
+            this.theme = this.game.add.audio('theme', 1, true);
             this.theme.play();
         }
     }

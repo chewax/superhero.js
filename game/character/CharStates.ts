@@ -102,7 +102,7 @@ module Superhero {
         public update ():CharState {
 
 
-            if (Math.abs(this.heroStick.speed.x) > 0 || Math.abs(this.heroStick.speed.y > 0)) {
+            if (Math.abs(this.heroStick.speed.x) > 0 || Math.abs(this.heroStick.speed.y) > 0) {
                 this.hero.move(this.heroStick.speed);
             }
             this.hero.sprite.play('flystill');
@@ -139,7 +139,7 @@ module Superhero {
             //var speed = this.heroStick.speed;
             //speed.x *= 2;
 
-            if (Math.abs(this.heroStick.speed.x) > 0 || Math.abs(this.heroStick.speed.y > 0)) {
+            if (Math.abs(this.heroStick.speed.x) > 0 || Math.abs(this.heroStick.speed.y) > 0) {
                 this.hero.move(this.heroStick.speed);
             }
 

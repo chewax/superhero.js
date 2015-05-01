@@ -25,6 +25,7 @@ module Superhero {
         maxFuel: number;
         shootDelay: number = 300;
         allowFingerMargin: boolean = true;
+        firePower: number = 1;
         fuelTimer: number;
         bulletTimer: number;
         _state: Superhero.CharState;
@@ -82,7 +83,6 @@ module Superhero {
         initPhysics ():void {
             this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
             this.sprite.body.collideWorldBounds = true;
-
             this.sprite.body.gravity.y = (<Superhero.Game> this.game).conf.physics.player.gravity.y;
             this.sprite.body.drag.x = (<Superhero.Game> this.game).conf.physics.player.drag;
             this.sprite.body.drag.y = (<Superhero.Game> this.game).conf.physics.player.drag;
@@ -130,7 +130,7 @@ module Superhero {
 
         move (speed:{x:number ; y:number}): void {
 
-            if (this.allowFingerMargin && (this.sprite.x <= this.game.width/4 && speed.x < 0)) speed.x = 0;
+            //if (this.allowFingerMargin && (this.sprite.x <= this.game.width/2 && speed.x < 0)) speed.x = 0;
 
             this.sprite.body.velocity.x = speed.x;
             if (this.fuel) this.sprite.body.velocity.y = speed.y;
@@ -156,22 +156,49 @@ module Superhero {
                 var elapsedTime = this.game.time.elapsedSince(this.bulletTimer);
                 if (elapsedTime < this.shootDelay) return;
 
+
                 //Get the first bullet that has gone offscreen
-                var bullet = this.bullets.getFirstDead();
-                if (!bullet) return;
+                //var bullets = [];
+                for (var i=0; i<this.firePower; i++) {
+
+                    var bullet = this.bullets.getFirstDead();
+
+                    if (!bullet) bullet = this.bullets.create(-10,-10, 'bullets','bullet1');
+
+                    bullet.anchor.setTo(0.5, 1);
+                    bullet.reset(this.sprite.x + 40, this.sprite.y + (10 * i+1));
+                    bullet.checkWorldBounds = true;
+                    bullet.outOfBoundsKill = true;
+                    bullet.body.velocity.x = this.bulletVelocity;
+                    bullet.body.allowGravity = false;
+                    bullet.scale.setTo((<Superhero.Game> this.game).conf.world.sprite_scaling);
+
+                    //bullets[i] = bullet;
+                }
 
                 this.sprite.animations.play('shoot');
-                bullet.anchor.setTo(0.5, 1);
+                //bullet.anchor.setTo(0.5, 1);
 
-                //Reposition bullet
-                bullet.reset(this.sprite.x + 40, this.sprite.y + 40);
+                //Reposition bullets
+                //for (var i=0; i<this.firePower; i++) {
+                //
+                //    bullets[i].reset(this.sprite.x + 40, this.sprite.y + (10 * i+1));
+                //
+                //    //Set bullet physics
+                //    bullets[i].checkWorldBounds = true;
+                //    bullets[i].outOfBoundsKill = true;
+                //    bullets[i].body.velocity.x = this.bulletVelocity;
+                //    bullets[i].body.allowGravity = false;
+                //    bullets[i].scale.setTo((<Superhero.Game> this.game).conf.world.sprite_scaling);
+                //}
+
 
                 //Set bullet physics
-                bullet.checkWorldBounds = true;
-                bullet.outOfBoundsKill = true;
-                bullet.body.velocity.x = this.bulletVelocity;
-                bullet.body.allowGravity = false;
-                bullet.scale.setTo((<Superhero.Game> this.game).conf.world.sprite_scaling);
+                //bullet.checkWorldBounds = true;
+                //bullet.outOfBoundsKill = true;
+                //bullet.body.velocity.x = this.bulletVelocity;
+                //bullet.body.allowGravity = false;
+                //bullet.scale.setTo((<Superhero.Game> this.game).conf.world.sprite_scaling);
 
                 //Reset the timer
                 this.bulletTimer = this.game.time.time;
