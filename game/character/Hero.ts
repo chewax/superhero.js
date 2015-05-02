@@ -8,6 +8,8 @@ module Superhero {
 
         constructor (game:Phaser.Game) {
             super(game,'hero1',game.world.centerX - 200,100);
+            this.facing = Facing.RIGHT;
+
             this.setBulletVelocity(1000);
         }
 

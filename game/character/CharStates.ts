@@ -1,7 +1,3 @@
-/**
- * @author Daniel Waksman
- */
-
 /// <reference path="../../lib/phaser.d.ts"/>
 /// <reference path="Character.ts"/>
 /// <reference path="../plugins/GamePad.ts"/>
@@ -173,29 +169,9 @@ module Superhero {
 
         tween: Phaser.Tween;
 
-        // TODO: DRY code - to improve
-
-        public tween1 (): void {
+        public patrol (): void {
             this.tween = this.game.add.tween(this.hero.sprite);
-            this.tween.to({y: 300},1000,Phaser.Easing.Linear.None,true);
-            this.tween.onComplete.addOnce(this.tween2, this);
-
-            //  Notice the use of addOnce above. If you don't use that then you *must* do:
-            // tween.onComplete.removeAll();
-            //  before using the tween again, or it will fire both onComplete callbacks.
-
-        }
-
-        private tween2(): void {
-            console.log("called tween2");
-            this.tween.to({y: 500},1000,Phaser.Easing.Linear.None,true);
-            this.tween.onComplete.addOnce(this.tween3, this);
-        }
-
-        private tween3(): void {
-            console.log("called tween3");
-            this.tween.to({y: 100},1000,Phaser.Easing.Linear.None,true);
-            this.tween.onComplete.addOnce(this.tween2, this);
+            this.tween.to({y: 400},1500,Phaser.Easing.Linear.None,true,0,-1,true);
         }
 
         public update ():CharState {

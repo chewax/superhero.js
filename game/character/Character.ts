@@ -2,8 +2,6 @@
  * Character class.
  * Wraps the logic of creating and upating a character. Should be extended from
  * Hero and Badie
- *
- * @author Daniel Waksman
  */
 
 /// <reference path="../../lib/phaser.d.ts"/>
@@ -14,6 +12,11 @@
 /// <reference path="../collectables/Collectables.ts"/>
 
 module Superhero {
+
+    export enum Facing {
+        LEFT = -1,
+        RIGHT = 1
+    }
 
     export class Character {
 
@@ -28,6 +31,7 @@ module Superhero {
         firePower: number = 1;
         fuelTimer: number;
         bulletTimer: number;
+        facing: Facing;
         _state: Superhero.CharState;
 
         bulletVelocity: number = 1000;
@@ -45,6 +49,7 @@ module Superhero {
             this.game = game;
             this.floor = this.game.height - 80;
             this._state = new Superhero.StateIdle(game, this);
+            this.facing = Facing.LEFT;
 
             //this.initShadow();
             this.initSprite(assetKey,x,y);
@@ -157,49 +162,25 @@ module Superhero {
                 if (elapsedTime < this.shootDelay) return;
 
 
-                //Get the first bullet that has gone offscreen
-                //var bullets = [];
+
                 for (var i=0; i<this.firePower; i++) {
 
+                    //Get the first bullet that has gone offscreen
                     var bullet = this.bullets.getFirstDead();
 
+                    //If there is none (all are still flying) create new one.
                     if (!bullet) bullet = this.bullets.create(-10,-10, 'bullets','bullet1');
 
                     bullet.anchor.setTo(0.5, 1);
-                    bullet.reset(this.sprite.x + 40, this.sprite.y + (10 * i+1));
+                    bullet.reset(this.sprite.x + (this.facing * 40), this.sprite.y + (10 * i+1));
                     bullet.checkWorldBounds = true;
                     bullet.outOfBoundsKill = true;
                     bullet.body.velocity.x = this.bulletVelocity;
                     bullet.body.allowGravity = false;
                     bullet.scale.setTo((<Superhero.Game> this.game).conf.world.sprite_scaling);
-
-                    //bullets[i] = bullet;
                 }
 
                 this.sprite.animations.play('shoot');
-                //bullet.anchor.setTo(0.5, 1);
-
-                //Reposition bullets
-                //for (var i=0; i<this.firePower; i++) {
-                //
-                //    bullets[i].reset(this.sprite.x + 40, this.sprite.y + (10 * i+1));
-                //
-                //    //Set bullet physics
-                //    bullets[i].checkWorldBounds = true;
-                //    bullets[i].outOfBoundsKill = true;
-                //    bullets[i].body.velocity.x = this.bulletVelocity;
-                //    bullets[i].body.allowGravity = false;
-                //    bullets[i].scale.setTo((<Superhero.Game> this.game).conf.world.sprite_scaling);
-                //}
-
-
-                //Set bullet physics
-                //bullet.checkWorldBounds = true;
-                //bullet.outOfBoundsKill = true;
-                //bullet.body.velocity.x = this.bulletVelocity;
-                //bullet.body.allowGravity = false;
-                //bullet.scale.setTo((<Superhero.Game> this.game).conf.world.sprite_scaling);
-
                 //Reset the timer
                 this.bulletTimer = this.game.time.time;
             }
@@ -311,7 +292,7 @@ module Superhero {
          * @param {number} n the new value to the bullet velocity
          */
         setBulletVelocity(n:number){
-            this.bulletVelocity = n;
+            this.bulletVelocity = n * this.facing;
         }
 
         /**

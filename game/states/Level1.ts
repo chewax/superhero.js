@@ -98,9 +98,9 @@ module Superhero {
             var elapsedTime = this.game.time.elapsedSince(this.obstacleTimer);
             
             if (elapsedTime > 1500 ) {
-                this.wall.resetAndRoll(30,-150)
+                this.wall.resetAndRoll(30,-150);
                 this.obstacleTimer = this.game.time.time;
-            };
+            }
             
 
         }
@@ -136,8 +136,6 @@ module Superhero {
             (<Superhero.Game> this.game).gamepad = new Gamepads.GamePad(this.game, Gamepads.GamepadType.STICK_BUTTON, Gamepads.ButtonPadType.ONE_FIXED);
             (<Superhero.Game> this.game).gamepad.buttonPad.button1.type = Gamepads.ButtonType.CUSTOM;
             (<Superhero.Game> this.game).gamepad.stick1.settings.topSpeed = 600;
-         
-
         }
 
         setActors(): void {
