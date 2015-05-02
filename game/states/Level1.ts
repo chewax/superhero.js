@@ -40,7 +40,7 @@ module Superhero {
             this.setBaseStage();
             this.configureInput();
             this.setActors();
-            this.startMusic();
+            //this.startMusic();
             this.setObstaclesEmitter();
             this.score = 0;
             this.scoreText = this.game.add.bitmapText(10, 10, 'desyrel', this.score.toString(), 60);
