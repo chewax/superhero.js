@@ -26,7 +26,7 @@ module Superhero {
         obstacleEmitter: Phaser.Particles.Arcade.Emitter;
         obstacleTimer: number;
         score: number;
-        scoreText : Phaser.BitmapText;
+        scoreText : Phaser.Text;
 
         preload () {
 
@@ -43,8 +43,8 @@ module Superhero {
             //this.startMusic();
             this.setObstaclesEmitter();
             this.score = 0;
-            this.scoreText = this.game.add.bitmapText(10, 10, 'desyrel', this.score.toString(), 60);
-
+            var style = { font: "40px Arial", fill: "#FF9900", align: "center" };
+            this.scoreText = this.game.add.text(10, 100, this.score.toString(), style);
             //this.debug = new Debug(this.game);
             //this.game.time.events.add(this.game.rnd.integerInRange(5000, 20000), this.createPowerUp, this);
 
