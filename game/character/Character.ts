@@ -161,7 +161,7 @@ module Superhero {
                 var elapsedTime = this.game.time.elapsedSince(this.bulletTimer);
                 if (elapsedTime < this.shootDelay) return;
 
-
+                this.sprite.animations.play('shoot');
 
                 for (var i=0; i<this.firePower; i++) {
 
@@ -180,7 +180,7 @@ module Superhero {
                     bullet.scale.setTo((<Superhero.Game> this.game).conf.world.sprite_scaling);
                 }
 
-                this.sprite.animations.play('shoot');
+
                 //Reset the timer
                 this.bulletTimer = this.game.time.time;
             }
