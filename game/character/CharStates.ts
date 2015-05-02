@@ -58,6 +58,7 @@ module Superhero {
             this.hero = hero;
             this.gamepad = (<Superhero.Game> this.game).gamepad;
             this.fireButton = this.gamepad.buttonPad.button1;
+
             this.heroStick = this.gamepad.stick1;
         }
 
@@ -82,10 +83,6 @@ module Superhero {
                 this.hero.fire();
             }
 
-            if (this.hero.sprite.body.touching.down) {
-                this.hero.sprite.play('flywalk');
-            }
-
             if (this.heroStick.receivingInput()) {
                 return new StateFly(this.game, this.hero);
             }
@@ -105,7 +102,10 @@ module Superhero {
 
         public update ():CharState {
 
-            this.hero.move(this.heroStick.speed);
+
+            if (Math.abs(this.heroStick.speed.x) > 0 || Math.abs(this.heroStick.speed.y) > 0) {
+                this.hero.move(this.heroStick.speed);
+            }
             this.hero.sprite.play('flystill');
 
             if (this.heroStick.cursors.right) {
@@ -137,9 +137,12 @@ module Superhero {
         public update ():CharState {
 
             this.hero.sprite.play('fly');
-            var speed = this.heroStick.speed;
-            speed.x *= 2;
-            this.hero.move(speed);
+            //var speed = this.heroStick.speed;
+            //speed.x *= 2;
+
+            if (Math.abs(this.heroStick.speed.x) > 0 || Math.abs(this.heroStick.speed.y) > 0) {
+                this.hero.move(this.heroStick.speed);
+            }
 
             //If fire on idle. Fire and remain in same state
             if (this.fireButton.pressed) {
@@ -163,9 +166,44 @@ module Superhero {
         }
     }
 
+    ///**
+    // * Hostile state Class
+    // */
+    export class StateHostile extends BaseState{
 
+        tween: Phaser.Tween;
 
+        // TODO: DRY code - to improve
 
+        public tween1 (): void {
+            this.tween = this.game.add.tween(this.hero.sprite);
+            this.tween.to({y: 300},1000,Phaser.Easing.Linear.None,true);
+            this.tween.onComplete.addOnce(this.tween2, this);
 
+            //  Notice the use of addOnce above. If you don't use that then you *must* do:
+            // tween.onComplete.removeAll();
+            //  before using the tween again, or it will fire both onComplete callbacks.
 
+        }
+
+        private tween2(): void {
+            console.log("called tween2");
+            this.tween.to({y: 500},1000,Phaser.Easing.Linear.None,true);
+            this.tween.onComplete.addOnce(this.tween3, this);
+        }
+
+        private tween3(): void {
+            console.log("called tween3");
+            this.tween.to({y: 100},1000,Phaser.Easing.Linear.None,true);
+            this.tween.onComplete.addOnce(this.tween2, this);
+        }
+
+        public update ():CharState {
+            this.hero.fire();
+            return this;
+        }
+
+        public enterState () {}
+        public exitState () {}
+    }
 }

@@ -37,7 +37,7 @@ module Superhero {
 
                 width: 1200,
                 height: 550,
-                sprite_scaling: 0.5
+                sprite_scaling: 0.3
             };
 
             this.physics = {
@@ -47,8 +47,8 @@ module Superhero {
                 },
 
                 player: {
-                    gravity: {x: 0, y: 1750},
-                    drag: 1500
+                    gravity: {x: 0, y: 0},
+                    drag: 700
                 },
 
                 npc: {

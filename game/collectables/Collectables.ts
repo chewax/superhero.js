@@ -25,10 +25,10 @@ module Collectables {
             }.bind(this), 1000);
         }
 
-        resetFloatation(){
+        resetFloatation(speed:number = -100, tween:boolean = true){
             this.restartAnimation();
-            this.game.add.tween(this).to( {y:'+100'} , 1500, Phaser.Easing.Sinusoidal.InOut, true , 400, -1 , true);
-            this.body.velocity.x = -100;
+            if (tween) this.game.add.tween(this).to( {y:'+100'} , 1500, Phaser.Easing.Sinusoidal.InOut, true , 400, -1 , true);
+            this.body.velocity.x = speed;
             this.scale.setTo(0.1);
             this.checkWorldBounds = true;
             this.outOfBoundsKill = true;
@@ -37,6 +37,9 @@ module Collectables {
         updateCharacter(character: Superhero.Character){
             character.fuel += character.maxFuel * this.potency / 100;
             if (character.fuel > character.maxFuel) character.fuel = character.maxFuel;
+
+            if (character.firePower < 5) character.firePower += 1;
+
         }
 
     }
