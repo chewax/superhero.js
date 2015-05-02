@@ -25,7 +25,7 @@ module Superhero {
         loadAssets () {
 
             this.game.load.atlasJSONHash('hero1', '/assets/hero1.png', '/assets/hero1.json');
-            this.game.load.atlasJSONHash('badie', '/assets/badie.png', '/assets/badie.json');
+            this.game.load.atlasJSONHash('badie', '/assets/hero3.png', '/assets/hero3.json');
             this.game.load.atlasJSONHash('heart', '/assets/heart.png', '/assets/heart.json');
             this.game.load.atlasJSONHash('meteors', '/assets/meteors.png', '/assets/meteors.json');
             this.game.load.atlasJSONHash('bullets', '/assets/bullets.png', '/assets/bullets.json');
