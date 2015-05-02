@@ -187,13 +187,11 @@ module Superhero {
         }
 
         private tween2(): void {
-            console.log("called tween2");
             this.tween.to({y: 500},1000,Phaser.Easing.Linear.None,true);
             this.tween.onComplete.addOnce(this.tween3, this);
         }
 
         private tween3(): void {
-            console.log("called tween3");
             this.tween.to({y: 100},1000,Phaser.Easing.Linear.None,true);
             this.tween.onComplete.addOnce(this.tween2, this);
         }
