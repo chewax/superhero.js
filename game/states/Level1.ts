@@ -52,23 +52,23 @@ module Superhero {
 
         killWall(wall:Phaser.Sprite, bullet:Phaser.Sprite):void{
 
-            var wallx = wall.x;
-            var wally = wall.y;
+            var wallX = wall.x;
+            var wallY = wall.y;
 
             if (!(wall.frameName == "grey5")) {
                 wall.kill();
+
+                //one out of 20 must drop something
+                if (this.game.rnd.integerInRange(0,20) == 10) this.spawnPU(wallX, wallY);
+
                 // play particles effect
-                this.particleBurst(wall)
+                this.particleBurst(wall);
                 this.score+= 50;
 
             }
 
-            //one out of 30 must drop something
-            //if (this.game.rnd.integerInRange(0,30) == 15) {
-            //    this.spawnPU(wallx, wally)
-            //}
 
-            this.spawnPU(wallx, wally)
+
 
             bullet.kill();
         }
@@ -98,9 +98,9 @@ module Superhero {
             var elapsedTime = this.game.time.elapsedSince(this.obstacleTimer);
             
             if (elapsedTime > 1500 ) {
-                this.wall.resetAndRoll(30,-150)
+                this.wall.resetAndRoll(30,-150);
                 this.obstacleTimer = this.game.time.time;
-            };
+            }
             
 
         }
@@ -136,8 +136,6 @@ module Superhero {
             (<Superhero.Game> this.game).gamepad = new Gamepads.GamePad(this.game, Gamepads.GamepadType.STICK_BUTTON, Gamepads.ButtonPadType.ONE_FIXED);
             (<Superhero.Game> this.game).gamepad.buttonPad.button1.type = Gamepads.ButtonType.CUSTOM;
             (<Superhero.Game> this.game).gamepad.stick1.settings.topSpeed = 600;
-         
-
         }
 
         setActors(): void {
@@ -171,7 +169,7 @@ module Superhero {
         }
 
         setObstaclesEmitter(): void {
-            this.obstacleEmitter = this.game.add.emitter(0, 0, 100);
+            this.obstacleEmitter = this.game.add.emitter();
             this.obstacleEmitter.makeParticles('meteors', 'brown10');
             this.obstacleEmitter.gravity = 200;
         }
