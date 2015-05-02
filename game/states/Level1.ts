@@ -24,9 +24,9 @@ module Superhero {
         theme: Phaser.Sound;
         wall: Obstacles.WallObstacle;
         obstacleEmitter: Phaser.Particles.Arcade.Emitter;
-        
         obstacleTimer: number;
-
+        score: number;
+        scoreText : Phaser.BitmapText;
 
         preload () {
 
@@ -42,6 +42,8 @@ module Superhero {
             this.setActors();
             this.startMusic();
             this.setObstaclesEmitter();
+            this.score = 0;
+            this.scoreText = this.game.add.bitmapText(10, 10, 'desyrel', this.score.toString(), 60);
 
             //this.debug = new Debug(this.game);
             //this.game.time.events.add(this.game.rnd.integerInRange(5000, 20000), this.createPowerUp, this);
@@ -57,6 +59,7 @@ module Superhero {
                 wall.kill();
                 // play particles effect
                 this.particleBurst(wall)
+                this.score+= 50;
 
             }
 
@@ -71,6 +74,9 @@ module Superhero {
         }
 
         update () {
+
+            this.scoreText.setText(this.score.toString());
+
             this.hero.diesWithGroup(this.badie.bullets);
             this.hero.collideWithObject(this.hero.shadow);
             this.hero.collectsGroup(this.fuelPowerUps);
@@ -122,6 +128,8 @@ module Superhero {
             this.fuelPowerUps.enableBody = true;
             this.fuelPowerUps.createMultiple(1,'heart');
 
+            this.score = 0;
+
         }
 
         configureInput(): void {
@@ -164,7 +172,6 @@ module Superhero {
 
         setObstaclesEmitter(): void {
             this.obstacleEmitter = this.game.add.emitter(0, 0, 100);
-
             this.obstacleEmitter.makeParticles('meteors', 'brown10');
             this.obstacleEmitter.gravity = 200;
         }

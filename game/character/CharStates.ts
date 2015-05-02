@@ -58,6 +58,7 @@ module Superhero {
             this.hero = hero;
             this.gamepad = (<Superhero.Game> this.game).gamepad;
             this.fireButton = this.gamepad.buttonPad.button1;
+
             this.heroStick = this.gamepad.stick1;
         }
 
@@ -165,9 +166,44 @@ module Superhero {
         }
     }
 
+    ///**
+    // * Hostile state Class
+    // */
+    export class StateHostile extends BaseState{
 
+        tween: Phaser.Tween;
 
+        // TODO: DRY code - to improve
 
+        public tween1 (): void {
+            this.tween = this.game.add.tween(this.hero.sprite);
+            this.tween.to({y: 300},1000,Phaser.Easing.Linear.None,true);
+            this.tween.onComplete.addOnce(this.tween2, this);
 
+            //  Notice the use of addOnce above. If you don't use that then you *must* do:
+            // tween.onComplete.removeAll();
+            //  before using the tween again, or it will fire both onComplete callbacks.
 
+        }
+
+        private tween2(): void {
+            console.log("called tween2");
+            this.tween.to({y: 500},1000,Phaser.Easing.Linear.None,true);
+            this.tween.onComplete.addOnce(this.tween3, this);
+        }
+
+        private tween3(): void {
+            console.log("called tween3");
+            this.tween.to({y: 100},1000,Phaser.Easing.Linear.None,true);
+            this.tween.onComplete.addOnce(this.tween2, this);
+        }
+
+        public update ():CharState {
+            this.hero.fire();
+            return this;
+        }
+
+        public enterState () {}
+        public exitState () {}
+    }
 }
