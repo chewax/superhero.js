@@ -57,15 +57,17 @@ module Obstacles {
             var key = sprites[this.game.rnd.integerInRange(0,1)];
 			
 			for (var i=0; i<n; i++) {
-				
+                //Try to use all the dead bricks first
 				var item = this.group.getFirstDead();
-				
-				if (!item) {
-					item = this.group.create(viewportWidth - 1, (positions[i]) * itemHeight, 'meteors', key);
-				} else {
-					item.reset(viewportWidth - 1, (positions[i]) * itemHeight);	
-				}
 
+                //The -1 is there to avoid phaser killing the sprite before reaching the world.
+                var x = viewportWidth - 1;
+                var y = positions[i] * itemHeight;
+
+                //If none is dead, then create a new one
+                //Else recycle the old one
+				if (!item) item = this.group.create(x, y, 'meteors', key);
+				else item.reset(x, y);
 
 				item.body.velocity.x = speed;
 				item.body.immovable = true;
@@ -90,13 +92,17 @@ module Obstacles {
 		
 
 			for (var i=0; i<n; i++) {
+                //Try to use all the dead bricks first
 				var item = this.group.getFirstDead();
-				
-				if (!item) {
-					item = this.group.create(viewportWidth - 1, viewportHeight - itemHeight - (positions[i] * itemHeight), 'meteors', key)
-				} else {
-					item.reset(viewportWidth - 1, viewportHeight - itemHeight - (positions[i] * itemHeight));
-				}
+
+                //The -1 is there to avoid phaser killing the sprite before reaching the world.
+                var x = viewportWidth - 1;
+                var y = viewportHeight - itemHeight - (positions[i] * itemHeight);
+
+                //If none is dead, then create a new one
+                //Else recycle the old one
+				if (!item) item = this.group.create(x, y, 'meteors', key);
+				else item.reset(x, y);
 
 				item.body.velocity.x = speed;
 				item.body.immovable = true;
@@ -135,7 +141,6 @@ module Obstacles {
 			//  The third is ignored when using burst/explode mode
 			//  The final parameter  is how many particles will be emitted in this single burst
 			this.obstacleEmitter.start(true, 2000, null, 4);
-
 		}
 			
 	}
