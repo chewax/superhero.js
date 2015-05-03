@@ -17,6 +17,7 @@ module Superhero {
             (<Superhero.StateHostile>this._state).patrol();
 
             this.shootDelay = 1600;
+
         }
 
         update () {
@@ -30,6 +31,17 @@ module Superhero {
                 newState.enterState();
                 this._state = newState;
             }
+        }
+
+        /**
+         * Initalizes the physics of the character
+         */
+        initPhysics ():void {
+            super.initPhysics();
+            this.sprite.body.drag.x = 0;
+            this.sprite.body.velocity.x = -150;
+            this.sprite.body.collideWorldBounds = false;
+            this.sprite.body.checkWorldBounds = true;
         }
 
         /**
