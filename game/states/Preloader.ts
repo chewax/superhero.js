@@ -10,11 +10,12 @@ module Superhero {
 
         preload () {
 
-            this.preloadBar = this.add.sprite(200,250,'loadbar');
+            this.preloadBar = this.add.sprite(this.world.centerX,this.world.centerY,'loadbar');
             this.preloadBar.anchor.setTo(0.5);
 
             this.load.setPreloadSprite(this.preloadBar);
             this.loadAssets();
+            
         }
 
         create () {
