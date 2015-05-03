@@ -159,7 +159,7 @@ module Superhero {
 
             if (pu) {
                 pu.reset(x, y);
-                pu.resetFloatation(0,false);
+                pu.resetFloatation(-100,true);
             }
         }
 
