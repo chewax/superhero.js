@@ -15,7 +15,7 @@ module Superhero {
 
             this.load.setPreloadSprite(this.preloadBar);
             this.loadAssets();
-            
+
         }
 
         create () {

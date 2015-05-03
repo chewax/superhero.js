@@ -44,50 +44,18 @@ module Superhero {
 
         }
 
-        killWall(wall:Phaser.Sprite, bullet:Phaser.Sprite):void{
-
-            var wallX = wall.x;
-            var wallY = wall.y;
-
-            if (!(wall.frameName == "grey5")) {
-                wall.kill();
-                //one out of 20 must drop something
-                if (this.game.rnd.integerInRange(0,20) == 10) this.spawnPU(wallX, wallY);
-                this.ui.scoreUp(50);
-            }
-
-            bullet.kill();
-        }
-
         update () {
-
-            this.hero.diesWithGroup(this.badie.bullets);
-            this.hero.collideWithObject(this.hero.shadow);
-            this.hero.collectsGroup(this.fuelPowerUps);
-
-            this.hero.collideWithGroup(this.wall.upperObstacle.group);
-            this.hero.collideWithGroup(this.wall.lowerObstacle.group);
-
-            this.game.physics.arcade.overlap(this.wall.lowerObstacle.group, this.hero.bullets, this.killWall, null, this);
-            this.game.physics.arcade.overlap(this.wall.upperObstacle.group, this.hero.bullets, this.killWall, null, this);
-
-            this.badie.collideWithObject(this.badie.shadow);
-            this.badie.diesWithGroup(this.hero.bullets);
+            //Collisions
+            this.checkForCollisions();
 
             //Updates
             this.hero.update();
             this.badie.update();
             this.ui.update();
-
             //this.debug.update();
-            var elapsedTime = this.game.time.elapsedSince(this.obstacleTimer);
-            
-            if (elapsedTime > 1500 ) {
-                this.wall.resetAndRoll(30,-150);
-                this.obstacleTimer = this.game.time.time;
-            }
-            
 
+            //Obstacles
+            this.obstacleGenerator();
         }
 
         configurePhysics():void {
@@ -95,22 +63,27 @@ module Superhero {
             this.game.physics.arcade.gravity.y = (<Superhero.Game> this.game).conf.physics.global.gravity.y;
         }
 
+
         setBaseStage():void {
+
+            //Setup Farthest
             this.background = this.game.add.tileSprite(-1,-1,1800,600,'farback');
             this.background.autoScroll(-60,0);
 
+            //Setup paralax layer
             this.paralax1 = this.game.add.tileSprite(0,0,1800,600, 'starfield');
             this.paralax1.autoScroll(-100,0);
-            
+
+            //Setup Wall Obstacle
     	    this.wall = new Obstacles.WallObstacle(this.game);
             this.obstacleTimer = this.game.time.time;
-           
-            this.fuelPowerUps = this.game.add.group();
-            this.fuelPowerUps.classType = Collectables.FuelPowerUps;
-            this.fuelPowerUps.enableBody = true;
-            this.fuelPowerUps.createMultiple(1,'heart');
+
+
+            //Setup powerups
+            this.setPowerUps();
 
         }
+
 
         configureInput(): void {
             (<Superhero.Game> this.game).gamepad = new Gamepads.GamePad(this.game, Gamepads.GamepadType.STICK_BUTTON, Gamepads.ButtonPadType.ONE_FIXED);
@@ -123,6 +96,18 @@ module Superhero {
             this.badie = new Badie(this.game);
             this.ui = new Superhero.UI(this.game, this.hero);
         }
+
+
+
+        setPowerUps(): void {
+            this.fuelPowerUps = this.game.add.group();
+            this.fuelPowerUps.classType = Collectables.FuelPowerUps;
+            this.fuelPowerUps.enableBody = true;
+            this.fuelPowerUps.createMultiple(1,'heart');
+        }
+
+
+
 
         createPowerUp(): void {
             this.game.time.events.add(this.game.rnd.integerInRange(5000, 20000), this.createPowerUp, this);
@@ -146,6 +131,48 @@ module Superhero {
         startMusic () :void{
             this.theme = this.game.add.audio('theme', 1, true);
             this.theme.play();
+        }
+
+        checkForCollisions(): void {
+
+            this.hero.diesWithGroup(this.badie.bullets);
+
+            this.hero.collideWithObject(this.hero.shadow);
+            this.hero.collectsGroup(this.fuelPowerUps);
+
+            this.hero.collideWithGroup(this.wall.upperObstacle.group);
+            this.hero.collideWithGroup(this.wall.lowerObstacle.group);
+
+            this.game.physics.arcade.overlap(this.wall.lowerObstacle.group, this.hero.bullets, this.killWall, null, this);
+            this.game.physics.arcade.overlap(this.wall.upperObstacle.group, this.hero.bullets, this.killWall, null, this);
+
+            this.badie.collideWithObject(this.badie.shadow);
+            this.badie.diesWithGroup(this.hero.bullets);
+
+        }
+
+        obstacleGenerator(): void {
+            var elapsedTime = this.game.time.elapsedSince(this.obstacleTimer);
+
+            if (elapsedTime > 1500 ) {
+                this.wall.resetAndRoll(30,-150);
+                this.obstacleTimer = this.game.time.time;
+            }
+        }
+
+        killWall(wall:Phaser.Sprite, bullet:Phaser.Sprite):void{
+
+            var wallX = wall.x;
+            var wallY = wall.y;
+
+            if (!(wall.frameName == "grey5")) {
+                wall.kill();
+                //one out of 20 must drop something
+                if (this.game.rnd.integerInRange(0,20) == 10) this.spawnPU(wallX, wallY);
+                this.ui.scoreUp(50);
+            }
+
+            bullet.kill();
         }
 
     }
