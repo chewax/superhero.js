@@ -23,9 +23,7 @@ module Superhero {
         ui: Superhero.UI;
         theme: Phaser.Sound;
         wall: Obstacles.WallObstacle;
-        obstacleEmitter: Phaser.Particles.Arcade.Emitter;
         obstacleTimer: number;
-        scoreText : Phaser.Text;
 
         preload () {
 
@@ -40,7 +38,6 @@ module Superhero {
             this.configureInput();
             this.setActors();
             //this.startMusic();
-            this.setObstaclesEmitter();
 
             //this.debug = new Debug(this.game);
             //this.game.time.events.add(this.game.rnd.integerInRange(5000, 20000), this.createPowerUp, this);
@@ -54,12 +51,8 @@ module Superhero {
 
             if (!(wall.frameName == "grey5")) {
                 wall.kill();
-
                 //one out of 20 must drop something
                 if (this.game.rnd.integerInRange(0,20) == 10) this.spawnPU(wallX, wallY);
-
-                // play particles effect
-                this.particleBurst(wall);
                 this.ui.scoreUp(50);
             }
 
@@ -117,8 +110,6 @@ module Superhero {
             this.fuelPowerUps.enableBody = true;
             this.fuelPowerUps.createMultiple(1,'heart');
 
-            this.score = 0;
-
         }
 
         configureInput(): void {
@@ -157,24 +148,5 @@ module Superhero {
             this.theme.play();
         }
 
-        setObstaclesEmitter(): void {
-            this.obstacleEmitter = this.game.add.emitter();
-            this.obstacleEmitter.makeParticles('meteors', 'brown10');
-            this.obstacleEmitter.gravity = 200;
-        }
-
-        particleBurst(pointer) {
-
-            //  Position the emitter where the mouse/touch event was
-            this.obstacleEmitter.x = pointer.x;
-            this.obstacleEmitter.y = pointer.y;
-
-            //  The first parameter sets the effect to "explode" which means all particles are emitted at once
-            //  The second gives each particle a lifespan
-            //  The third is ignored when using burst/explode mode
-            //  The final parameter  is how many particles will be emitted in this single burst
-            this.obstacleEmitter.start(true, 2000, null, 4);
-
-    }
     }
 }

@@ -107,6 +107,36 @@ module Obstacles {
 	}
 	
 	export class ObstacleItem extends Phaser.Sprite{
+
+		obstacleEmitter: Phaser.Particles.Arcade.Emitter;
+
+		constructor(game:Phaser.Game, x:number, y:number, key?:any, frame?:any) {
+			super(game, x, y, key, frame);
+			this.setObstaclesEmitter();
+			this.events.onKilled.add(this.particleBurst, this);
+		}
+
+		setObstaclesEmitter(): void {
+			this.obstacleEmitter = this.game.add.emitter();
+			this.obstacleEmitter.makeParticles('meteors', 'brown10');
+			this.obstacleEmitter.gravity = 200;
+		}
+
+		particleBurst() {
+            //Do not emit if the kill was made by outOfBounds event.
+            if (!this.inWorld) return;
+
+			//  Position the emitter where the mouse/touch event was
+			this.obstacleEmitter.x = this.x;
+			this.obstacleEmitter.y = this.y;
+
+			//  The first parameter sets the effect to "explode" which means all particles are emitted at once
+			//  The second gives each particle a lifespan
+			//  The third is ignored when using burst/explode mode
+			//  The final parameter  is how many particles will be emitted in this single burst
+			this.obstacleEmitter.start(true, 2000, null, 4);
+
+		}
 			
 	}
 }
