@@ -15,12 +15,15 @@ module Superhero {
         fuelRemaining: Phaser.Text;
         player: Superhero.Character;
         fuelBar: Phaser.Sprite;
+        scoreCount: number = 0;
+        scoreText: Phaser.Text;
 
         constructor(game: Phaser.Game, player: Superhero.Character) {
             this.game = game;
             this.player = player;
 
             this.createFuelBar();
+            this.createScoreBoard();
         }
 
         update ():void {
@@ -43,6 +46,17 @@ module Superhero {
             var style = { font: "14px Arial", fill: "#000", align: "center" };
             this.fuelRemaining = this.game.add.text(25, 30, ' ', style);
             this.fuelRemaining.anchor.y = 0.5;
+        }
+
+        createScoreBoard (): void {
+            var style = { font: "40px Arial", fill: "#FF9900", align: "center" };
+            this.scoreText = this.game.add.text(10, 100, this.scoreCount.toString(), style);
+        }
+
+
+        scoreUp (amount:number): void {
+            this.scoreCount += amount;
+            this.scoreText.setText(this.scoreCount.toString());
         }
 
 

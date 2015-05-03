@@ -25,7 +25,6 @@ module Superhero {
         wall: Obstacles.WallObstacle;
         obstacleEmitter: Phaser.Particles.Arcade.Emitter;
         obstacleTimer: number;
-        score: number;
         scoreText : Phaser.Text;
 
         preload () {
@@ -42,9 +41,7 @@ module Superhero {
             this.setActors();
             //this.startMusic();
             this.setObstaclesEmitter();
-            this.score = 0;
-            var style = { font: "40px Arial", fill: "#FF9900", align: "center" };
-            this.scoreText = this.game.add.text(10, 100, this.score.toString(), style);
+
             //this.debug = new Debug(this.game);
             //this.game.time.events.add(this.game.rnd.integerInRange(5000, 20000), this.createPowerUp, this);
 
@@ -63,19 +60,13 @@ module Superhero {
 
                 // play particles effect
                 this.particleBurst(wall);
-                this.score+= 50;
-
+                this.ui.scoreUp(50);
             }
-
-
-
 
             bullet.kill();
         }
 
         update () {
-
-            this.scoreText.setText(this.score.toString());
 
             this.hero.diesWithGroup(this.badie.bullets);
             this.hero.collideWithObject(this.hero.shadow);
@@ -93,7 +84,8 @@ module Superhero {
             //Updates
             this.hero.update();
             this.badie.update();
-            //this.ui.update();
+            this.ui.update();
+
             //this.debug.update();
             var elapsedTime = this.game.time.elapsedSince(this.obstacleTimer);
             
@@ -111,9 +103,6 @@ module Superhero {
         }
 
         setBaseStage():void {
-            //this.background = this.game.add.tileSprite(0, 0, 2061, 540, 'background');
-            //this.background.autoScroll(-500, 0);
-
             this.background = this.game.add.tileSprite(-1,-1,1800,600,'farback');
             this.background.autoScroll(-60,0);
 
@@ -141,7 +130,7 @@ module Superhero {
         setActors(): void {
             this.hero = new Hero(this.game);
             this.badie = new Badie(this.game);
-            //this.ui = new Superhero.UI(this.game, this.hero);
+            this.ui = new Superhero.UI(this.game, this.hero);
         }
 
         createPowerUp(): void {
