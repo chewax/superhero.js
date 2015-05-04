@@ -73,14 +73,15 @@ module Superhero {
     export class StateIdle extends BaseState{
 
         public update ():CharState {
+            if(this.hero.isAlive) {
+                //If fire on idle. Fire and remain in same state
+                if (this.fireButton.pressed) {
+                    this.hero.fire();
+                }
 
-            //If fire on idle. Fire and remain in same state
-            if (this.fireButton.pressed) {
-                this.hero.fire();
-            }
-
-            if (this.heroStick.receivingInput()) {
-                return new StateFly(this.game, this.hero);
+                if (this.heroStick.receivingInput()) {
+                    return new StateFly(this.game, this.hero);
+                }
             }
             //If nothing was commanded remain on the same state
             return this;
@@ -98,25 +99,25 @@ module Superhero {
 
         public update ():CharState {
 
+            if(this.hero.isAlive) {
+                if (Math.abs(this.heroStick.speed.x) > 0 || Math.abs(this.heroStick.speed.y) > 0) {
+                    this.hero.move(this.heroStick.speed);
+                }
+                this.hero.sprite.play('flystill');
 
-            if (Math.abs(this.heroStick.speed.x) > 0 || Math.abs(this.heroStick.speed.y) > 0) {
-                this.hero.move(this.heroStick.speed);
+                if (this.heroStick.cursors.right) {
+                    return new StateSprint(this.game, this.hero);
+                }
+
+                //If fire on idle. Fire and remain in same state
+                if (this.fireButton.pressed) {
+                    this.hero.fire();
+                }
+
+                if (!this.heroStick.receivingInput()) {
+                    return new StateIdle(this.game, this.hero);
+                }
             }
-            this.hero.sprite.play('flystill');
-
-            if (this.heroStick.cursors.right) {
-                return new StateSprint(this.game, this.hero);
-            }
-
-            //If fire on idle. Fire and remain in same state
-            if (this.fireButton.pressed) {
-                this.hero.fire();
-            }
-
-            if (!this.heroStick.receivingInput()) {
-                return new StateIdle(this.game, this.hero);
-            }
-
             return this;
         }
 
@@ -131,28 +132,28 @@ module Superhero {
     export class StateSprint extends BaseState{
 
         public update ():CharState {
+            if(this.hero.isAlive) {
+                this.hero.sprite.play('fly');
+                //var speed = this.heroStick.speed;
+                //speed.x *= 2;
 
-            this.hero.sprite.play('fly');
-            //var speed = this.heroStick.speed;
-            //speed.x *= 2;
+                if (Math.abs(this.heroStick.speed.x) > 0 || Math.abs(this.heroStick.speed.y) > 0) {
+                    this.hero.move(this.heroStick.speed);
+                }
 
-            if (Math.abs(this.heroStick.speed.x) > 0 || Math.abs(this.heroStick.speed.y) > 0) {
-                this.hero.move(this.heroStick.speed);
+                //If fire on idle. Fire and remain in same state
+                if (this.fireButton.pressed) {
+                    this.hero.fire();
+                }
+
+                if (!this.heroStick.receivingInput()) {
+                    return new StateIdle(this.game, this.hero);
+                }
+
+                if (!this.heroStick.cursors.right) {
+                    return new StateFly(this.game, this.hero);
+                }
             }
-
-            //If fire on idle. Fire and remain in same state
-            if (this.fireButton.pressed) {
-                this.hero.fire();
-            }
-
-            if (!this.heroStick.receivingInput()) {
-                return new StateIdle(this.game, this.hero);
-            }
-
-            if (!this.heroStick.cursors.right) {
-                return new StateFly(this.game, this.hero);
-            }
-
             return this;
         }
 
@@ -175,7 +176,9 @@ module Superhero {
         }
 
         public update ():CharState {
-            this.hero.fire();
+            if(this.hero.isAlive) {
+                this.hero.fire();
+            }
             return this;
         }
 
