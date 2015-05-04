@@ -125,7 +125,7 @@ module Obstacles {
 		setObstaclesEmitter(): void {
 			this.obstacleEmitter = this.game.add.emitter();
 			this.obstacleEmitter.makeParticles('meteors', 'brown10');
-			this.obstacleEmitter.gravity = 200;
+			this.obstacleEmitter.gravity = 0;
 		}
 
 		particleBurst() {
