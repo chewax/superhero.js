@@ -37,9 +37,9 @@ module Superhero {
             this.setBaseStage();
             this.configureInput();
             this.setActors();
-            //this.startMusic();
+            this.startMusic();
 
-            //this.debug = new Debug(this.game);
+            this.debug = new Debug(this.game);
             //this.game.time.events.add(this.game.rnd.integerInRange(5000, 20000), this.createPowerUp, this);
 
         }
@@ -52,7 +52,7 @@ module Superhero {
             this.hero.update();
             this.badie.update();
             this.ui.update();
-            //this.debug.update();
+            this.debug.update();
 
             //Obstacles
             this.obstacleGenerator();
@@ -65,10 +65,6 @@ module Superhero {
 
 
         setBaseStage():void {
-
-            //Setup Farthest
-            this.background = this.game.add.tileSprite(-1,-1,1800,600,'farback');
-            this.background.autoScroll(-60,0);
 
             //Setup paralax layer
             this.paralax1 = this.game.add.tileSprite(0,0,1800,600, 'starfield');
@@ -98,15 +94,12 @@ module Superhero {
         }
 
 
-
         setPowerUps(): void {
             this.fuelPowerUps = this.game.add.group();
             this.fuelPowerUps.classType = Collectables.FuelPowerUps;
             this.fuelPowerUps.enableBody = true;
             this.fuelPowerUps.createMultiple(1,'heart');
         }
-
-
 
 
         createPowerUp(): void {
@@ -135,7 +128,7 @@ module Superhero {
 
         checkForCollisions(): void {
 
-            this.hero.diesWithGroup(this.badie.bullets);
+            //this.hero.diesWithGroup(this.badie.bullets);
 
             this.hero.collideWithObject(this.hero.shadow);
             this.hero.collectsGroup(this.fuelPowerUps);
