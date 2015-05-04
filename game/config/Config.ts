@@ -30,6 +30,7 @@ module Superhero {
 
         world: IWorldConfig;
         physics: IPhysicsConfig;
+        playerDieOutofBounds: boolean;
 
         constructor () {
 
@@ -56,6 +57,8 @@ module Superhero {
                     drag: 1500
                 }
             }
+
+            this.playerDieOutofBounds = false;
 
         }
 

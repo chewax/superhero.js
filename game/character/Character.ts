@@ -33,7 +33,6 @@ module Superhero {
         bulletTimer: number;
         facing: Facing;
         _state: Superhero.CharState;
-        isAlive : boolean;
 
         bulletVelocity: number = 1000;
         floor: number;
@@ -52,7 +51,6 @@ module Superhero {
             this._state = new Superhero.StateIdle(game, this);
             this.facing = Facing.LEFT;
             this.allowFingerMargin = false;
-            this.isAlive = true;
             
             this.initSprite(assetKey,x,y);
             this.initPhysics();
@@ -80,8 +78,9 @@ module Superhero {
         initSprite (assetKey:string, x:number, y:number):void {
             this.sprite = this.game.add.sprite(x, y, assetKey, 'stand1');
             this.sprite.anchor.setTo(0.5,0);
-
             this.sprite.scale.setTo((<Superhero.Game> this.game).conf.world.sprite_scaling);
+            this.sprite.checkWorldBounds = this.game.conf.playerDieOutofBounds;
+            this.sprite.outOfBoundsKill = this.game.conf.playerDieOutofBounds;
         }
 
         /**
@@ -90,6 +89,7 @@ module Superhero {
         initPhysics ():void {
             this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
             this.sprite.body.collideWorldBounds = true;
+
             this.sprite.body.gravity.y = (<Superhero.Game> this.game).conf.physics.player.gravity.y;
             this.sprite.body.drag.x = (<Superhero.Game> this.game).conf.physics.player.drag;
             this.sprite.body.drag.y = (<Superhero.Game> this.game).conf.physics.player.drag;
@@ -306,7 +306,7 @@ module Superhero {
          * @param {any}           object An instance of the collided object
          */
         die (char:Phaser.Sprite, object:any) {
-            this.isAlive = false;
+            this.sprite.alive = false;
             char.play('takehit',4,false,true);
             object.kill();
 

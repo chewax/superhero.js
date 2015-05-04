@@ -73,7 +73,7 @@ module Superhero {
     export class StateIdle extends BaseState{
 
         public update ():CharState {
-            if(this.hero.isAlive) {
+            if(this.hero.sprite.alive) {
                 //If fire on idle. Fire and remain in same state
                 if (this.fireButton.pressed) {
                     this.hero.fire();
@@ -99,7 +99,7 @@ module Superhero {
 
         public update ():CharState {
 
-            if(this.hero.isAlive) {
+            if(this.hero.sprite.alive) {
                 if (Math.abs(this.heroStick.speed.x) > 0 || Math.abs(this.heroStick.speed.y) > 0) {
                     this.hero.move(this.heroStick.speed);
                 }
@@ -132,7 +132,7 @@ module Superhero {
     export class StateSprint extends BaseState{
 
         public update ():CharState {
-            if(this.hero.isAlive) {
+            if(this.hero.sprite.alive) {
                 this.hero.sprite.play('fly');
                 //var speed = this.heroStick.speed;
                 //speed.x *= 2;
@@ -176,7 +176,7 @@ module Superhero {
         }
 
         public update ():CharState {
-            if(this.hero.isAlive) {
+            if(this.hero.sprite.alive) {
                 this.hero.fire();
             }
             return this;

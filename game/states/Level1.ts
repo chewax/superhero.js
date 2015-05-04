@@ -2,7 +2,7 @@
 /// <reference path="../character/Hero.ts"/>
 /// <reference path="../character/Badie.ts"/>
 /// <reference path="../utils/Debug.ts"/>
-/// <reference path="../utils/Config.ts"/>
+/// <reference path="../config/Config.ts"/>
 /// <reference path="../ui/UI.ts"/>
 /// <reference path="../core/Game.ts"/>
 /// <reference path="../plugins/Gamepad.ts"/>
