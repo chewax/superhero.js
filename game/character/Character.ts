@@ -78,8 +78,9 @@ module Superhero {
         initSprite (assetKey:string, x:number, y:number):void {
             this.sprite = this.game.add.sprite(x, y, assetKey, 'stand1');
             this.sprite.anchor.setTo(0.5,0);
-
             this.sprite.scale.setTo((<Superhero.Game> this.game).conf.world.sprite_scaling);
+            this.sprite.checkWorldBounds = this.game.conf.playerDieOutofBounds;
+            this.sprite.outOfBoundsKill = this.game.conf.playerDieOutofBounds;
         }
 
         /**
@@ -88,6 +89,7 @@ module Superhero {
         initPhysics ():void {
             this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
             this.sprite.body.collideWorldBounds = true;
+
             this.sprite.body.gravity.y = (<Superhero.Game> this.game).conf.physics.player.gravity.y;
             this.sprite.body.drag.x = (<Superhero.Game> this.game).conf.physics.player.drag;
             this.sprite.body.drag.y = (<Superhero.Game> this.game).conf.physics.player.drag;
@@ -97,7 +99,6 @@ module Superhero {
          * Wraps the left movement logic
          */
         moveLeft ():void{
-
             this.sprite.body.velocity.x = -500;
         }
 
@@ -127,18 +128,16 @@ module Superhero {
          * Wraps the mid air flight logic
          */
         flyStill (): void {
-
             if (this.sprite.animations.currentAnim.isFinished){
                 this.sprite.play('flystill');
             }
         }
 
         move (speed:{x:number ; y:number}): void {
+                if (this.allowFingerMargin && (this.sprite.x <= this.game.width / 2 && speed.x < 0)) speed.x = 0;
 
-            if (this.allowFingerMargin && (this.sprite.x <= this.game.width/2 && speed.x < 0)) speed.x = 0;
-
-            this.sprite.body.velocity.x = speed.x;
-            if (this.fuel) this.sprite.body.velocity.y = speed.y;
+                this.sprite.body.velocity.x = speed.x;
+                if (this.fuel) this.sprite.body.velocity.y = speed.y;
         }
 
         /**
@@ -153,37 +152,36 @@ module Superhero {
          * its position and sendit fo fly
          */
         fire (): void {
+                //Thou shalt only shoot if there is no shooting in progress
+                if (this.sprite.animations.currentAnim.name != 'shoot' || this.sprite.animations.currentAnim.isFinished) {
 
-            //Thou shalt only shoot if there is no shooting in progress
-            if (this.sprite.animations.currentAnim.name != 'shoot' || this.sprite.animations.currentAnim.isFinished) {
+                    //Check for shootRate
+                    var elapsedTime = this.game.time.elapsedSince(this.bulletTimer);
+                    if (elapsedTime < this.shootDelay) return;
 
-                //Check for shootRate
-                var elapsedTime = this.game.time.elapsedSince(this.bulletTimer);
-                if (elapsedTime < this.shootDelay) return;
+                    this.sprite.animations.play('shoot');
 
-                this.sprite.animations.play('shoot');
+                    for (var i = 0; i < this.firePower; i++) {
 
-                for (var i=0; i<this.firePower; i++) {
+                        //Get the first bullet that has gone offscreen
+                        var bullet = this.bullets.getFirstDead();
 
-                    //Get the first bullet that has gone offscreen
-                    var bullet = this.bullets.getFirstDead();
+                        //If there is none (all are still flying) create new one.
+                        if (!bullet) bullet = this.bullets.create(-10, -10, 'bullets', 'bullet1');
 
-                    //If there is none (all are still flying) create new one.
-                    if (!bullet) bullet = this.bullets.create(-10,-10, 'bullets','bullet1');
+                        bullet.anchor.setTo(0.5, 1);
+                        bullet.reset(this.sprite.x + (this.facing * 40), this.sprite.y + (10 * i + 1));
+                        bullet.checkWorldBounds = true;
+                        bullet.outOfBoundsKill = true;
+                        bullet.body.velocity.x = this.bulletVelocity;
+                        bullet.body.allowGravity = false;
+                        bullet.scale.setTo((<Superhero.Game> this.game).conf.world.sprite_scaling);
+                    }
 
-                    bullet.anchor.setTo(0.5, 1);
-                    bullet.reset(this.sprite.x + (this.facing * 40), this.sprite.y + (10 * i+1));
-                    bullet.checkWorldBounds = true;
-                    bullet.outOfBoundsKill = true;
-                    bullet.body.velocity.x = this.bulletVelocity;
-                    bullet.body.allowGravity = false;
-                    bullet.scale.setTo((<Superhero.Game> this.game).conf.world.sprite_scaling);
+
+                    //Reset the timer
+                    this.bulletTimer = this.game.time.time;
                 }
-
-
-                //Reset the timer
-                this.bulletTimer = this.game.time.time;
-            }
         }
 
         /**
@@ -199,10 +197,10 @@ module Superhero {
             this.sprite.animations.add('stop',['hit1'], 3, false, false);
 
             this.sprite.events.onAnimationComplete.add(function () {
-
-                this.sprite.animations.stop();
-                this.flyStill();
-
+                if(this.isAlive) {
+                    this.sprite.animations.stop();
+                    this.flyStill();
+                }
             }, this);
         }
 
@@ -308,7 +306,7 @@ module Superhero {
          * @param {any}           object An instance of the collided object
          */
         die (char:Phaser.Sprite, object:any) {
-
+            this.sprite.alive = false;
             char.play('takehit',4,false,true);
             object.kill();
 
