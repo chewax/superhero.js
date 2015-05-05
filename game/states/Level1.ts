@@ -23,6 +23,7 @@ module Superhero {
         ui: Superhero.UI;
         theme: Phaser.Sound;
         wall: Obstacles.WallObstacle;
+        obstacleEmitter: Phaser.Particles.Arcade.Emitter;
         obstacleTimer: number;
 
         preload () {
@@ -37,9 +38,9 @@ module Superhero {
             this.setBaseStage();
             this.configureInput();
             this.setActors();
-            //this.startMusic();
+            this.startMusic();
 
-            //this.debug = new Debug(this.game);
+            this.debug = new Debug(this.game);
             //this.game.time.events.add(this.game.rnd.integerInRange(5000, 20000), this.createPowerUp, this);
 
         }
@@ -52,7 +53,7 @@ module Superhero {
             this.hero.update();
             this.badie.update();
             this.ui.update();
-            //this.debug.update();
+            this.debug.update();
 
             //Obstacles
             this.obstacleGenerator();
@@ -66,10 +67,6 @@ module Superhero {
 
         setBaseStage():void {
 
-            //Setup Farthest
-            this.background = this.game.add.tileSprite(-1,-1,1800,600,'farback');
-            this.background.autoScroll(-60,0);
-
             //Setup paralax layer
             this.paralax1 = this.game.add.tileSprite(0,0,1800,600, 'starfield');
             this.paralax1.autoScroll(-100,0);
@@ -81,6 +78,9 @@ module Superhero {
 
             //Setup powerups
             this.setPowerUps();
+
+            //Set obstacleEmitter
+            this.setObstaclesEmitter();
 
         }
 
@@ -98,15 +98,12 @@ module Superhero {
         }
 
 
-
         setPowerUps(): void {
             this.fuelPowerUps = this.game.add.group();
             this.fuelPowerUps.classType = Collectables.FuelPowerUps;
             this.fuelPowerUps.enableBody = true;
             this.fuelPowerUps.createMultiple(1,'heart');
         }
-
-
 
 
         createPowerUp(): void {
@@ -135,7 +132,7 @@ module Superhero {
 
         checkForCollisions(): void {
 
-            this.hero.diesWithGroup(this.badie.bullets);
+            //this.hero.diesWithGroup(this.badie.bullets);
 
             this.hero.collideWithObject(this.hero.shadow);
             this.hero.collectsGroup(this.fuelPowerUps);
@@ -160,6 +157,24 @@ module Superhero {
             }
         }
 
+        setObstaclesEmitter(): void {
+            this.obstacleEmitter = this.game.add.emitter();
+            this.obstacleEmitter.makeParticles('meteors', 'brown10');
+            this.obstacleEmitter.gravity = 0;
+        }
+
+        particleBurst(pointer) {
+            //  Position the emitter where the mouse/touch event was
+            this.obstacleEmitter.x = pointer.x;
+            this.obstacleEmitter.y = pointer.y;
+
+            //  The first parameter sets the effect to "explode" which means all particles are emitted at once
+            //  The second gives each particle a lifespan
+            //  The third is ignored when using burst/explode mode
+            //  The final parameter  is how many particles will be emitted in this single burst
+            this.obstacleEmitter.start(true, 2000, null, 4);
+        }
+
         killWall(wall:Phaser.Sprite, bullet:Phaser.Sprite):void{
 
             var wallX = wall.x;
@@ -170,6 +185,7 @@ module Superhero {
                 //one out of 20 must drop something
                 if (this.game.rnd.integerInRange(0,20) == 10) this.spawnPU(wallX, wallY);
                 this.ui.scoreUp(50);
+                this.particleBurst(wall);
             }
 
             bullet.kill();

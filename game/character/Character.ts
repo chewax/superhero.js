@@ -79,8 +79,8 @@ module Superhero {
             this.sprite = this.game.add.sprite(x, y, assetKey, 'stand1');
             this.sprite.anchor.setTo(0.5,0);
             this.sprite.scale.setTo((<Superhero.Game> this.game).conf.world.sprite_scaling);
-            this.sprite.checkWorldBounds = this.game.conf.playerDieOutofBounds;
-            this.sprite.outOfBoundsKill = this.game.conf.playerDieOutofBounds;
+            this.sprite.checkWorldBounds = (<Superhero.Game> this.game).conf.playerDieOutofBounds;
+            this.sprite.outOfBoundsKill = (<Superhero.Game> this.game).conf.playerDieOutofBounds;
         }
 
         /**
