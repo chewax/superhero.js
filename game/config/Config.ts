@@ -33,33 +33,18 @@ module Superhero {
         playerDieOutofBounds: boolean;
 
         constructor () {
+            // Parse JSON values from game config file path
+            this.world = JSON.parse(this.getRemote()).world;
+            this.physics = JSON.parse(this.getRemote()).physics;
+            this.playerDieOutofBounds = JSON.parse(this.getRemote()).playerDieOutofBounds;
+        }
 
-            this.world = {
-
-                width: 1200,
-                height: 550,
-                sprite_scaling: 0.3
-            };
-
-            this.physics = {
-
-                global: {
-                    gravity: {x: 0, y: 0}
-                },
-
-                player: {
-                    gravity: {x: 0, y: 0},
-                    drag: 700
-                },
-
-                npc: {
-                    gravity: {x: 0, y: 1500},
-                    drag: 1500
-                }
-            }
-
-            this.playerDieOutofBounds = false;
-
+        getRemote(): string {
+            return $.ajax({
+                type: "GET",
+                url: "game/config/config.json",
+                async: false
+            }).responseText;
         }
     }
 }
