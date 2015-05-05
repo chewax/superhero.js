@@ -6,7 +6,7 @@
 /// <reference path="../ui/UI.ts"/>
 /// <reference path="../core/Game.ts"/>
 /// <reference path="../plugins/Gamepad.ts"/>
-/// <reference path="../obstacles/Obstacles.ts"/>
+/// <reference path="../obstacles/ObstacleManager.ts"/>
 /// <reference path="../collectables/Collectables.ts"/>
 
 
@@ -22,9 +22,8 @@ module Superhero {
         debug: Superhero.Debug;
         ui: Superhero.UI;
         theme: Phaser.Sound;
-        wall: Obstacles.WallObstacle;
-        obstacleEmitter: Phaser.Particles.Arcade.Emitter;
-        obstacleTimer: number;
+        obstacleManager: Obstacles.ObstacleManager;
+
 
         preload () {
 
@@ -56,7 +55,7 @@ module Superhero {
             this.debug.update();
 
             //Obstacles
-            this.obstacleGenerator();
+            this.obstacleManager.update();
         }
 
         configurePhysics():void {
@@ -71,16 +70,12 @@ module Superhero {
             this.paralax1 = this.game.add.tileSprite(0,0,1800,600, 'starfield');
             this.paralax1.autoScroll(-100,0);
 
-            //Setup Wall Obstacle
-    	    this.wall = new Obstacles.WallObstacle(this.game);
-            this.obstacleTimer = this.game.time.time;
-
+            //Setup Obstacle
+            this.obstacleManager = new Obstacles.ObstacleManager(this.game);
+            this.obstacleManager.addObstacleToPool(Obstacles.ObstacleType.WALL);
 
             //Setup powerups
             this.setPowerUps();
-
-            //Set obstacleEmitter
-            this.setObstaclesEmitter();
 
         }
 
@@ -137,58 +132,31 @@ module Superhero {
             this.hero.collideWithObject(this.hero.shadow);
             this.hero.collectsGroup(this.fuelPowerUps);
 
-            this.hero.collideWithGroup(this.wall.upperObstacle.group);
-            this.hero.collideWithGroup(this.wall.lowerObstacle.group);
-
-            this.game.physics.arcade.overlap(this.wall.lowerObstacle.group, this.hero.bullets, this.killWall, null, this);
-            this.game.physics.arcade.overlap(this.wall.upperObstacle.group, this.hero.bullets, this.killWall, null, this);
+            this.obstacleManager.collidesWith(this.hero.sprite);
+            this.obstacleManager.diesWith(this.hero.bullets, this.killWall, this);
 
             this.badie.collideWithObject(this.badie.shadow);
             this.badie.diesWithGroup(this.hero.bullets);
 
         }
 
-        obstacleGenerator(): void {
-            var elapsedTime = this.game.time.elapsedSince(this.obstacleTimer);
 
-            if (elapsedTime > 1500 ) {
-                this.wall.resetAndRoll(30,-150);
-                this.obstacleTimer = this.game.time.time;
-            }
-        }
+        killWall(bullet:Phaser.Sprite, wall:Phaser.Sprite):void{
 
-        setObstaclesEmitter(): void {
-            this.obstacleEmitter = this.game.add.emitter();
-            this.obstacleEmitter.makeParticles('meteors', 'brown10');
-            this.obstacleEmitter.gravity = 0;
-        }
+            bullet.kill();
 
-        particleBurst(pointer) {
-            //  Position the emitter where the mouse/touch event was
-            this.obstacleEmitter.x = pointer.x;
-            this.obstacleEmitter.y = pointer.y;
+            if (wall.frameName == "grey5") return;
 
-            //  The first parameter sets the effect to "explode" which means all particles are emitted at once
-            //  The second gives each particle a lifespan
-            //  The third is ignored when using burst/explode mode
-            //  The final parameter  is how many particles will be emitted in this single burst
-            this.obstacleEmitter.start(true, 2000, null, 4);
-        }
-
-        killWall(wall:Phaser.Sprite, bullet:Phaser.Sprite):void{
 
             var wallX = wall.x;
             var wallY = wall.y;
 
-            if (!(wall.frameName == "grey5")) {
-                wall.kill();
-                //one out of 20 must drop something
-                if (this.game.rnd.integerInRange(0,20) == 10) this.spawnPU(wallX, wallY);
-                this.ui.scoreUp(50);
-                this.particleBurst(wall);
-            }
+            wall.kill();
+            //one out of 20 must drop something
+            if (this.game.rnd.integerInRange(0,20) == 10) this.spawnPU(wallX, wallY);
+            this.ui.scoreUp(50);
+            this.obstacleManager.particleBurst(wall);
 
-            bullet.kill();
         }
 
     }

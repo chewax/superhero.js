@@ -8,7 +8,7 @@ module Obstacles {
 		group: Phaser.Group;
 		
 		
-		constructor (game:Phaser.Game, n:number){
+		constructor (game:Phaser.Game){
 			this.game = game;
 			this.group = this.game.add.group();
 			this.group.enableBody = true;
@@ -17,6 +17,8 @@ module Obstacles {
 		}
 		
 		resetAndRoll(n:number, speed:number):void{ }
+		collidesWith(object:any):void{ }
+        diesWith(object:any, callback?: Function, listenerContext?: any){}
 	}
 	
 	export class WallObstacle extends Obstacle {
@@ -25,9 +27,9 @@ module Obstacles {
 		lowerObstacle: Obstacles.LowerObstacle;
 		
 		constructor(game:Phaser.Game){
-			super(game, 30);
-			this.upperObstacle = new UpperObstacle(game, 15);
-			this.lowerObstacle = new LowerObstacle(game, 15); 
+			super(game);
+			this.upperObstacle = new UpperObstacle(game);
+			this.lowerObstacle = new LowerObstacle(game);
 		}
 		
 		resetAndRoll(n:number, speed:number):void{
@@ -43,6 +45,16 @@ module Obstacles {
 			this.upperObstacle.resetAndRoll(top, speed);
 			this.lowerObstacle.resetAndRoll(low, speed);
 		}
+
+        collidesWith(object:any):void{
+            this.lowerObstacle.collidesWith(object);
+            this.upperObstacle.collidesWith(object);
+        }
+
+        diesWith(object:any, callback?: Function, listenerContext?: any){
+            this.lowerObstacle.diesWith(object, callback, listenerContext);
+            this.upperObstacle.diesWith(object, callback, listenerContext);
+        }
 		
 	}
 	
@@ -74,9 +86,15 @@ module Obstacles {
 				item.checkWorldBounds = true;
             	item.outOfBoundsKill = true;
 			}
-
-
 		}
+
+        collidesWith(object:any):void{
+            this.game.physics.arcade.collide(object, this.group);
+        }
+
+        diesWith(object:any, callback?: Function, listenerContext?: any){
+            this.game.physics.arcade.overlap(object, this.group, callback, null, listenerContext);
+        }
 		
 	}
 	
@@ -109,6 +127,14 @@ module Obstacles {
                 item.checkWorldBounds = true;
                 item.outOfBoundsKill = true;
             }
+        }
+
+        collidesWith(object:any):void{
+            this.game.physics.arcade.collide(object, this.group);
+        }
+
+        diesWith(object:any, callback?: Function, listenerContext?: any){
+            this.game.physics.arcade.overlap(object, this.group, callback, null, listenerContext);
         }
 	}
 

@@ -61,6 +61,5 @@ module Superhero {
             this.playerDieOutofBounds = false;
 
         }
-
     }
 }
