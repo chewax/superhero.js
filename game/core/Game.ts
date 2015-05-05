@@ -5,6 +5,7 @@
 /// <reference path="../states/Level1.ts"/>
 /// <reference path="../config/Config.ts"/>
 /// <reference path="../plugins/GamePad.ts"/>
+/// <reference path="../../lib/jquery.d.ts" />
 
 
 module Superhero{
