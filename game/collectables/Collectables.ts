@@ -4,19 +4,38 @@
 module Collectables {
 
     export interface Collectable extends Phaser.Sprite{
-        updateCharacter(character: Superhero.Character);
+
+        spawnAt ( x:number, y:number ): void;
+        collect ( character: Superhero.Character ): void;
+        overlapWithChar ( character: Superhero.Character): void;
     }
 
-    export class FuelPowerUps extends Phaser.Sprite implements Collectable{
+    export class ImproveFirePower extends Phaser.Sprite implements Collectable{
 
-        //In Pertentage
-        potency: number = 50;
         constructor(game: Phaser.Game){
+            super(game,100,100,'heart','frame-1');
+            this.initAnimations();
+            this.initPhysics();
+        }
 
-            super(game,-10,-10,'heart','frame-1');
-
+        initAnimations(){
             var anim = this.animations.add('base',['frame-1','frame-2','frame-3','frame-4','frame-5','frame-6','frame-7','frame-8'], 10, false, false);
             anim.onComplete.add(this.restartAnimation,this);
+        }
+
+        initPhysics(){
+            this.game.physics.enable(this, Phaser.Physics.ARCADE);
+            this.alive = false;
+            this.visible = false;
+            this.checkWorldBounds = true;
+            this.outOfBoundsKill = true;
+        }
+
+        spawnAt ( x:number, y:number ): void {
+            //this.revive();
+            this.reset(x,y);
+            this.restartAnimation();
+            this.resetFloatation();
         }
 
         restartAnimation(){
@@ -25,20 +44,22 @@ module Collectables {
             }.bind(this), 1000);
         }
 
-        resetFloatation(speed:number = -100, tween:boolean = true){
-            this.restartAnimation();
-            if (tween) this.game.add.tween(this).to( {y:'+100'} , 1500, Phaser.Easing.Sinusoidal.InOut, true , 400, -1 , true);
+        resetFloatation ( speed:number = 10, tween:boolean = true ) {
             this.body.velocity.x = speed;
             this.scale.setTo(0.1);
-            this.checkWorldBounds = true;
-            this.outOfBoundsKill = true;
+            if (tween) this.game.add.tween(this).to( {y:'+100'} , 1500, Phaser.Easing.Sinusoidal.InOut, true , 400, -1 , true);
+
         }
 
-        updateCharacter(character: Superhero.Character){
-            character.fuel += character.maxFuel * this.potency / 100;
-            if (character.fuel > character.maxFuel) character.fuel = character.maxFuel;
-
+        collect( character: Superhero.Character ) {
             if (character.firePower < 5) character.firePower += 1;
+        }
+
+        overlapWithChar (character: Superhero.Character){
+            if (this.game.physics.arcade.overlap(character.sprite, this)) {
+                this.kill();
+                this.collect(character);
+            }
 
         }
 

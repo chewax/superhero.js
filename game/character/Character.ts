@@ -318,7 +318,7 @@ module Superhero {
          * @param {any}           object An instance of the collided object
          */
         collect (char:Phaser.Sprite, object:Collectables.Collectable) {
-            object.updateCharacter(this);
+            object.collect(this);
             object.kill();
         }
 

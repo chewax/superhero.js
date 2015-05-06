@@ -30,6 +30,6 @@
     }
   },
 
-  "playerDieOutofBounds": true
+  "playerDieOutofBounds": false
 
 }
