@@ -32,7 +32,7 @@ module Collectables {
         }
 
         spawnAt ( x:number, y:number ): void {
-            this.revive();
+            //this.revive();
             this.reset(x,y);
             this.restartAnimation();
             this.resetFloatation();
@@ -44,10 +44,11 @@ module Collectables {
             }.bind(this), 1000);
         }
 
-        resetFloatation ( speed:number = 20, tween:boolean = true ) {
-            if (tween) this.game.add.tween(this).to( {y:'+100'} , 1500, Phaser.Easing.Sinusoidal.InOut, true , 400, -1 , true);
+        resetFloatation ( speed:number = 10, tween:boolean = true ) {
             this.body.velocity.x = speed;
             this.scale.setTo(0.1);
+            if (tween) this.game.add.tween(this).to( {y:'+100'} , 1500, Phaser.Easing.Sinusoidal.InOut, true , 400, -1 , true);
+
         }
 
         collect( character: Superhero.Character ) {

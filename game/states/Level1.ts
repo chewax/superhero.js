@@ -19,7 +19,7 @@ module Superhero {
         badie: Superhero.Badie;
         background: Phaser.TileSprite;
         paralax1: Phaser.TileSprite;
-        fuelPowerUps: Phaser.Group;
+
         debug: Superhero.Debug;
         ui: Superhero.UI;
         theme: Phaser.Sound;
@@ -123,6 +123,7 @@ module Superhero {
             if (wall.frameName == "grey5") return;
 
             wall.kill();
+
             //one out of 20 must drop something
             this.collectableManager.spawnCollectable(wall);
             this.ui.scoreUp(50);
