@@ -1,0 +1,25 @@
+{
+  "easyLapse": {
+    "startsAt": 0,
+    "finishAt": 20000,
+    "spawnDelay": 1000,
+    "enemyTypesAllowed": [0],
+    "maxEnemiesAtStage": 2
+  },
+
+  "mediumLapse": {
+    "startsAt": 20001,
+    "finishAt": 40000,
+    "spawnDelay": 1000,
+    "enemyTypesAllowed": [0, 1],
+    "maxEnemiesAtStage": 2
+  },
+
+  "hardLapse": {
+    "startsAt": 40001,
+    "finishAt": -1,
+    "spawnDelay": 1000,
+    "enemyTypesAllowed": [0, 1, 2],
+    "maxEnemiesAtStage": 3
+  }
+}

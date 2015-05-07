@@ -1,6 +1,7 @@
 /// <reference path="../../lib/phaser.d.ts"/>
 /// <reference path="../character/Hero.ts"/>
-/// <reference path="../character/Badie.ts"/>
+/// <reference path="../character/EnemyBase.ts"/>
+/// <reference path="../character/EnemyManager.ts"/>
 /// <reference path="../utils/Debug.ts"/>
 /// <reference path="../config/Config.ts"/>
 /// <reference path="../ui/UI.ts"/>
@@ -15,7 +16,6 @@ module Superhero {
     export class Level1 extends Phaser.State {
 
         hero: Superhero.Hero;
-        badie: Superhero.Badie;
         background: Phaser.TileSprite;
         paralax1: Phaser.TileSprite;
         fuelPowerUps: Phaser.Group;
@@ -23,7 +23,7 @@ module Superhero {
         ui: Superhero.UI;
         theme: Phaser.Sound;
         obstacleManager: Obstacles.ObstacleManager;
-
+        enemyManager: Superhero.EnemyManager;
 
         preload () {
 
@@ -41,7 +41,6 @@ module Superhero {
 
             this.debug = new Debug(this.game);
             //this.game.time.events.add(this.game.rnd.integerInRange(5000, 20000), this.createPowerUp, this);
-
         }
 
         update () {
@@ -50,7 +49,8 @@ module Superhero {
 
             //Updates
             this.hero.update();
-            this.badie.update();
+
+            this.enemyManager.update();
             this.ui.update();
             this.debug.update();
 
@@ -66,15 +66,18 @@ module Superhero {
 
         setBaseStage():void {
 
-            //Setup paralax layer
+            // Setup paralax layer
             this.paralax1 = this.game.add.tileSprite(0,0,1800,600, 'starfield');
             this.paralax1.autoScroll(-100,0);
 
-            //Setup Obstacle
+            // Setup Obstacle
             this.obstacleManager = new Obstacles.ObstacleManager(this.game);
             this.obstacleManager.addObstacleToPool(Obstacles.ObstacleType.WALL);
 
-            //Setup powerups
+            // Setup enemy manager
+            this.enemyManager = new Superhero.EnemyManager(this.game);
+
+            // Setup powerups
             this.setPowerUps();
 
         }
@@ -88,7 +91,6 @@ module Superhero {
 
         setActors(): void {
             this.hero = new Hero(this.game);
-            this.badie = new Badie(this.game);
             this.ui = new Superhero.UI(this.game, this.hero);
         }
 
@@ -127,7 +129,11 @@ module Superhero {
 
         checkForCollisions(): void {
 
-            //this.hero.diesWithGroup(this.badie.bullets);
+            var enemies = this.enemyManager.enemies;
+
+            enemies.forEach((enmy) =>
+                this.hero.diesWithGroup(enmy.bullets)
+            );
 
             this.hero.collideWithObject(this.hero.shadow);
             this.hero.collectsGroup(this.fuelPowerUps);
@@ -135,18 +141,20 @@ module Superhero {
             this.obstacleManager.collidesWith(this.hero.sprite);
             this.obstacleManager.diesWith(this.hero.bullets, this.killWall, this);
 
-            this.badie.collideWithObject(this.badie.shadow);
-            this.badie.diesWithGroup(this.hero.bullets);
+            enemies.forEach((enmy) => {
+                enmy.collideWithObject(enmy.shadow);
+                enmy.diesWithGroup(this.hero.bullets);
+                this.obstacleManager.diesWith(enmy.bullets, this.killWall, this);
 
+            });
         }
 
 
-        killWall(bullet:Phaser.Sprite, wall:Phaser.Sprite):void{
+        killWall(bullet:Phaser.Sprite, wall:Phaser.Sprite): void {
 
             bullet.kill();
 
             if (wall.frameName == "grey5") return;
-
 
             var wallX = wall.x;
             var wallY = wall.y;

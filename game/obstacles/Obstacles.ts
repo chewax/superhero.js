@@ -20,7 +20,7 @@ module Obstacles {
 		collidesWith(object:any):void{ }
         diesWith(object:any, callback?: Function, listenerContext?: any){}
 	}
-	
+	// TODO: maybe we can have an specific ts file for each obstacle type
 	export class WallObstacle extends Obstacle {
 		
 		upperObstacle: Obstacles.UpperObstacle;

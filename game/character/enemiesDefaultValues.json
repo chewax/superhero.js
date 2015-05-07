@@ -1,0 +1,38 @@
+{
+  "easyEnemy": {
+    "assetsKey": "badie",
+    "facing": "left",
+    "bulletVelocity": 1000,
+    "sprite_scaling": 1,
+    "spawnLocation" : {"x": 150, "y": 100 },
+    "firePower": 5,
+    "shootDelay": 1600,
+    "fireType": "single",
+    "defaultState": "steady",
+    "defaultPatrolSpeed": 0.5
+  },
+
+  "mediumEnemy": {
+    "assetsKey": "badie",
+    "facing": "left",
+    "bulletVelocity": 1400,
+    "sprite_scaling": 1,
+    "spawnLocation" : {"x": -150, "y": 100 },
+    "shootDelay": 1300,
+    "fireType": "double",
+    "defaultState": "patrol",
+    "defaultPatrolSpeed": 0.8
+  },
+
+  "hardEnemy": {
+    "assetsKey": "badie",
+    "facing": "left",
+    "bulletVelocity": 1800,
+    "sprite_scaling": 1.2,
+    "spawnLocation" : {"x": -150, "y": 100 },
+    "shootDelay": 1000,
+    "fireType": "triple",
+    "defaultState": "patrol",
+    "defaultPatrolSpeed": 1
+  }
+}
