@@ -13,15 +13,15 @@ module Collectables {
     export class ImproveFirePower extends Phaser.Sprite implements Collectable{
 
         constructor(game: Phaser.Game){
-            super(game,100,100,'heart','frame-1');
-            this.initAnimations();
+            super(game,100,100,'pups','bullet');
+            //this.initAnimations();
             this.initPhysics();
         }
 
-        initAnimations(){
-            var anim = this.animations.add('base',['frame-1','frame-2','frame-3','frame-4','frame-5','frame-6','frame-7','frame-8'], 10, false, false);
-            anim.onComplete.add(this.restartAnimation,this);
-        }
+        //initAnimations(){
+        //    var anim = this.animations.add('base',['frame-1','frame-2','frame-3','frame-4','frame-5','frame-6','frame-7','frame-8'], 10, false, false);
+        //    anim.onComplete.add(this.restartAnimation,this);
+        //}
 
         initPhysics(){
             this.game.physics.enable(this, Phaser.Physics.ARCADE);
@@ -34,15 +34,15 @@ module Collectables {
         spawnAt ( x:number, y:number ): void {
             //this.revive();
             this.reset(x,y);
-            this.restartAnimation();
+            //this.restartAnimation();
             this.resetFloatation();
         }
 
-        restartAnimation(){
-            setTimeout(function(){
-                this.play('base');
-            }.bind(this), 1000);
-        }
+        //restartAnimation(){
+        //    setTimeout(function(){
+        //        this.play('base');
+        //    }.bind(this), 1000);
+        //}
 
         resetFloatation ( speed:number = 10, tween:boolean = true ) {
             this.body.velocity.x = speed;

@@ -71,7 +71,7 @@ module Superhero {
             this.paralax1.autoScroll(-100,0);
 
             //Setup Obstacle
-            this.obstacleManager = new Obstacles.ObstacleManager(this.game);
+            this.obstacleManager = new Obstacles.ObstacleManager(this.game, 2500);
             this.obstacleManager.addObstacleToPool(Obstacles.ObstacleType.WALL);
 
             this.collectableManager = new Collectables.CollectableManager(this.game);

@@ -67,5 +67,11 @@ module Superhero {
             return Array.apply(null, {length: size}).map(Number.call, Number);
         }
 
+
+        static groupConcat(group1:Phaser.Group, group2:Phaser.Group): Phaser.Group{
+            group1.children = group1.children.concat(group2.children);
+            return group1;
+        }
+
     }
 }
