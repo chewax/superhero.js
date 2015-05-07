@@ -119,10 +119,12 @@ module Superhero {
 
             //if (wall.frameName == "grey5") return;
 
+            //one out of 20 must drop something
+            this.collectableManager.spawnCollectable(wall.position.x, wall.position.y);
+
             wall.kill();
 
-            //one out of 20 must drop something
-            this.collectableManager.spawnCollectable(wall);
+
             this.obstacleManager.particleBurst(wall);
             this.ui.scoreUp(50);
         }

@@ -49,9 +49,10 @@ module Collectables {
 
         /**
          * Spawns a collectable where an object was standing.
-         * @param object - The object that will be superseeded
+         * @param x - X Coordinate
+         * @param y - Y Coordinate
          */
-        spawnCollectable(object:any){
+        spawnCollectable(x:number, y:number){
 
             // Randomly respawn 1 out of 20 times
             // if (this.game.rnd.integerInRange(0,12) != 10) return;
@@ -68,7 +69,7 @@ module Collectables {
             if (!coll) return;
             if (coll.alive) return;
 
-            coll.spawnAt(object.x, object.y);
+            coll.spawnAt(x, y);
         }
 
     }

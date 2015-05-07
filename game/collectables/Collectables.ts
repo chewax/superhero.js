@@ -4,19 +4,18 @@
 module Collectables {
 
     export interface Collectable extends Phaser.Sprite{
-
         spawnAt ( x:number, y:number ): void;
         collect ( character: Superhero.Character ): void;
         overlapWithChar ( character: Superhero.Character): void;
     }
 
-    export class ImproveFirePower extends Phaser.Sprite implements Collectable{
 
-        constructor(game: Phaser.Game){
-            super(game,100,100,'pups','bullet');
+    export class BaseCollectable extends Phaser.Sprite implements Collectable {
+
+        constructor(game: Phaser.Game, key:string){
+            super(game,100,100,'pups', key);
             this.initPhysics();
         }
-
 
         initPhysics(){
             this.game.physics.enable(this, Phaser.Physics.ARCADE);
@@ -27,72 +26,49 @@ module Collectables {
         }
 
         spawnAt ( x:number, y:number ): void {
-
-            this.scale.setTo(0.1);
+            this.scale.setTo(0.5);
             this.reset(x,y);
             this.resetFloatation();
-
         }
 
         resetFloatation ( speed:number = 10, tween:boolean = true ) {
             this.body.velocity.x = speed;
-            if (tween) this.game.add.tween(this).to( {y:'+100'} , 1500, Phaser.Easing.Sinusoidal.InOut, true , 400, -1 , true);
+            if (tween) this.game.add.tween(this).to( {y:'+50'} , 1500, Phaser.Easing.Sinusoidal.InOut, true , 0,  -1 , true);
+        }
 
+        collect( character: Superhero.Character ) {
+
+        }
+
+        overlapWithChar (character: Superhero.Character){
+            if (this.game.physics.arcade.overlap(character.sprite, this)) {
+                this.collect(character);
+                this.kill();
+            }
+        }
+
+    }
+
+    export class ImproveFirePower extends BaseCollectable {
+
+        constructor(game: Phaser.Game){
+            super(game, 'bullet');
         }
 
         collect( character: Superhero.Character ) {
             if (character.firePower < 5) character.firePower += 1;
         }
-
-        overlapWithChar (character: Superhero.Character){
-            if (this.game.physics.arcade.overlap(character.sprite, this)) {
-                this.kill();
-                this.collect(character);
-            }
-
-        }
-
     }
 
-    export class ImprovedShield extends Phaser.Sprite implements Collectable{
+
+    export class ImprovedShield extends BaseCollectable{
 
         constructor(game: Phaser.Game){
-            super(game,100,100,'pups','shield');
-            this.initPhysics();
-        }
-
-
-        initPhysics(){
-            this.game.physics.enable(this, Phaser.Physics.ARCADE);
-            this.alive = false;
-            this.visible = false;
-            this.checkWorldBounds = true;
-            this.outOfBoundsKill = true;
-        }
-
-        spawnAt ( x:number, y:number ): void {
-            this.scale.setTo(0.1);
-            this.reset(x,y);
-            this.resetFloatation();
-        }
-
-        resetFloatation ( speed:number = 10, tween:boolean = true ) {
-            this.body.velocity.x = speed;
-
-            if (tween) this.game.add.tween(this).to( {y:'+100'} , 1500, Phaser.Easing.Sinusoidal.InOut, true , 400, -1 , true);
-
+            super(game, 'shield');
         }
 
         collect( character: Superhero.Character ) {
             //if (character.firePower < 5) character.firePower += 1;
-        }
-
-        overlapWithChar (character: Superhero.Character){
-            if (this.game.physics.arcade.overlap(character.sprite, this)) {
-                this.kill();
-                this.collect(character);
-            }
-
         }
 
     }
