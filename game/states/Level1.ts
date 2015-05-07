@@ -80,7 +80,9 @@ module Superhero {
             this.collectableManager.addCollectable(Collectables.CollectableType.NUKE_BOMB);
             this.collectableManager.addCollectable(Collectables.CollectableType.TIME_WARP);
             this.collectableManager.addCollectable(Collectables.CollectableType.DIAMOND);
-            this.collectableManager.addCollectable(Collectables.CollectableType.DIAMOND);
+            this.collectableManager.addCollectable(Collectables.CollectableType.BOMB);
+            this.collectableManager.addCollectable(Collectables.CollectableType.INMUNITY);
+
 
         }
 

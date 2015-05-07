@@ -108,4 +108,30 @@ module Collectables {
         }
 
     }
+
+    export class Inmunity extends BaseCollectable{
+
+        constructor(game: Phaser.Game){
+            super(game, 'star');
+        }
+
+        collect( character: Superhero.Character ) {
+            //if (character.firePower < 5) character.firePower += 1;
+        }
+
+    }
+
+    export class Bomb extends BaseCollectable{
+
+        constructor(game: Phaser.Game){
+            super(game, 'rocket');
+        }
+
+        collect( character: Superhero.Character ) {
+            //if (character.firePower < 5) character.firePower += 1;
+        }
+
+    }
+
+
 }

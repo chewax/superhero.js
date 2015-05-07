@@ -10,7 +10,9 @@ module Collectables {
         NUKE_BOMB = 2,
         TIME_WARP = 3,
         COIN = 4,
-        DIAMOND = 5
+        DIAMOND = 5,
+        INMUNITY = 6,
+        BOMB = 7
     }
 
     export class CollectableManager {
@@ -43,12 +45,22 @@ module Collectables {
                     break;
 
                 case CollectableType.TIME_WARP:
-                    var item = new Collectables.ImprovedShield(this.game);
+                    var item = new Collectables.TimeWarp(this.game);
                     this.collectables.add(item);
                     break;
 
                 case CollectableType.DIAMOND:
                     var item = new Collectables.Diamond(this.game);
+                    this.collectables.add(item);
+                    break;
+
+                case CollectableType.INMUNITY:
+                    var item = new Collectables.Inmunity(this.game);
+                    this.collectables.add(item);
+                    break;
+
+                case CollectableType.BOMB:
+                    var item = new Collectables.Bomb(this.game);
                     this.collectables.add(item);
                     break;
 
