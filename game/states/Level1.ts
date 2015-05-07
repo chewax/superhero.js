@@ -9,6 +9,7 @@
 /// <reference path="../plugins/Gamepad.ts"/>
 /// <reference path="../obstacles/ObstacleManager.ts"/>
 /// <reference path="../collectables/Collectables.ts"/>
+/// <reference path="../collectables/CollectableManager.ts"/>
 
 
 module Superhero {
@@ -18,12 +19,12 @@ module Superhero {
         hero: Superhero.Hero;
         background: Phaser.TileSprite;
         paralax1: Phaser.TileSprite;
-        fuelPowerUps: Phaser.Group;
         debug: Superhero.Debug;
         ui: Superhero.UI;
         theme: Phaser.Sound;
         obstacleManager: Obstacles.ObstacleManager;
         enemyManager: Superhero.EnemyManager;
+        collectableManager: Collectables.CollectableManager;
 
         preload () {
 
@@ -37,10 +38,9 @@ module Superhero {
             this.setBaseStage();
             this.configureInput();
             this.setActors();
-            this.startMusic();
+            //this.startMusic();
 
             this.debug = new Debug(this.game);
-            //this.game.time.events.add(this.game.rnd.integerInRange(5000, 20000), this.createPowerUp, this);
         }
 
         update () {
@@ -52,7 +52,7 @@ module Superhero {
 
             this.enemyManager.update();
             this.ui.update();
-            this.debug.update();
+            //this.debug.update();
 
             //Obstacles
             this.obstacleManager.update();
@@ -70,16 +70,25 @@ module Superhero {
             this.paralax1 = this.game.add.tileSprite(0,0,1800,600, 'starfield');
             this.paralax1.autoScroll(-100,0);
 
-            // Setup Obstacle
-            this.obstacleManager = new Obstacles.ObstacleManager(this.game);
-            this.obstacleManager.addObstacleToPool(Obstacles.ObstacleType.WALL);
-
             // Setup enemy manager
             this.enemyManager = new Superhero.EnemyManager(this.game);
 
-            // Setup powerups
-            this.setPowerUps();
+            //Setup Obstacle
+            this.obstacleManager = new Obstacles.ObstacleManager(this.game, 2500);
+            this.obstacleManager.addObstacleToPool(Obstacles.ObstacleType.WALL);
 
+            this.initCollectables();
+        }
+
+        initCollectables(): void {
+            this.collectableManager = new Collectables.CollectableManager(this.game);
+            this.collectableManager.addCollectable(Collectables.CollectableType.IMPROVE_FIRE);
+            this.collectableManager.addCollectable(Collectables.CollectableType.IMPROVE_SHIELD);
+            this.collectableManager.addCollectable(Collectables.CollectableType.NUKE_BOMB);
+            this.collectableManager.addCollectable(Collectables.CollectableType.TIME_WARP);
+            this.collectableManager.addCollectable(Collectables.CollectableType.DIAMOND);
+            this.collectableManager.addCollectable(Collectables.CollectableType.BOMB);
+            this.collectableManager.addCollectable(Collectables.CollectableType.INMUNITY);
         }
 
 
@@ -95,33 +104,6 @@ module Superhero {
         }
 
 
-        setPowerUps(): void {
-            this.fuelPowerUps = this.game.add.group();
-            this.fuelPowerUps.classType = Collectables.FuelPowerUps;
-            this.fuelPowerUps.enableBody = true;
-            this.fuelPowerUps.createMultiple(1,'heart');
-        }
-
-
-        createPowerUp(): void {
-            this.game.time.events.add(this.game.rnd.integerInRange(5000, 20000), this.createPowerUp, this);
-            var pu = this.fuelPowerUps.getFirstDead();
-
-            if (pu) {
-                pu.reset(this.game.world.width, this.game.world.centerY - 200);
-                pu.resetFloatation();
-            }
-        }
-
-        spawnPU(x:number, y:number): void {
-            var pu = this.fuelPowerUps.getFirstDead();
-
-            if (pu) {
-                pu.reset(x, y);
-                pu.resetFloatation(-100,true);
-            }
-        }
-
         startMusic () :void{
             this.theme = this.game.add.audio('theme', 1, true);
             this.theme.play();
@@ -135,18 +117,18 @@ module Superhero {
                 this.hero.diesWithGroup(enmy.bullets)
             );
 
-            this.hero.collideWithObject(this.hero.shadow);
-            this.hero.collectsGroup(this.fuelPowerUps);
-
             this.obstacleManager.collidesWith(this.hero.sprite);
             this.obstacleManager.diesWith(this.hero.bullets, this.killWall, this);
+
 
             enemies.forEach((enmy) => {
                 enmy.collideWithObject(enmy.shadow);
                 enmy.diesWithGroup(this.hero.bullets);
                 this.obstacleManager.diesWith(enmy.bullets, this.killWall, this);
-
             });
+
+            this.collectableManager.checkCollectedBy(this.hero);
+
         }
 
 
@@ -156,15 +138,13 @@ module Superhero {
 
             if (wall.frameName == "grey5") return;
 
-            var wallX = wall.x;
-            var wallY = wall.y;
+            //one out of 20 must drop something
+            this.collectableManager.spawnCollectable(wall.position.x, wall.position.y);
 
             wall.kill();
-            //one out of 20 must drop something
-            if (this.game.rnd.integerInRange(0,20) == 10) this.spawnPU(wallX, wallY);
-            this.ui.scoreUp(50);
-            this.obstacleManager.particleBurst(wall);
 
+            this.obstacleManager.particleBurst(wall);
+            this.ui.scoreUp(50);
         }
 
     }

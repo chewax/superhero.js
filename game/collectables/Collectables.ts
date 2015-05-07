@@ -4,43 +4,134 @@
 module Collectables {
 
     export interface Collectable extends Phaser.Sprite{
-        updateCharacter(character: Superhero.Character);
+        spawnAt ( x:number, y:number ): void;
+        collect ( character: Superhero.Character ): void;
+        overlapWithChar ( character: Superhero.Character): void;
     }
 
-    export class FuelPowerUps extends Phaser.Sprite implements Collectable{
 
-        //In Pertentage
-        potency: number = 50;
-        constructor(game: Phaser.Game){
+    export class BaseCollectable extends Phaser.Sprite implements Collectable {
 
-            super(game,-10,-10,'heart','frame-1');
-
-            var anim = this.animations.add('base',['frame-1','frame-2','frame-3','frame-4','frame-5','frame-6','frame-7','frame-8'], 10, false, false);
-            anim.onComplete.add(this.restartAnimation,this);
+        constructor(game: Phaser.Game, key:string){
+            super(game,100,100,'pups', key);
+            this.initPhysics();
         }
 
-        restartAnimation(){
-            setTimeout(function(){
-                this.play('base');
-            }.bind(this), 1000);
-        }
-
-        resetFloatation(speed:number = -100, tween:boolean = true){
-            this.restartAnimation();
-            if (tween) this.game.add.tween(this).to( {y:'+100'} , 1500, Phaser.Easing.Sinusoidal.InOut, true , 400, -1 , true);
-            this.body.velocity.x = speed;
-            this.scale.setTo(0.1);
+        initPhysics(){
+            this.game.physics.enable(this, Phaser.Physics.ARCADE);
+            this.alive = false;
+            this.visible = false;
             this.checkWorldBounds = true;
             this.outOfBoundsKill = true;
         }
 
-        updateCharacter(character: Superhero.Character){
-            character.fuel += character.maxFuel * this.potency / 100;
-            if (character.fuel > character.maxFuel) character.fuel = character.maxFuel;
+        spawnAt ( x:number, y:number ): void {
+            this.scale.setTo(0.5);
+            this.reset(x,y);
+            this.resetFloatation();
+        }
 
-            if (character.firePower < 5) character.firePower += 1;
+        resetFloatation ( speed:number = 10, tween:boolean = true ) {
+            this.body.velocity.x = speed;
+            if (tween) this.game.add.tween(this).to( {y:'+50'} , 1500, Phaser.Easing.Sinusoidal.InOut, true , 0,  -1 , true);
+        }
+
+        collect( character: Superhero.Character ) {
 
         }
 
+        overlapWithChar (character: Superhero.Character){
+            if (this.game.physics.arcade.overlap(character.sprite, this)) {
+                this.collect(character);
+                this.kill();
+            }
+        }
+
     }
+
+    export class ImproveFirePower extends BaseCollectable {
+
+        constructor(game: Phaser.Game){
+            super(game, 'bullet');
+        }
+
+        collect( character: Superhero.Character ) {
+            if (character.firePower < 5) character.firePower += 1;
+        }
+    }
+
+
+    export class ImprovedShield extends BaseCollectable{
+
+        constructor(game: Phaser.Game){
+            super(game, 'shield');
+        }
+
+        collect( character: Superhero.Character ) {
+            if (character.shield < 5) character.shield += 1;
+        }
+
+    }
+
+    export class NukeBomb extends BaseCollectable{
+
+        constructor(game: Phaser.Game){
+            super(game, 'nuke');
+        }
+
+        collect( character: Superhero.Character ) {
+            character.nukes += 1;
+        }
+
+    }
+
+    export class TimeWarp extends BaseCollectable{
+
+        constructor(game: Phaser.Game){
+            super(game, 'clock');
+        }
+
+        collect( character: Superhero.Character ) {
+            character.timeWarps += 1;
+        }
+
+    }
+
+    export class Diamond extends BaseCollectable{
+
+        constructor(game: Phaser.Game){
+            super(game, 'diamond');
+        }
+
+        collect( character: Superhero.Character ) {
+            character.coins += 10;
+        }
+
+    }
+
+    export class Immunity extends BaseCollectable{
+
+        constructor(game: Phaser.Game){
+            super(game, 'star');
+        }
+
+        collect( character: Superhero.Character ) {
+            character.immunity = true;
+        }
+
+    }
+
+    export class Bomb extends BaseCollectable{
+
+        constructor(game: Phaser.Game){
+            super(game, 'rocket');
+        }
+
+        collect( character: Superhero.Character ) {
+            character.bombs += 1;
+        }
+
+    }
+
+
 }
