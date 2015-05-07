@@ -68,7 +68,7 @@ module Collectables {
         }
 
         collect( character: Superhero.Character ) {
-            //if (character.firePower < 5) character.firePower += 1;
+            if (character.shield < 5) character.shield += 1;
         }
 
     }
@@ -80,7 +80,7 @@ module Collectables {
         }
 
         collect( character: Superhero.Character ) {
-            //if (character.firePower < 5) character.firePower += 1;
+            character.nukes += 1;
         }
 
     }
@@ -92,7 +92,7 @@ module Collectables {
         }
 
         collect( character: Superhero.Character ) {
-            //if (character.firePower < 5) character.firePower += 1;
+            character.timeWarps += 1;
         }
 
     }
@@ -104,19 +104,19 @@ module Collectables {
         }
 
         collect( character: Superhero.Character ) {
-            //if (character.firePower < 5) character.firePower += 1;
+            character.coins += 10;
         }
 
     }
 
-    export class Inmunity extends BaseCollectable{
+    export class Immunity extends BaseCollectable{
 
         constructor(game: Phaser.Game){
             super(game, 'star');
         }
 
         collect( character: Superhero.Character ) {
-            //if (character.firePower < 5) character.firePower += 1;
+            character.immunity = true;
         }
 
     }
@@ -128,7 +128,7 @@ module Collectables {
         }
 
         collect( character: Superhero.Character ) {
-            //if (character.firePower < 5) character.firePower += 1;
+            character.bombs += 1;
         }
 
     }

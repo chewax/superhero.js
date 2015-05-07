@@ -28,7 +28,18 @@ module Superhero {
         maxFuel: number;
         shootDelay: number = 300;
         allowFingerMargin: boolean = true;
+
+        // Power Ups
         firePower: number = 1;
+        nukes: number = 0;
+        timeWarps: number = 0;
+        immunity: boolean = false;
+        bombs: number = 0;
+        shield: number = 0;
+
+        // 1 Diamond == 10 Coins
+        coins: number = 0;
+
         fuelTimer: number;
         bulletTimer: number;
         facing: Facing;

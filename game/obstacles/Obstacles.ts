@@ -178,8 +178,6 @@ module Obstacles {
     //}
 
 
-
-
 	export class ObstacleItem extends Phaser.Sprite{
 
 		//constructor(game:Phaser.Game, x:number, y:number, key?:any, frame?:any) {

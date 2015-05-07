@@ -79,7 +79,6 @@ module Superhero {
 
 
         initCollectables(): void {
-
             this.collectableManager = new Collectables.CollectableManager(this.game);
             this.collectableManager.addCollectable(Collectables.CollectableType.IMPROVE_FIRE);
             this.collectableManager.addCollectable(Collectables.CollectableType.IMPROVE_SHIELD);
@@ -117,7 +116,6 @@ module Superhero {
             this.obstacleManager.diesWith(this.hero.bullets, this.killWall, this);
 
             this.badie.diesWithGroup(this.hero.bullets);
-
             this.collectableManager.checkCollectedBy(this.hero);
 
         }
@@ -127,13 +125,12 @@ module Superhero {
 
             bullet.kill();
 
-            //if (wall.frameName == "grey5") return;
+            if (wall.frameName == "grey5") return;
 
             //one out of 20 must drop something
             this.collectableManager.spawnCollectable(wall.position.x, wall.position.y);
 
             wall.kill();
-
 
             this.obstacleManager.particleBurst(wall);
             this.ui.scoreUp(50);

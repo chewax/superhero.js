@@ -11,7 +11,7 @@ module Collectables {
         TIME_WARP = 3,
         COIN = 4,
         DIAMOND = 5,
-        INMUNITY = 6,
+        IMMUNITY = 6,
         BOMB = 7
     }
 
@@ -54,8 +54,8 @@ module Collectables {
                     this.collectables.add(item);
                     break;
 
-                case CollectableType.INMUNITY:
-                    var item = new Collectables.Inmunity(this.game);
+                case CollectableType.IMMUNITY:
+                    var item = new Collectables.Immunity(this.game);
                     this.collectables.add(item);
                     break;
 
