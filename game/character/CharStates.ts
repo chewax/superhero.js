@@ -25,6 +25,14 @@ module Superhero {
         exitState():void;
     }
 
+    /**
+     * Enemy possible states
+     */
+    export enum EnemyState {
+        STEADY = 0,
+        PATROL = 1
+    }
+
 
     /**
      * Contains all the generic behaviour for the States.
@@ -163,16 +171,22 @@ module Superhero {
         }
     }
 
-    ///**
+        ///**
     // * Hostile state Class
     // */
-    export class StateHostile extends BaseState{
+    export class StateEnemyHostile extends BaseState{
 
         tween: Phaser.Tween;
 
-        public patrol (): void {
+        public patrol (patrolPoint: Superhero.spawnEnemyPosition): void {
+
             this.tween = this.game.add.tween(this.hero.sprite);
-            this.tween.to({y: 400},1500,Phaser.Easing.Linear.None,true,0,-1,true);
+            // TODO: read from config file tween speed and tween coordinates for top and down positions
+            if(patrolPoint == Superhero.spawnEnemyPosition.TOP) {
+                this.tween.to({y: this.game.world.centerY - 50}, 1500, Phaser.Easing.Linear.None, true, 0, -1, true);
+            } else {
+                this.tween.to({y: this.game.world.centerY + 50}, 1500, Phaser.Easing.Linear.None, true, 0, -1, true);
+            }
         }
 
         public update ():CharState {

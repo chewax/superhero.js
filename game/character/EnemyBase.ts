@@ -4,20 +4,31 @@
 
 module Superhero {
 
-    export class Badie extends Character{
+    export interface IEnemyChar {
+        AssetKey: string;
+        Facing: Superhero.Facing;
+        BulletVelocity: number;
+    }
 
-        constructor (game:Phaser.Game) {
-            // TODO: add random spawn point for enemies
-            super(game,'badie',game.width - 150,100);
+    /**
+     * Interface to set enemies tween range
+     */
+    export enum spawnEnemyPosition{
+        TOP = 150,
+        DOWN = -150
+    }
 
-            this.facing = Facing.LEFT;
-            this.setBulletVelocity(1000);
+    /**
+     * Enemy base class
+     */
+    export class EnemyBase extends Character {
+        isPatrolling: boolean = false;
+        spawnPoint: spawnEnemyPosition;
 
-            this._state = new Superhero.StateHostile(this.game, this);
-            (<Superhero.StateHostile>this._state).patrol();
-
-            this.shootDelay = 1600;
-
+        constructor (game: Phaser.Game, enemyChar: Superhero.IEnemy) {
+            super(game, enemyChar.assetsKey, game.width - enemyChar.spawnLocation.x, enemyChar.spawnLocation.y);
+            // Set custom properties
+            this.setCustomEnemyProperties(enemyChar);
         }
 
         update () {
@@ -34,12 +45,36 @@ module Superhero {
         }
 
         /**
+         * Set enemy custom properties
+        **/
+        setCustomEnemyProperties(enemyChar: Superhero.IEnemy): void {
+
+            // Common properties
+            this.firePower = enemyChar.firePower;
+            this.spawnPoint = enemyChar.spawnPoint;
+            this.facing = enemyChar.facing;
+            this.setBulletVelocity(enemyChar.bulletVelocity);
+            this.shootDelay = enemyChar.shootDelay;
+
+            // TODO: implement tween speed
+            //this.patrolSpeed = enemyChar.patrolSpeed;
+
+            // State
+            this._state = new Superhero.StateEnemyHostile(this.game, this);
+
+            // Patrol
+            if (enemyChar.defaultState == EnemyState.PATROL) {
+                this.isPatrolling = true;
+                (<Superhero.StateEnemyHostile>this._state).patrol(enemyChar.spawnPoint);
+            }
+        }
+
+        /**
          * Initalizes the physics of the character
          */
         initPhysics ():void {
             super.initPhysics();
             this.sprite.body.drag.x = 0;
-            this.sprite.body.velocity.x = -150;
             this.sprite.body.collideWorldBounds = false;
             this.sprite.body.checkWorldBounds = true;
         }
@@ -65,7 +100,6 @@ module Superhero {
             //Thou shalt only shoot if there is no shooting in progress
             if (this.sprite.animations.currentAnim.name != 'shoot' || this.sprite.animations.currentAnim.isFinished) {
 
-
                 //Check for shootRate
                 var elapsedTime = this.game.time.elapsedSince(this.bulletTimer);
                 if (elapsedTime < this.shootDelay) return;
@@ -90,13 +124,9 @@ module Superhero {
                         bullet.scale.setTo((<Superhero.Game> this.game).conf.world.sprite_scaling);
                     }
 
-
                     //Reset the timer
                     this.bulletTimer = this.game.time.time;
                 },this);
-
-
-
             }
         }
     }
