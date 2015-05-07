@@ -111,21 +111,25 @@ module Superhero {
                 if (enemySpawnPoint === spawnEnemyPosition.TOP) {
                     spawnCoordinates = {x: 150, y: 20};
                 } else {
-                    spawnCoordinates = {x: 150, y: this.game.world.height - 70};
+                    // TODO: implement sprite height instead of hardcoded
+                    spawnCoordinates = {x: 150, y: this.game.height - 70};
                 }
             } else {
                 if (enemySpawnPoint === spawnEnemyPosition.TOP) {
-                    spawnCoordinates = {x: 150, y: 150};
+                    spawnCoordinates = {x: 150, y: this.game.height / 3};
+                    //spawnCoordinates = {x: 150, y: this.game.height / 3 - sprite.Height};
                 } else {
-                    spawnCoordinates = {x: 150, y: this.game.world.height - 270};
+                    // TODO: implement sprite height instead of hardcoded
+                    spawnCoordinates = {x: 150, y: (this.game.height / 3) * 2/*this.game.world.height - 270*/};
                 }
             }
-            
+            console.log(spawnCoordinates.y);
             return spawnCoordinates;
         }
 
         private getRandomEnemyState(): EnemyState {
-            return this.game.rnd.integerInRange(0, 1);
+            return 1;
+            //return this.game.rnd.integerInRange(0, 1);
         }
 
         private getRandomEnemySpawnPosition(): spawnEnemyPosition {
@@ -144,7 +148,6 @@ module Superhero {
          * Call enemies update
          */
         public update(): void {
-
             this.enemies.forEach((enmy) =>
                     enmy.update()
             );

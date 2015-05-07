@@ -171,7 +171,7 @@ module Superhero {
         }
     }
 
-        ///**
+    ///**
     // * Hostile state Class
     // */
     export class StateEnemyHostile extends BaseState{
