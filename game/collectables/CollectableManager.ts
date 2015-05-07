@@ -29,6 +29,8 @@ module Collectables {
                     break;
 
                 case CollectableType.IMPROVE_SHIELD:
+                    var item = new Collectables.ImprovedShield(this.game);
+                    this.collectables.add(item);
                     break;
 
             }
@@ -51,16 +53,18 @@ module Collectables {
          */
         spawnCollectable(object:any){
 
-            //Randomly respawn 1 out of 20 times
-            //if (this.game.rnd.integerInRange(0,12) != 10) return;
+            // Randomly respawn 1 out of 20 times
+            // if (this.game.rnd.integerInRange(0,12) != 10) return;
 
-            //If there are no collectables created, return
+            // If there are no collectables created, return
             if (this.collectables.length < 1) return;
 
-            //For now the respawn is random
+            // If there is already one spawned then return
+            if (this.collectables.countLiving() >= 1) return;
+
+            // Otherwise spawn a random collectable
+            // For now the respawn is random
             var coll = this.collectables.getRandom();
-
-
             if (!coll) return;
             if (coll.alive) return;
 
