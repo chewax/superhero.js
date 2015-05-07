@@ -52,7 +52,7 @@ module Superhero {
             this.hero.update();
             this.badie.update();
             this.ui.update();
-            this.debug.update();
+            //this.debug.update();
 
             //Obstacles
             this.obstacleManager.update();
@@ -74,6 +74,12 @@ module Superhero {
             this.obstacleManager = new Obstacles.ObstacleManager(this.game, 2500);
             this.obstacleManager.addObstacleToPool(Obstacles.ObstacleType.WALL);
 
+            this.initCollectables();
+        }
+
+
+        initCollectables(): void {
+
             this.collectableManager = new Collectables.CollectableManager(this.game);
             this.collectableManager.addCollectable(Collectables.CollectableType.IMPROVE_FIRE);
             this.collectableManager.addCollectable(Collectables.CollectableType.IMPROVE_SHIELD);
@@ -82,8 +88,6 @@ module Superhero {
             this.collectableManager.addCollectable(Collectables.CollectableType.DIAMOND);
             this.collectableManager.addCollectable(Collectables.CollectableType.BOMB);
             this.collectableManager.addCollectable(Collectables.CollectableType.INMUNITY);
-
-
         }
 
 
