@@ -120,7 +120,7 @@ module Superhero {
                     spawnCoordinates = {x: 150, y: this.game.world.height - 270};
                 }
             }
-
+            
             return spawnCoordinates;
         }
 
@@ -132,7 +132,11 @@ module Superhero {
             if(this.getEnemiesOnStage() == 0) {
                 return this.game.rnd.integerInRange(0, 1);
             } else {
-                return this.enemies[0].spawnPoint;
+                 if(this.enemies[0].spawnPoint == spawnEnemyPosition.TOP) {
+                     return spawnEnemyPosition.DOWN;
+                 } else {
+                     return spawnEnemyPosition.TOP;
+                 }
             }
         }
 
