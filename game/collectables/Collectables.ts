@@ -72,4 +72,40 @@ module Collectables {
         }
 
     }
+
+    export class NukeBomb extends BaseCollectable{
+
+        constructor(game: Phaser.Game){
+            super(game, 'nuke');
+        }
+
+        collect( character: Superhero.Character ) {
+            //if (character.firePower < 5) character.firePower += 1;
+        }
+
+    }
+
+    export class TimeWarp extends BaseCollectable{
+
+        constructor(game: Phaser.Game){
+            super(game, 'clock');
+        }
+
+        collect( character: Superhero.Character ) {
+            //if (character.firePower < 5) character.firePower += 1;
+        }
+
+    }
+
+    export class Diamond extends BaseCollectable{
+
+        constructor(game: Phaser.Game){
+            super(game, 'diamond');
+        }
+
+        collect( character: Superhero.Character ) {
+            //if (character.firePower < 5) character.firePower += 1;
+        }
+
+    }
 }

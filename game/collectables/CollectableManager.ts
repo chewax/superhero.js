@@ -6,7 +6,11 @@ module Collectables {
 
     export enum CollectableType {
         IMPROVE_FIRE = 0,
-        IMPROVE_SHIELD = 1
+        IMPROVE_SHIELD = 1,
+        NUKE_BOMB = 2,
+        TIME_WARP = 3,
+        COIN = 4,
+        DIAMOND = 5
     }
 
     export class CollectableManager {
@@ -30,6 +34,21 @@ module Collectables {
 
                 case CollectableType.IMPROVE_SHIELD:
                     var item = new Collectables.ImprovedShield(this.game);
+                    this.collectables.add(item);
+                    break;
+
+                case CollectableType.NUKE_BOMB:
+                    var item = new Collectables.NukeBomb(this.game);
+                    this.collectables.add(item);
+                    break;
+
+                case CollectableType.TIME_WARP:
+                    var item = new Collectables.ImprovedShield(this.game);
+                    this.collectables.add(item);
+                    break;
+
+                case CollectableType.DIAMOND:
+                    var item = new Collectables.Diamond(this.game);
                     this.collectables.add(item);
                     break;
 
