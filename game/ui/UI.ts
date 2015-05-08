@@ -15,6 +15,13 @@ module Superhero {
         fuelRemaining: Phaser.Text;
         player: Superhero.Character;
         fuelBar: Phaser.Sprite;
+
+        fireInfo: Phaser.Sprite;
+        nukeInfo: Phaser.Sprite;
+        warpInfo: Phaser.Sprite;
+        coinInfo: Phaser.Sprite;
+        shieldInfo: Phaser.Sprite;
+
         scoreCount: number = 0;
         scoreText: Phaser.Text;
 
@@ -22,12 +29,13 @@ module Superhero {
             this.game = game;
             this.player = player;
 
-            this.createFuelBar();
+            //this.createFuelBar();
             this.createScoreBoard();
+            this.createPowerUPInfo();
         }
 
         update ():void {
-            this.updateFuelBar();
+            //this.updateFuelBar();
         }
 
         updateFuelBar ():void {
@@ -49,8 +57,8 @@ module Superhero {
         }
 
         createScoreBoard (): void {
-            var style = { font: "40px Arial", fill: "#FF9900", align: "center" };
-            this.scoreText = this.game.add.text(10, 100, this.scoreCount.toString(), style);
+            var style = { font: "40px saranaigamebold", fill: "#FF9900", align: "center" };
+            this.scoreText = this.game.add.text(35, 100, this.scoreCount.toString(), style);
         }
 
 
@@ -59,7 +67,32 @@ module Superhero {
             this.scoreText.setText(this.scoreCount.toString());
         }
 
+        createPowerUPInfo(){
+            var x = 20;
+            var y = 20;
+            var style = { font: "40px saranaigamebold", fill: "#FF9900", align: "center" };
 
+            //Fire Info
+            this.fireInfo = this.game.add.sprite(x, y, 'puinfo');
+            this.fireInfo.addChild(this.game.add.sprite(34, 24, 'pups', 'bullet'));
+            this.fireInfo.addChild(this.game.add.text(150, 37, this.player.firePower.toString(), style));
+            this.fireInfo.scale.setTo(0.5);
+
+            x = x + this.fireInfo.width + 10;
+            //Shield Info
+            this.shieldInfo = this.game.add.sprite(x, y, 'puinfo');
+            this.shieldInfo.addChild(this.game.add.sprite(28, 33, 'pups', 'shield'));
+            this.shieldInfo.addChild(this.game.add.text(150, 37, this.player.shield.toString(), style));
+            this.shieldInfo.scale.setTo(0.5);
+
+            x = x + this.shieldInfo.width + 10;
+            //Shield Info
+            this.coinInfo = this.game.add.sprite(x, y, 'puinfo');
+            this.coinInfo.addChild(this.game.add.sprite(27, 29, 'pups', 'coin'));
+            this.coinInfo.addChild(this.game.add.text(150, 37, this.player.coins.toString(), style));
+            this.coinInfo.scale.setTo(0.5);
+
+        }
 	}
 
 }
