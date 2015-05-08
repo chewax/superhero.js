@@ -67,7 +67,7 @@ module Superhero {
                 spawnLocation: this.getSpawnCoordinates(enemyDefaultState, enemySpawnPoint),
                 firePower: this.getFirePower(),
                 shootDelay: this.getShootDelay(),
-                defaultState: this.getRandomEnemyState(),
+                defaultState: enemyDefaultState,
                 spawnPoint: enemySpawnPoint
             };
 
@@ -76,7 +76,7 @@ module Superhero {
         }
 
         private getShootDelay(): number {
-            // TODO: read default bullet speed from config file
+            // TODO: read default shootDelay from config file
             return 5000 / (1 + this.multiplier);
         }
 
@@ -84,6 +84,7 @@ module Superhero {
             // TODO: read default bullet speed from config file
             var bulletSpeed = 400 * (1 + this.multiplier);
 
+            // TODO: get max bullet speed from config
             if(bulletSpeed > 1100) {
                 bulletSpeed = 1100;
             }
@@ -123,13 +124,12 @@ module Superhero {
                     spawnCoordinates = {x: 150, y: (this.game.height / 3) * 2/*this.game.world.height - 270*/};
                 }
             }
-            console.log(spawnCoordinates.y);
+
             return spawnCoordinates;
         }
 
         private getRandomEnemyState(): EnemyState {
-            return 1;
-            //return this.game.rnd.integerInRange(0, 1);
+            return this.game.rnd.integerInRange(0, 1);
         }
 
         private getRandomEnemySpawnPosition(): spawnEnemyPosition {
