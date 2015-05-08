@@ -30,6 +30,35 @@
     }
   },
 
-  "playerDieOutofBounds": false
+  "playerDieOutofBounds": false,
+
+  "enemies": {
+    "multiplier": 0.1,
+    "respawnLapse": 5000,
+    "shootDelay": 5000,
+    "bulletSpeed": 400,
+    "maxBulletSpeed": 1100,
+    "enemiesAvailableAssets": ["badie"],
+    "spawnCoordinates": {
+      "patrol": {
+        "top": {
+          "x": 150,
+          "y": 20
+        },
+        "down": {
+          "x": 150
+        }
+      },
+      "steady": {
+        "top": {
+          "x": 150
+        },
+        "down": {
+          "x": 150
+        }
+      }
+    },
+    "patrolTweenSpeed": 1500
+  }
 
 }

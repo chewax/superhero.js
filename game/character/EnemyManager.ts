@@ -39,16 +39,14 @@ module Superhero {
             // 20 secs per update add multiplier 0.1
             this.enemiesTimer = this.game.time.create(false);
             this.enemiesTimer.start();
-            // TODO: get enemies re-spawn time from the game config json (enemyManager constructor)
-            this.enemiesTimer.loop(5000, this.updateMultiplier, this);
+            this.enemiesTimer.loop((<Superhero.Game> this.game).conf.ENEMIES.respawnLapse, this.updateMultiplier, this);
         }
 
         /**
          * Update multiplier values
          */
         public updateMultiplier(): void {
-            // TODO: read value from config
-            this.multiplier += 0.1;
+            this.multiplier += (<Superhero.Game> this.game).conf.ENEMIES.multiplier;
             this.tryToSpawnEnemy();
         }
 
@@ -76,26 +74,22 @@ module Superhero {
         }
 
         private getShootDelay(): number {
-            // TODO: read default shootDelay from config file
-            return 5000 / (1 + this.multiplier);
+            return (<Superhero.Game> this.game).conf.ENEMIES.shootDelay / (1 + this.multiplier);
         }
 
         private getBulletSpeed(): number {
-            // TODO: read default bullet speed from config file
-            var bulletSpeed = 400 * (1 + this.multiplier);
+            var bulletSpeed = (<Superhero.Game> this.game).conf.ENEMIES.bulletSpeed * (1 + this.multiplier);
 
-            // TODO: get max bullet speed from config
-            if(bulletSpeed > 1100) {
-                bulletSpeed = 1100;
+            if(bulletSpeed > (<Superhero.Game> this.game).conf.ENEMIES.maxBulletSpeed) {
+                bulletSpeed = (<Superhero.Game> this.game).conf.ENEMIES.maxBulletSpeed;
             }
 
             return bulletSpeed;
         }
 
         private getRandomEnemyAsset(): string {
-            // TODO: imeplement random available assets...
-            // get array of available enemies to spawn from the json config file
-            return "badie";
+            var newEnemyAsset = this.game.rnd.integerInRange(0, (<Superhero.Game> this.game).conf.ENEMIES.enemiesAvailableAssets.length - 1);
+            return (<Superhero.Game> this.game).conf.ENEMIES.enemiesAvailableAssets[newEnemyAsset];
         }
 
         private getFirePower(): number {
@@ -105,23 +99,21 @@ module Superhero {
 
         private getSpawnCoordinates(enemyDefaultState: EnemyState, enemySpawnPoint: spawnEnemyPosition): any {
 
-            // TODO: get coordinates from json config file
             var spawnCoordinates;
 
             if(enemyDefaultState === EnemyState.PATROL) {
                 if (enemySpawnPoint === spawnEnemyPosition.TOP) {
-                    spawnCoordinates = {x: 150, y: 20};
+                    spawnCoordinates = {x: (<Superhero.Game> this.game).conf.ENEMIES.spawnCoordinates.patrol.top.x, y: 20};
                 } else {
                     // TODO: implement sprite height instead of hardcoded
-                    spawnCoordinates = {x: 150, y: this.game.height - 70};
+                    spawnCoordinates = {x: (<Superhero.Game> this.game).conf.ENEMIES.spawnCoordinates.patrol.down.x, y: this.game.height - 70};
                 }
             } else {
                 if (enemySpawnPoint === spawnEnemyPosition.TOP) {
-                    spawnCoordinates = {x: 150, y: this.game.height / 3};
-                    //spawnCoordinates = {x: 150, y: this.game.height / 3 - sprite.Height};
+                    spawnCoordinates = {x: (<Superhero.Game> this.game).conf.ENEMIES.spawnCoordinates.steady.top.x, y: this.game.height / 3};
                 } else {
                     // TODO: implement sprite height instead of hardcoded
-                    spawnCoordinates = {x: 150, y: (this.game.height / 3) * 2/*this.game.world.height - 270*/};
+                    spawnCoordinates = {x: (<Superhero.Game> this.game).conf.ENEMIES.spawnCoordinates.steady.down.x, y: (this.game.height / 3) * 2/*this.game.world.height - 270*/};
                 }
             }
 

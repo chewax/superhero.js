@@ -28,7 +28,7 @@ module Superhero{
         constructor () {
 
             this.conf = new Superhero.Config();
-            super(this.conf.world.width, this.conf.world.height, Phaser.CANVAS, 'sh', null);
+            super(this.conf.WORLD.width, this.conf.WORLD.height, Phaser.CANVAS, 'sh', null);
 
             this.state.add('Boot', Boot, false);
             this.state.add('Preloader', Preloader, false);

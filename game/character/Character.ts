@@ -89,9 +89,9 @@ module Superhero {
         initSprite (assetKey:string, x:number, y:number):void {
             this.sprite = this.game.add.sprite(x, y, assetKey, 'stand1');
             this.sprite.anchor.setTo(0.5,0);
-            this.sprite.scale.setTo((<Superhero.Game> this.game).conf.world.sprite_scaling);
-            this.sprite.checkWorldBounds = (<Superhero.Game> this.game).conf.playerDieOutofBounds;
-            this.sprite.outOfBoundsKill = (<Superhero.Game> this.game).conf.playerDieOutofBounds;
+            this.sprite.scale.setTo((<Superhero.Game> this.game).conf.WORLD.sprite_scaling);
+            this.sprite.checkWorldBounds = (<Superhero.Game> this.game).conf.PLAYERDIEOUTOFBOUNDS;
+            this.sprite.outOfBoundsKill = (<Superhero.Game> this.game).conf.PLAYERDIEOUTOFBOUNDS;
         }
 
         /**
@@ -101,9 +101,9 @@ module Superhero {
             this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
             this.sprite.body.collideWorldBounds = true;
 
-            this.sprite.body.gravity.y = (<Superhero.Game> this.game).conf.physics.player.gravity.y;
-            this.sprite.body.drag.x = (<Superhero.Game> this.game).conf.physics.player.drag;
-            this.sprite.body.drag.y = (<Superhero.Game> this.game).conf.physics.player.drag;
+            this.sprite.body.gravity.y = (<Superhero.Game> this.game).conf.PHYISICS.player.gravity.y;
+            this.sprite.body.drag.x = (<Superhero.Game> this.game).conf.PHYISICS.player.drag;
+            this.sprite.body.drag.y = (<Superhero.Game> this.game).conf.PHYISICS.player.drag;
             this.sprite.body.setSize(100,220);
         }
         /**
@@ -186,7 +186,7 @@ module Superhero {
                         bullet.outOfBoundsKill = true;
                         bullet.body.velocity.x = this.bulletVelocity;
                         bullet.body.allowGravity = false;
-                        bullet.scale.setTo((<Superhero.Game> this.game).conf.world.sprite_scaling);
+                        bullet.scale.setTo((<Superhero.Game> this.game).conf.WORLD.sprite_scaling);
                     }
 
 

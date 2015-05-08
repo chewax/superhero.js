@@ -121,7 +121,7 @@ module Superhero {
                         bullet.outOfBoundsKill = true;
                         bullet.body.velocity.x = this.bulletVelocity;
                         bullet.body.allowGravity = false;
-                        bullet.scale.setTo((<Superhero.Game> this.game).conf.world.sprite_scaling);
+                        bullet.scale.setTo((<Superhero.Game> this.game).conf.WORLD.sprite_scaling);
                     }
 
                     //Reset the timer

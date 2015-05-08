@@ -17,7 +17,6 @@ module Superhero {
             gravity: {x:number; y:number}
             drag: number
         }
-
     }
 
     interface IWorldConfig {
@@ -26,20 +25,52 @@ module Superhero {
         sprite_scaling: number
     }
 
+    interface IEnemiesConfig {
+        multiplier: number;
+        respawnLapse: number;
+        shootDelay: number;
+        bulletSpeed: number;
+        maxBulletSpeed: number;
+        enemiesAvailableAssets: string[];
+        spawnCoordinates: {
+            patrol: {
+                top: {
+                    x: number;
+                    y: number;
+                }
+                down: {
+                    x: number;
+                }
+            }
+            steady: {
+                top: {
+                    x: number;
+                }
+                down: {
+                    x: number;
+                }
+            }
+        }
+        patrolTweenSpeed: number
+    }
+
     export class Config {
 
-        world: IWorldConfig;
-        physics: IPhysicsConfig;
-        playerDieOutofBounds: boolean;
+        WORLD: IWorldConfig;
+        PHYISICS: IPhysicsConfig;
+        PLAYERDIEOUTOFBOUNDS: boolean;
+        ENEMIES: IEnemiesConfig;
 
         constructor () {
             // Parse JSON values from game config file path
-            this.world = JSON.parse(this.getRemote()).world;
-            this.physics = JSON.parse(this.getRemote()).physics;
-            this.playerDieOutofBounds = JSON.parse(this.getRemote()).playerDieOutofBounds;
+            var remoteValues = this.getRemote();
+            this.WORLD = JSON.parse(remoteValues).world;
+            this.PHYISICS = JSON.parse(remoteValues).physics;
+            this.PLAYERDIEOUTOFBOUNDS = JSON.parse(remoteValues).playerDieOutofBounds;
+            this.ENEMIES = JSON.parse(remoteValues).enemies;
         }
 
-        getRemote(): string {
+        private getRemote(): string {
             return $.ajax({
                 type: "GET",
                 url: "game/config/config.json",

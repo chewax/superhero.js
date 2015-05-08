@@ -181,11 +181,10 @@ module Superhero {
         public patrol (patrolPoint: Superhero.spawnEnemyPosition): void {
 
             this.tween = this.game.add.tween(this.hero.sprite);
-            // TODO: read from config file tween speed and tween coordinates for top and down positions
             if(patrolPoint == Superhero.spawnEnemyPosition.TOP) {
-                this.tween.to({y: this.game.world.centerY - 50}, 1500, Phaser.Easing.Linear.None, true, 0, -1, true);
+                this.tween.to({y: this.game.world.centerY - 50}, (<Superhero.Game> this.game).conf.ENEMIES.patrolTweenSpeed, Phaser.Easing.Linear.None, true, 0, -1, true);
             } else {
-                this.tween.to({y: this.game.world.centerY + 50}, 1500, Phaser.Easing.Linear.None, true, 0, -1, true);
+                this.tween.to({y: this.game.world.centerY + 50}, (<Superhero.Game> this.game).conf.ENEMIES.patrolTweenSpeed, Phaser.Easing.Linear.None, true, 0, -1, true);
             }
         }
 
