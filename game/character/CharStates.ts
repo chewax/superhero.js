@@ -61,6 +61,7 @@ module Superhero {
             this.game = game;
             this.hero = hero;
             this.gamepad = (<Superhero.Game> this.game).gamepad;
+
             this.fireButton = this.gamepad.buttonPad.button1;
 
             this.heroStick = this.gamepad.stick1;
@@ -182,9 +183,15 @@ module Superhero {
 
             this.tween = this.game.add.tween(this.hero.sprite);
             if(patrolPoint == Superhero.spawnEnemyPosition.TOP) {
-                this.tween.to({y: this.game.world.centerY - 50}, (<Superhero.Game> this.game).conf.ENEMIES.patrolTweenSpeed, Phaser.Easing.Linear.None, true, 0, -1, true);
+                this.tween.to({y: this.game.world.centerY - 50}, (<Superhero.Game>this.game).conf.ENEMIES.patrolTweenSpeed, Phaser.Easing.Linear.None, true, 0, -1, true);
             } else {
-                this.tween.to({y: this.game.world.centerY + 50}, (<Superhero.Game> this.game).conf.ENEMIES.patrolTweenSpeed, Phaser.Easing.Linear.None, true, 0, -1, true);
+                this.tween.to({y: this.game.world.centerY + 50}, (<Superhero.Game>this.game).conf.ENEMIES.patrolTweenSpeed, Phaser.Easing.Linear.None, true, 0, -1, true);
+            }
+        }
+
+        public stopPatrol(): void {
+            if(this.tween) {
+                this.tween.stop();
             }
         }
 

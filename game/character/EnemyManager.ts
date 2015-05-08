@@ -25,11 +25,17 @@ module Superhero {
         enemies: Superhero.EnemyBase[];
         enemiesTimer: Phaser.Timer;
         multiplier: number = 0;
+        enemiesOnTheStage = 0;
+        currentLevel: string;
+        enemiesAlive: Superhero.EnemyBase[];
 
-        constructor (game:Phaser.Game) {
+        constructor (game:Phaser.Game, levelID: string) {
             this.game = game;
+            this.currentLevel = levelID;
             this.startTimer();
             this.enemies =  [];
+            this.enemiesAlive = [];
+            this.createLevelEnemies();
         }
 
         /**
@@ -39,14 +45,14 @@ module Superhero {
             // 20 secs per update add multiplier 0.1
             this.enemiesTimer = this.game.time.create(false);
             this.enemiesTimer.start();
-            this.enemiesTimer.loop((<Superhero.Game> this.game).conf.ENEMIES.respawnLapse, this.updateMultiplier, this);
+            this.enemiesTimer.loop((<Superhero.Game>this.game).conf.ENEMIES.respawnLapse, this.updateMultiplier, this);
         }
 
         /**
          * Update multiplier values
          */
         public updateMultiplier(): void {
-            this.multiplier += (<Superhero.Game> this.game).conf.ENEMIES.multiplier;
+            this.multiplier += (<Superhero.Game>this.game).conf.ENEMIES.multiplier;
             this.tryToSpawnEnemy();
         }
 
@@ -57,7 +63,6 @@ module Superhero {
 
             var enemySpawnPoint = this.getRandomEnemySpawnPosition();
             var enemyDefaultState = this.getRandomEnemyState();
-
             var newEnemy: IEnemy = {
                 assetsKey: this.getRandomEnemyAsset(),
                 facing: Superhero.Facing.LEFT,
@@ -69,39 +74,45 @@ module Superhero {
                 spawnPoint: enemySpawnPoint
             };
 
-            // TODO: If there is some sprite already dead try to get it and reset
+            //this.enemies.push(new Superhero.EnemyBase(this.game, newEnemy));
             var spawnEnemy = this.getFirstEnemyDead(newEnemy.assetsKey);
-
             if (spawnEnemy) {
-                spawnEnemy.setCustomEnemyProperties(newEnemy);
+                // Fix x position
+                newEnemy.spawnLocation.x = this.game.width - newEnemy.spawnLocation.x;
+                (<Superhero.StateEnemyHostile>spawnEnemy._state).stopPatrol();
                 spawnEnemy.sprite.reset(newEnemy.spawnLocation.x, newEnemy.spawnLocation.y);
+                spawnEnemy.setCustomEnemyProperties(newEnemy);
+                this.enemiesAlive.push(spawnEnemy);
             }
+
+            // TODO: implement timer when dead to 0 again so it doesn't appear again
+
         }
 
         private getFirstEnemyDead(key:string): Superhero.EnemyBase {
             for (var i = 0; i < this.enemies.length; i++) {
-                if (this.enemies[i].sprite.frameName === key && !this.enemies[i].sprite.alive ) return this.enemies[i];
+                if (this.enemies[i].sprite.key === key && !this.enemies[i].sprite.alive ) return this.enemies[i];
             }
             return null
         }
 
         private getShootDelay(): number {
-            return (<Superhero.Game> this.game).conf.ENEMIES.shootDelay / (1 + this.multiplier);
+            return (<Superhero.Game>this.game).conf.ENEMIES.shootDelay / (1 + this.multiplier);
         }
 
         private getBulletSpeed(): number {
-            var bulletSpeed = (<Superhero.Game> this.game).conf.ENEMIES.bulletSpeed * (1 + this.multiplier);
+            var bulletSpeed = (<Superhero.Game>this.game).conf.ENEMIES.bulletSpeed * (1 + this.multiplier);
 
-            if(bulletSpeed > (<Superhero.Game> this.game).conf.ENEMIES.maxBulletSpeed) {
-                bulletSpeed = (<Superhero.Game> this.game).conf.ENEMIES.maxBulletSpeed;
+            if(bulletSpeed > (<Superhero.Game>this.game).conf.ENEMIES.maxBulletSpeed) {
+                bulletSpeed = (<Superhero.Game>this.game).conf.ENEMIES.maxBulletSpeed;
             }
 
             return bulletSpeed;
         }
 
         private getRandomEnemyAsset(): string {
-            var newEnemyAsset = this.game.rnd.integerInRange(0, (<Superhero.Game> this.game).conf.ENEMIES.enemiesAvailableAssets.length - 1);
-            return (<Superhero.Game> this.game).conf.ENEMIES.enemiesAvailableAssets[newEnemyAsset];
+            var newEnemyAsset = this.game.rnd.integerInRange(0, (<Superhero.Game>this.game).conf.ENEMIES.levels[this.currentLevel].length - 1);
+            return (<Superhero.Game>this.game).conf.ENEMIES.levels[this.currentLevel][newEnemyAsset];
         }
 
         private getFirePower(): number {
@@ -115,17 +126,17 @@ module Superhero {
 
             if(enemyDefaultState === EnemyState.PATROL) {
                 if (enemySpawnPoint === spawnEnemyPosition.TOP) {
-                    spawnCoordinates = {x: (<Superhero.Game> this.game).conf.ENEMIES.spawnCoordinates.patrol.top.x, y: 20};
+                    spawnCoordinates = {x: (<Superhero.Game>this.game).conf.ENEMIES.spawnCoordinates.patrol.top.x, y: 20};
                 } else {
                     // TODO: implement sprite height instead of hardcoded
-                    spawnCoordinates = {x: (<Superhero.Game> this.game).conf.ENEMIES.spawnCoordinates.patrol.down.x, y: this.game.height - 70};
+                    spawnCoordinates = {x: (<Superhero.Game>this.game).conf.ENEMIES.spawnCoordinates.patrol.down.x, y: this.game.height - 70};
                 }
             } else {
                 if (enemySpawnPoint === spawnEnemyPosition.TOP) {
-                    spawnCoordinates = {x: (<Superhero.Game> this.game).conf.ENEMIES.spawnCoordinates.steady.top.x, y: this.game.height / 3};
+                    spawnCoordinates = {x: (<Superhero.Game>this.game).conf.ENEMIES.spawnCoordinates.steady.top.x, y: this.game.height / 3};
                 } else {
                     // TODO: implement sprite height instead of hardcoded
-                    spawnCoordinates = {x: (<Superhero.Game> this.game).conf.ENEMIES.spawnCoordinates.steady.down.x, y: (this.game.height / 3) * 2/*this.game.world.height - 270*/};
+                    spawnCoordinates = {x: (<Superhero.Game>this.game).conf.ENEMIES.spawnCoordinates.steady.down.x, y: (this.game.height / 3) * 2/*this.game.world.height - 270*/};
                 }
             }
 
@@ -137,15 +148,70 @@ module Superhero {
         }
 
         private getRandomEnemySpawnPosition(): spawnEnemyPosition {
-            if(this.getEnemiesOnStage() == 0) {
-                return this.game.rnd.integerInRange(0, 1);
+
+            if(this.enemiesAlive.length == 0) {
+                var rndInt = this.game.rnd.integerInRange(0, 1);
+                if(rndInt == 0){
+                    return spawnEnemyPosition.TOP;
+                } else {
+                    return spawnEnemyPosition.DOWN;
+                }
             } else {
-                 if(this.enemies[0].spawnPoint == spawnEnemyPosition.TOP) {
+                //console.log("current: " + this.enemiesAlive[0].spawnPoint);
+                // TODO: FIX - this.enemiesAlive[0].spawnPoint is returning wrong position
+                if(this.enemiesAlive[0].spawnPoint == spawnEnemyPosition.TOP) {
+                    //console.log("new: " +spawnEnemyPosition.DOWN);
                      return spawnEnemyPosition.DOWN;
                  } else {
-                     return spawnEnemyPosition.TOP;
+                    //console.log("new: " +spawnEnemyPosition.TOP);
+                    return spawnEnemyPosition.TOP;
                  }
             }
+        }
+
+        /**
+         * Initialize enemies for the current state
+         * @param assetKey
+         */
+        public createLevelEnemies(): void {
+            (<Superhero.Game>this.game).conf.ENEMIES.levels[this.currentLevel].forEach((enemyAssetKey) => {
+                var newEnemy = this.getInitDefaultEnemyProperties(enemyAssetKey);
+                // create the new enemy twice
+                for (var i = 2; --i>=0;){
+                    var spawnedNewEnemy = this.spawnEnemy(newEnemy);
+                    spawnedNewEnemy.sprite.kill();
+                    spawnedNewEnemy.sprite.events.onKilled.add(function() {
+                        this.enemiesAlive.pop(this);
+                    }, this);
+                    this.enemies.push(spawnedNewEnemy);
+                }
+            });
+        }
+
+        private spawnEnemy(newEnemy: IEnemy): Superhero.EnemyBase {
+            return new Superhero.EnemyBase(this.game, newEnemy);
+        }
+
+        /**
+         * Get default values for initializing enemies
+         * @param assetKey
+         * @returns {IEnemy}
+         */
+        private getInitDefaultEnemyProperties(assetKey: string): IEnemy {
+
+            var newEnemy: IEnemy = {
+                assetsKey: assetKey,
+                facing: Superhero.Facing.LEFT,
+                bulletVelocity: (<Superhero.Game>this.game).conf.ENEMIES.bulletSpeed,
+                // TODO: check if it's ok to spawn the enemy outside the world bounds this way
+                spawnLocation: {x: this.game.width + 200, y: this.game.height + 200},
+                firePower: 1,
+                shootDelay: (<Superhero.Game>this.game).conf.ENEMIES.shootDelay,
+                defaultState: EnemyState.STEADY,
+                spawnPoint: spawnEnemyPosition.DOWN
+            };
+
+            return newEnemy;
         }
 
         /**
@@ -161,20 +227,20 @@ module Superhero {
          * Check if the new enemy can be spawned
          */
         private tryToSpawnEnemy() {
-            if(this.getEnemiesOnStage() < 2) {
+            if(this.totalEnemiesAlive() < 2) {
                 this.spawnRandomEnemy();
             }
         }
 
         enemyDied(): void {
-            // call powerUpManager drop and send the corresponding property (like drop weapon.B)
+            this.enemiesOnTheStage --;
         }
 
         /**
          * Gets the number of enemies on the current stage
          */
-        public getEnemiesOnStage(): number {
-            return this.enemies.length;
+        public totalEnemiesAlive(): number {
+            return this.enemiesAlive.length;
         }
 
 

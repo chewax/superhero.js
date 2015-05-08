@@ -31,7 +31,7 @@ module Superhero {
         shootDelay: number;
         bulletSpeed: number;
         maxBulletSpeed: number;
-        enemiesAvailableAssets: string[];
+        levels: any;
         spawnCoordinates: {
             patrol: {
                 top: {
@@ -51,7 +51,7 @@ module Superhero {
                 }
             }
         }
-        patrolTweenSpeed: number
+        patrolTweenSpeed: number;
     }
 
     export class Config {

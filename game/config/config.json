@@ -38,7 +38,6 @@
     "shootDelay": 5000,
     "bulletSpeed": 400,
     "maxBulletSpeed": 1100,
-    "enemiesAvailableAssets": ["badie"],
     "spawnCoordinates": {
       "patrol": {
         "top": {
@@ -58,7 +57,11 @@
         }
       }
     },
-    "patrolTweenSpeed": 1500
+    "patrolTweenSpeed": 1500,
+
+    "levels": {
+      "level1": ["badie"]
+    }
   }
 
 }

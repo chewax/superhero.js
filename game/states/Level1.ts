@@ -25,6 +25,7 @@ module Superhero {
         obstacleManager: Obstacles.ObstacleManager;
         enemyManager: Superhero.EnemyManager;
         collectableManager: Collectables.CollectableManager;
+        levelID: string = "level1";
 
         preload () {
 
@@ -39,6 +40,7 @@ module Superhero {
             this.configureInput();
             this.setActors();
             //this.startMusic();
+            this.setEnemyManager();
 
             this.debug = new Debug(this.game);
         }
@@ -70,14 +72,16 @@ module Superhero {
             this.paralax1 = this.game.add.tileSprite(0,0,1800,600, 'starfield');
             this.paralax1.autoScroll(-100,0);
 
-            // Setup enemy manager
-            this.enemyManager = new Superhero.EnemyManager(this.game);
-
             //Setup Obstacle
             this.obstacleManager = new Obstacles.ObstacleManager(this.game, 2500);
             this.obstacleManager.addObstacleToPool(Obstacles.ObstacleType.WALL);
 
             this.initCollectables();
+        }
+
+        private  setEnemyManager(): void {
+            // Setup enemy manager
+            this.enemyManager = new Superhero.EnemyManager(this.game, this.levelID);
         }
 
         initCollectables(): void {
@@ -88,7 +92,7 @@ module Superhero {
             this.collectableManager.addCollectable(Collectables.CollectableType.TIME_WARP);
             this.collectableManager.addCollectable(Collectables.CollectableType.DIAMOND);
             this.collectableManager.addCollectable(Collectables.CollectableType.BOMB);
-            this.collectableManager.addCollectable(Collectables.CollectableType.INMUNITY);
+            this.collectableManager.addCollectable(Collectables.CollectableType.IMMUNITY);
         }
 
 
