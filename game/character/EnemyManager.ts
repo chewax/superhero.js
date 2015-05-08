@@ -70,7 +70,19 @@ module Superhero {
             };
 
             // TODO: If there is some sprite already dead try to get it and reset
-            this.enemies.push(new Superhero.EnemyBase(this.game, newEnemy));
+            var spawnEnemy = this.getFirstEnemyDead(newEnemy.assetsKey);
+
+            if (spawnEnemy) {
+                spawnEnemy.setCustomEnemyProperties(newEnemy);
+                spawnEnemy.sprite.reset(newEnemy.spawnLocation.x, newEnemy.spawnLocation.y);
+            }
+        }
+
+        private getFirstEnemyDead(key:string): Superhero.EnemyBase {
+            for (var i = 0; i < this.enemies.length; i++) {
+                if (this.enemies[i].sprite.frameName === key && !this.enemies[i].sprite.alive ) return this.enemies[i];
+            }
+            return null
         }
 
         private getShootDelay(): number {
