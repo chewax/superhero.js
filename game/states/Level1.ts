@@ -74,7 +74,8 @@ module Superhero {
 
             //Setup Obstacle
             this.obstacleManager = new Obstacles.ObstacleManager(this.game, 2500);
-            this.obstacleManager.addObstacleToPool(Obstacles.ObstacleType.WALL);
+            //this.obstacleManager.addObstacleToPool(Obstacles.ObstacleType.WALL);
+            this.obstacleManager.addObstacleToPool(Obstacles.ObstacleType.METEORITE_SHOWER);
 
             this.initCollectables();
         }
@@ -140,7 +141,8 @@ module Superhero {
 
             bullet.kill();
 
-            if (wall.frameName == "grey5") return;
+            //If contains the word grey
+            if (wall.frameName.indexOf("grey") > -1) return;
 
             //one out of 20 must drop something
             this.collectableManager.spawnCollectable(wall.position.x, wall.position.y);
