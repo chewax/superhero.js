@@ -252,7 +252,6 @@ module Superhero {
                 }
             }
 
-
         }
 
         /**

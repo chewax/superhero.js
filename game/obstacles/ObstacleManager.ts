@@ -8,6 +8,7 @@ module Obstacles {
         WALL = 0,
         UPPERWALL = 1,
         LOWERWALL = 2,
+        METEORITE_SHOWER = 3
     }
     /**
      * On every updatee must handle if it is time to spawn a new obstacle, and which obstacle to spawn.
@@ -70,11 +71,7 @@ module Obstacles {
 
         speedUp(): void {
             for (var j=0; j < this.obstacles.length; j++) {
-                (<Obstacles.Obstacle> this.obstacles[j]).group.forEach(
-                    function(o){
-                        if (o.alive) o.body.velocity.x = this.gameSpeed * (1 + this.multiplier);
-                    },this
-                );
+                (<Obstacles.Obstacle> this.obstacles[j]).speedUp(this.gameSpeed, this.multiplier);
             }
         }
 
@@ -105,6 +102,11 @@ module Obstacles {
                 case ObstacleType.LOWERWALL:
                     this.obstacles.push(new Obstacles.LowerObstacle(this.game));
                     this.enabledObstacles.push(ObstacleType.LOWERWALL);
+                    break;
+
+                case ObstacleType.METEORITE_SHOWER:
+                    this.obstacles.push(new Obstacles.MeteoriteShower(this.game));
+                    this.enabledObstacles.push(ObstacleType.METEORITE_SHOWER);
                     break;
 
             }
