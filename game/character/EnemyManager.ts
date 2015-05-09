@@ -61,7 +61,8 @@ module Superhero {
          */
         public spawnRandomEnemy(): void {
 
-            var enemySpawnPoint = this.getRandomEnemySpawnPosition();
+            var enemySpawnPoint = this.getRandomEnemySpawnPosition(true);
+
             var enemyDefaultState = this.getRandomEnemyState();
             var newEnemy: IEnemy = {
                 assetsKey: this.getRandomEnemyAsset(),
@@ -147,26 +148,33 @@ module Superhero {
             return this.game.rnd.integerInRange(0, 1);
         }
 
-        private getRandomEnemySpawnPosition(): spawnEnemyPosition {
+        private getRandomEnemySpawnPosition(forEnemiesAlive: boolean): spawnEnemyPosition {
 
-            if(this.enemiesAlive.length == 0) {
+            var returnPosition;
+            var enemiesValues;
+
+            if(forEnemiesAlive) {
+                enemiesValues = this.enemiesAlive;
+            } else {
+                enemiesValues = this.enemies;
+            }
+
+            if(enemiesValues.length == 0) {
                 var rndInt = this.game.rnd.integerInRange(0, 1);
                 if(rndInt == 0){
-                    return spawnEnemyPosition.TOP;
+                    returnPosition = spawnEnemyPosition.TOP;
                 } else {
-                    return spawnEnemyPosition.DOWN;
+                    returnPosition = spawnEnemyPosition.DOWN;
                 }
             } else {
-                //console.log("current: " + this.enemiesAlive[0].spawnPoint);
-                // TODO: FIX - this.enemiesAlive[0].spawnPoint is returning wrong position
-                if(this.enemiesAlive[0].spawnPoint == spawnEnemyPosition.TOP) {
-                    //console.log("new: " +spawnEnemyPosition.DOWN);
-                     return spawnEnemyPosition.DOWN;
+                if(enemiesValues[0].spawnPoint == spawnEnemyPosition.TOP) {
+                    returnPosition = spawnEnemyPosition.DOWN;
                  } else {
-                    //console.log("new: " +spawnEnemyPosition.TOP);
-                    return spawnEnemyPosition.TOP;
+                    returnPosition = spawnEnemyPosition.TOP;
                  }
             }
+
+            return returnPosition;
         }
 
         /**
@@ -177,11 +185,19 @@ module Superhero {
             (<Superhero.Game>this.game).conf.ENEMIES.levels[this.currentLevel].forEach((enemyAssetKey) => {
                 var newEnemy = this.getInitDefaultEnemyProperties(enemyAssetKey);
                 // create the new enemy twice
-                for (var i = 2; --i>=0;){
+                for (var i = 0; i < 2; i++){
                     var spawnedNewEnemy = this.spawnEnemy(newEnemy);
                     spawnedNewEnemy.sprite.kill();
-                    spawnedNewEnemy.sprite.events.onKilled.add(function() {
-                        this.enemiesAlive.pop(this);
+                    spawnedNewEnemy.sprite.events.onKilled.add(function(s) {
+                        for (var i = 0; i < this.enemiesAlive.length; i++) {
+                            if (this.enemiesAlive[i].sprite === s ){
+                                var index = this.enemiesAlive.indexOf(this.enemiesAlive[i], 0);
+                                if (index != undefined) {
+                                    this.enemiesAlive.splice(index, 1);
+                                }
+                            }
+                        }
+
                     }, this);
                     this.enemies.push(spawnedNewEnemy);
                 }
@@ -208,7 +224,7 @@ module Superhero {
                 firePower: 1,
                 shootDelay: (<Superhero.Game>this.game).conf.ENEMIES.shootDelay,
                 defaultState: EnemyState.STEADY,
-                spawnPoint: spawnEnemyPosition.DOWN
+                spawnPoint: this.getRandomEnemySpawnPosition(false)
             };
 
             return newEnemy;
