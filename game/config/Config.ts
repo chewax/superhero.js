@@ -59,6 +59,7 @@ module Superhero {
         WORLD: IWorldConfig;
         PHYISICS: IPhysicsConfig;
         PLAYERDIEOUTOFBOUNDS: boolean;
+        PLAYERISIMMORTAL: boolean;
         ENEMIES: IEnemiesConfig;
 
         constructor () {
@@ -68,6 +69,7 @@ module Superhero {
             this.PHYISICS = JSON.parse(remoteValues).physics;
             this.PLAYERDIEOUTOFBOUNDS = JSON.parse(remoteValues).playerDieOutofBounds;
             this.ENEMIES = JSON.parse(remoteValues).enemies;
+            this.PLAYERISIMMORTAL = JSON.parse(remoteValues).playerIsImmortal;
         }
 
         private getRemote(): string {

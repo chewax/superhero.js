@@ -316,6 +316,9 @@ module Superhero {
          * @param {any}           object An instance of the collided object
          */
         die (char:Phaser.Sprite, object:any) {
+            if((<Superhero.Game>this.game).conf.PLAYERISIMMORTAL && char.key == "hero1") {
+                return;
+            }
             this.sprite.alive = false;
             char.play('takehit',4,false,true);
             object.kill();

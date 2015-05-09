@@ -30,6 +30,8 @@
     }
   },
 
+  "playerIsImmortal": false,
+
   "playerDieOutofBounds": false,
 
   "enemies": {
