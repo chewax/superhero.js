@@ -39,7 +39,7 @@ module Superhero {
             this.setBaseStage();
             this.configureInput();
             this.setActors();
-            //this.startMusic();
+            this.startMusic();
             this.setEnemyManager();
 
             this.debug = new Debug(this.game);
@@ -110,8 +110,10 @@ module Superhero {
 
 
         startMusic () :void{
-            this.theme = this.game.add.audio('theme', 1, true);
-            this.theme.play();
+            if((<Superhero.Game> this.game).conf.ISMUSICENABLED) {
+                this.theme = this.game.add.audio('theme', 1, true);
+                this.theme.play();
+            }
         }
 
         checkForCollisions(): void {
