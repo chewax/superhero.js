@@ -59,6 +59,7 @@ module Superhero {
         WORLD: IWorldConfig;
         PHYISICS: IPhysicsConfig;
         PLAYERDIEOUTOFBOUNDS: boolean;
+        ISMUSICENABLED: boolean;
         PLAYERISIMMORTAL: boolean;
         ENEMIES: IEnemiesConfig;
 
@@ -70,6 +71,7 @@ module Superhero {
             this.PLAYERDIEOUTOFBOUNDS = JSON.parse(remoteValues).playerDieOutofBounds;
             this.ENEMIES = JSON.parse(remoteValues).enemies;
             this.PLAYERISIMMORTAL = JSON.parse(remoteValues).playerIsImmortal;
+            this.ISMUSICENABLED = JSON.parse(remoteValues).isMusicEnabled;
         }
 
         private getRemote(): string {
