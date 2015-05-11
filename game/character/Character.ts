@@ -36,6 +36,7 @@ module Superhero {
         immunity: boolean = false;
         bombs: number = 0;
         shield: number = 0;
+        lives: number = 3;
 
         // 1 Diamond == 10 Coins
         coins: number = 0;
@@ -88,6 +89,8 @@ module Superhero {
          */
         initSprite (assetKey:string, x:number, y:number):void {
             this.sprite = this.game.add.sprite(x, y, assetKey, 'stand1');
+
+            //TODO Deacrease sprite size not to use scale, or properly update boundaries
             this.sprite.anchor.setTo(0.5,0);
             this.sprite.scale.setTo((<Superhero.Game> this.game).conf.WORLD.sprite_scaling);
             this.sprite.checkWorldBounds = (<Superhero.Game> this.game).conf.PLAYERDIEOUTOFBOUNDS;

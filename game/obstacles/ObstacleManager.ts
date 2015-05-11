@@ -53,7 +53,7 @@ module Obstacles {
             if (elapsedSecs > 10 ) {
                 this.multiplier += 0.1;
                 this.speedUp();
-                this.obstacleRespawnTime = this.baseRespawn / (1 + this.multiplier);
+                //this.obstacleRespawnTime = this.baseRespawn / (1 + this.multiplier);
                 this.multiplierTimer = this.game.time.time;
             }
 

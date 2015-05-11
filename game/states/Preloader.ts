@@ -37,8 +37,6 @@ module Superhero {
             this.game.load.image('starfield', '/assets/starfield.png');
             this.game.load.image('puinfo', '/assets/PUInfo.png');
 
-            //Fonts
-            //this.game.load.bitmapFont('desyrel', 'assets/fonts/bitmapFonts/desyrel.png', 'assets/fonts/bitmapFonts/desyrel.xml');
 
             //Audio
             //this.game.load.audio('theme', '/assets/sounds/demon_destroyer.mp3');

@@ -243,25 +243,25 @@ module Gamepads {
             angleStep = this.toRadians(angleStep);
 
             this.button1 = new Gamepads.Button(this.game, cx - this.padding, cy - this.padding, 'button1');
-            this.button1.sprite.scale.setTo(1.2);
+            this.button1.sprite.scale.setTo(1.3);
 
             //Button 2
             var bx = cx + Math.cos(angle) * radius;
             var by = cy + Math.sin(angle) * radius;
             this.button2 = new Gamepads.Button(this.game, bx, by, 'button2');
-            this.button2.sprite.scale.setTo(0.7);
+            this.button2.sprite.scale.setTo(0.8);
 
             //Button 3
             bx = cx + Math.cos(angle + angleStep) * radius;
             by = cy + Math.sin(angle + angleStep) * radius;
             this.button3 = new Gamepads.Button(this.game, bx, by, 'button3');
-            this.button3.sprite.scale.setTo(0.7);
+            this.button3.sprite.scale.setTo(0.8);
 
             //Button 4
             bx = cx + Math.cos(angle + (angleStep * 2)) * radius;
             by = cy + Math.sin(angle + (angleStep * 2)) * radius;
             this.button4 = new Gamepads.Button(this.game, bx, by, 'button4');
-            this.button4.sprite.scale.setTo(0.7);
+            this.button4.sprite.scale.setTo(0.8);
 
             this.game.add.plugin(this.button1);
             this.game.add.plugin(this.button2);
