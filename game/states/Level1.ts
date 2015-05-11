@@ -73,7 +73,7 @@ module Superhero {
             this.paralax1.autoScroll(-100,0);
 
             //Setup Obstacle
-            this.obstacleManager = new Obstacles.ObstacleManager(this.game, 2500);
+            this.obstacleManager = new Obstacles.ObstacleManager(this.game, 800);
             //this.obstacleManager.addObstacleToPool(Obstacles.ObstacleType.WALL);
             this.obstacleManager.addObstacleToPool(Obstacles.ObstacleType.METEORITE_SHOWER);
 
@@ -91,14 +91,16 @@ module Superhero {
             this.collectableManager.addCollectable(Collectables.CollectableType.IMPROVE_SHIELD);
             this.collectableManager.addCollectable(Collectables.CollectableType.NUKE_BOMB);
             this.collectableManager.addCollectable(Collectables.CollectableType.TIME_WARP);
-            this.collectableManager.addCollectable(Collectables.CollectableType.DIAMOND);
+            //this.collectableManager.addCollectable(Collectables.CollectableType.DIAMOND);
             this.collectableManager.addCollectable(Collectables.CollectableType.BOMB);
-            this.collectableManager.addCollectable(Collectables.CollectableType.IMMUNITY);
+            //this.collectableManager.addCollectable(Collectables.CollectableType.IMMUNITY);
+            this.collectableManager.addCollectable(Collectables.CollectableType.LIVES);
+
         }
 
 
         configureInput(): void {
-            (<Superhero.Game> this.game).gamepad = new Gamepads.GamePad(this.game, Gamepads.GamepadType.STICK_BUTTON, Gamepads.ButtonPadType.ONE_FIXED);
+            (<Superhero.Game> this.game).gamepad = new Gamepads.GamePad(this.game, Gamepads.GamepadType.STICK_BUTTON, Gamepads.ButtonPadType.FOUR_FAN);
             (<Superhero.Game> this.game).gamepad.buttonPad.button1.type = Gamepads.ButtonType.CUSTOM;
             (<Superhero.Game> this.game).gamepad.stick1.settings.topSpeed = 600;
         }

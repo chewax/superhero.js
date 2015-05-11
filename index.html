@@ -1,8 +1,33 @@
 <html>
 <head>
+    <link rel="stylesheet" href="/css/style.css" type="text/css" charset="utf-8" />
 </head>
 <body>
     <radar></radar>
+
+    <!--<script src="//ajax.googleapis.com/ajax/libs/webfont/1.5.10/webfont.js"></script>-->
+    <!--<script src="/lib/webfontloader.js"></script>-->
+    <!--<script> WebFont.load({-->
+        <!--custom: { families: ['saranaigamebold']}-->
+    <!--})</script>-->
+
+    <script type="text/javascript">
+
+        WebFontConfig = {
+            custom: { families: ['saranaigamebold'], urls: [ '/css/style.css' ] }
+        };
+
+        (function() {
+            var wf = document.createElement('script');
+//            wf.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+            wf.src = "/lib/webfontloader.js";
+            wf.type = 'text/javascript';
+            wf.async = 'true';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(wf, s);
+        })();
+
+    </script>
 
     <script type="text/javascript" src="lib/jquery.js"></script>
     <script type="text/javascript" src="lib/phaser.js"></script>

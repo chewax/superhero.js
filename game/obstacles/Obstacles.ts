@@ -45,9 +45,6 @@ module Obstacles {
 			
 			this.upperObstacle.resetAndRoll(top, speed);
 			this.lowerObstacle.resetAndRoll(low, speed);
-
-            //Concat add the group items to wall group
-            this.group = this.upperObstacle.group.children.concat(this.lowerObstacle.group.children);
 		}
 
         collidesWith(object:any):void{
