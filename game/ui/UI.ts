@@ -108,8 +108,10 @@ module Superhero {
 
         updateShields(){
             if (this.shieldLastCount == this.player.shield) return;
-            if (this.shieldLastCount > this.player.shield) this.killShieldIcon(this.shieldLastCount - this.player.shield);
-            else this.reviveShieldIcon(this.player.shield - this.shieldLastCount);
+            if (this.shieldLastCount > this.player.shield) this.killNextShield();
+            //if (this.shieldLastCount > this.player.shield) this.killShieldIcon(this.shieldLastCount - this.player.shield);
+            else this.reviveNextShield();
+            this.shieldLastCount = this.player.shield;
         }
 
         updateLives(){
@@ -140,6 +142,8 @@ module Superhero {
                 this.nukesText.alpha = 0.3;
                 (<Superhero.Game> this.game).gamepad.buttonPad.button2.sprite.alpha = 0.3;
             }
+
+            this.nukesLastCount = this.player.nukes;
         }
 
         updateRockets(){
@@ -151,13 +155,14 @@ module Superhero {
                 this.rocketText.alpha = 1;
                 (<Superhero.Game> this.game).gamepad.buttonPad.button4.sprite.alpha = 1;
             }
-
             else
             {
                 this.rocketIcon.alpha = 0.3;
                 this.rocketText.alpha = 0.3;
                 (<Superhero.Game> this.game).gamepad.buttonPad.button4.sprite.alpha = 0.3;
             }
+
+            this.rocketLastCount = this.player.bombs;
         }
 
         updateWarps(){
@@ -176,6 +181,8 @@ module Superhero {
                 this.warpText.alpha = 0.3;
                 (<Superhero.Game> this.game).gamepad.buttonPad.button3.sprite.alpha = 0.3;
             }
+
+            this.warpLastCount = this.player.timeWarps;
         }
 
         /**
@@ -217,6 +224,25 @@ module Superhero {
                 this.shieldIcons[i].kill();
                 this.shieldLastCount -= 1;
                 killed += 1;
+            }
+        }
+
+        killNextShield(){
+            for (var i=0; i<this.shieldIcons.length; i++){
+                if (!this.shieldIcons[i].alive && i>0) {
+                    this.shieldIcons[i-1].kill();
+                    return;
+                }
+            }
+            this.shieldIcons[this.shieldIcons.length-1].kill();
+        }
+
+        reviveNextShield(){
+            for (var i=0; i<this.shieldIcons.length; i++){
+                if (!this.shieldIcons[i].alive) {
+                    this.shieldIcons[i].revive();
+                    return;
+                }
             }
         }
 

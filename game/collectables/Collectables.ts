@@ -69,6 +69,7 @@ module Collectables {
 
         collect( character: Superhero.Character ) {
             if (character.shield < 3) character.shield += 1;
+            //character.renderShield();
         }
 
     }
