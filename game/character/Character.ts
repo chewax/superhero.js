@@ -46,6 +46,8 @@ module Superhero {
 
         fuelTimer: number;
         bulletTimer: number;
+        nukeCoolDown: number = 0;
+        warpCoolDown: number = 0;
         dieTimer: number;
         facing: Facing;
         _state: Superhero.CharState;
@@ -82,6 +84,9 @@ module Superhero {
             this.maxFuel = 2000;
             this.fuelTimer = this.game.time.time;
             this.bulletTimer = this.game.time.time;
+            this.nukeCoolDown = this.game.time.time;
+            this.warpCoolDown = this.game.time.time;
+
             this.sprite.play('flystill');
         }
 
@@ -248,6 +253,10 @@ module Superhero {
         fireNuke (): void {
 
             if (this.nukes <= 0) return;
+            var coolDown = this.game.time.elapsedSecondsSince(this.nukeCoolDown);
+            if (coolDown < 30) return;
+            this.nukeCoolDown = this.game.time.time;
+
 
             //Thou shalt only shoot if there is no shooting in progress
             if (this.sprite.animations.currentAnim.name != 'shoot' || this.sprite.animations.currentAnim.isFinished) {

@@ -205,7 +205,6 @@ module Obstacles {
 
             n = 1;
             speed = this.gameSpeed * Math.sqrt(1 + multiplier);
-            //speed = -80;
 
             var meteorites: IMeteors[] = [];
             var randKey: IMeteors[] = [];
@@ -240,7 +239,6 @@ module Obstacles {
 
             var viewportHeight = this.game.height;
             var viewportWidth = this.game.width;
-
             var sector = viewportHeight / n;
 
             var randY = [];
@@ -277,9 +275,7 @@ module Obstacles {
 
                     stone.reset(randX,randY[i]);
                 }
-
                 stone.body.velocity.x = speed * this.game.rnd.realInRange(1,3);
-
             }
 
         }
