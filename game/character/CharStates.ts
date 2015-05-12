@@ -96,6 +96,10 @@ module Superhero {
                     this.hero.fireRocket();
                 }
 
+                if (this.nukeButton.pressed) {
+                    this.hero.fireNuke();
+                }
+
                 if (this.heroStick.receivingInput()) {
                     return new StateFly(this.game, this.hero);
                 }
@@ -135,6 +139,10 @@ module Superhero {
                     this.hero.fireRocket();
                 }
 
+                if (this.nukeButton.pressed) {
+                    this.hero.fireNuke();
+                }
+
                 if (!this.heroStick.receivingInput()) {
                     return new StateIdle(this.game, this.hero);
                 }
@@ -169,6 +177,14 @@ module Superhero {
 
                 if (this.bombButton.pressed) {
                     this.hero.fireRocket();
+                }
+
+                if (this.nukeButton.pressed) {
+                    this.hero.fireNuke();
+                }
+
+                if (this.nukeButton.pressed) {
+                    this.hero.fireNuke();
                 }
 
                 if (!this.heroStick.receivingInput()) {

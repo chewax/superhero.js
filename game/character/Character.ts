@@ -240,6 +240,46 @@ module Superhero {
             }
         }
 
+
+        /**
+         * Wraps the fire logic. Check if there is a "dead" bullet. If so, reset
+         * its position and sendit fo fly
+         */
+        fireNuke (): void {
+
+            if (this.nukes <= 0) return;
+
+            //Thou shalt only shoot if there is no shooting in progress
+            if (this.sprite.animations.currentAnim.name != 'shoot' || this.sprite.animations.currentAnim.isFinished) {
+
+                //Check for shootRate
+                var elapsedTime = this.game.time.elapsedSince(this.bulletTimer);
+                if (elapsedTime < this.shootDelay) return;
+
+                var graphics = this.game.add.graphics(0,0);
+
+                graphics.lineStyle(0);
+                graphics.beginFill(0xFFFFFF, 1);
+                var rect = graphics.drawRect(0,0,this.game.width, this.game.height);
+
+                var nukeTween = this.game.add.tween(rect);
+                nukeTween.to({alpha:0},1500);
+
+                nukeTween.onComplete.add(function(){
+                    graphics.destroy();
+                },this);
+
+                nukeTween.start();
+                this.game.state.states.Level1.obstacleManager.killAll();
+                this.game.state.states.Level1.enemyManager.killAll();
+
+                //Reset the timer
+                this.bulletTimer = this.game.time.time;
+                this.nukes -= 1;
+            }
+
+        }
+
         /**
          * Adds the animations to the character
          */
@@ -377,7 +417,7 @@ module Superhero {
          * @param {Phaser.Sprite} char   An instance of the character
          * @param {any}           object An instance of the collided object
          */
-        die (char:Phaser.Sprite, object:any) {
+        die (char:Phaser.Sprite, object?:any) {
             var elapsedTime = this.game.time.elapsedSince(this.dieTimer);
             if (elapsedTime < 100) return;
             this.dieTimer = this.game.time.time;
@@ -385,7 +425,8 @@ module Superhero {
             if((<Superhero.Game>this.game).conf.PLAYERISIMMORTAL && char.key == "hero1") {
                 return;
             }
-            object.kill();
+
+            if (object) object.kill();
 
             if (this.shield > 0) {
                 this.shield -= 1;
@@ -399,7 +440,12 @@ module Superhero {
                 return
             }
 
+
             char.alive = false;
+
+            if (this.bullets) this.bullets.forEachAlive(function(b){b.kill()},this);
+            if (this.rockets) this.rockets.forEachAlive(function(r){r.kill()},this);
+
             char.play('takehit',4,false,true);
 
         }

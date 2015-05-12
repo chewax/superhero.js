@@ -38,6 +38,12 @@ module Superhero {
             this.createLevelEnemies();
         }
 
+        killAll(){
+            for (var i = 0; i < this.enemiesAlive.length; i++){
+                this.enemiesAlive[i].die(this.enemiesAlive[i].sprite);
+            }
+        }
+
         /**
         * Enemies Timer
         */
