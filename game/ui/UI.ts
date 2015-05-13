@@ -27,10 +27,6 @@ module Superhero {
         livesText: Phaser.Text;
         livesLastCount: number = 0;
 
-        //// COINS
-        //coinsIcon: Phaser.Sprite;
-        //coinsText: Phaser.Text;
-        //coinsLastCount: number = 0;
 
         // NUKES
         nukesIcon: Phaser.Sprite;
@@ -86,9 +82,6 @@ module Superhero {
 
 
         createScoreBoard (): void {
-            //OLD UI Color
-            //var style = { font: "30px saranaigamebold", fill: "#FF9900", align: "center" };
-
             var style = { font: "30px saranaigamebold", fill: "#FDCD08", align: "center" };
             this.scoreText = this.game.add.text(20, 50, this.scoreCount.toString(), style);
         }
@@ -97,11 +90,6 @@ module Superhero {
             this.scoreCount += amount;
             this.scoreText.setText(this.scoreCount.toString());
         }
-
-        //updateCoins(){
-        //    if (this.coinsLastCount == this.player.coins) return;
-        //    this.coinsText.setText(this.player.coins.toString());
-        //}
 
         updateCooldowns(){
             this.updateNukeCooldown();
@@ -290,9 +278,6 @@ module Superhero {
             var x = 20;
             var y = 30;
 
-            //OLD UI Color
-            //var style = { font: "20px saranaigamebold", fill: "#FF9900", align: "center"};
-
             var style = { font: "20px saranaigamebold", fill: "#FDCD08", align: "center"};
 
             // LIVES
@@ -303,15 +288,6 @@ module Superhero {
             this.livesText.anchor.set(0,0.5);
             this.livesLastCount = this.player.lives;
             x = x + this.livesText.width + 10;
-
-            //// COINS
-            //this.coinsIcon = this.game.add.sprite(x, y, 'pups', 'coin_s');
-            //this.coinsIcon.anchor.setTo(0,0.5);
-            //x = x + this.coinsIcon.width + 10;
-            //this.coinsText = this.game.add.text(x, y+5, this.player.coins.toString(), style);
-            //this.coinsText.anchor.set(0,0.5);
-            //this.coinsLastCount = this.player.coins;
-            //x = x + this.coinsText.width + 10;
 
             // SHIELDS
             this.shieldIcons = [];
@@ -381,46 +357,6 @@ module Superhero {
                 this.rocketText.alpha = 0.3;
                 (<Superhero.Game> this.game).gamepad.buttonPad.button4.sprite.alpha = 0.3;
             }
-
-            x = x - (this.rocketIcon.width  + 10);
-
-        }
-
-
-        // DEPRECATED METHODS
-        // ================================================================
-
-        fireInfo: Phaser.Sprite;
-        nukeInfo: Phaser.Sprite;
-        warpInfo: Phaser.Sprite;
-        coinInfo: Phaser.Sprite;
-        shieldInfo: Phaser.Sprite;
-
-        //Deprecated
-        createPowerUPInfo(){
-            var x = 20;
-            var y = 20;
-            var style = { font: "40px saranaigamebold", fill: "#FF9900", align: "center" };
-
-            //Fire Info
-            this.fireInfo = this.game.add.sprite(x, y, 'puinfo');
-            this.fireInfo.addChild(this.game.add.sprite(34, 24, 'pups', 'bullet'));
-            this.fireInfo.addChild(this.game.add.text(150, 37, this.player.firePower.toString(), style));
-            this.fireInfo.scale.setTo(0.5);
-
-            x = x + this.fireInfo.width + 10;
-            //Shield Info
-            this.shieldInfo = this.game.add.sprite(x, y, 'puinfo');
-            this.shieldInfo.addChild(this.game.add.sprite(28, 33, 'pups', 'shield'));
-            this.shieldInfo.addChild(this.game.add.text(150, 37, this.player.shield.toString(), style));
-            this.shieldInfo.scale.setTo(0.5);
-
-            x = x + this.shieldInfo.width + 10;
-            //Shield Info
-            this.coinInfo = this.game.add.sprite(x, y, 'puinfo');
-            this.coinInfo.addChild(this.game.add.sprite(27, 29, 'pups', 'coin'));
-            this.coinInfo.addChild(this.game.add.text(150, 37, this.player.coins.toString(), style));
-            this.coinInfo.scale.setTo(0.5);
 
         }
 
