@@ -27,7 +27,7 @@ module Superhero {
         livesText: Phaser.Text;
         livesLastCount: number = 0;
 
-        //// LIVES
+        //// COINS
         //coinsIcon: Phaser.Sprite;
         //coinsText: Phaser.Text;
         //coinsLastCount: number = 0;
@@ -67,9 +67,12 @@ module Superhero {
             this.updateShields();
             this.updateLives();
             this.updatePUPIcons();
+            this.updateCooldowns();
             //this.updateCoins();
 
         }
+
+
 
         createTimer():void {
             this.timer = this.game.time.create(false);
@@ -100,6 +103,37 @@ module Superhero {
         //    this.coinsText.setText(this.player.coins.toString());
         //}
 
+        updateCooldowns(){
+            this.updateNukeCooldown();
+            this.updateWarpCooldown();
+        }
+
+        updateNukeCooldown(){
+            var elapsed = this.game.time.elapsedSecondsSince(this.player.nukeCoolDown);
+            var cooldown = 30;
+
+            if (elapsed > cooldown) {
+                return;
+            }
+
+            var pj = elapsed / cooldown;
+            (<Superhero.PieMask> this.nukesIcon.mask).drawWithFill(pj, 0xFFFFFF, 0.5);
+
+        }
+
+        updateWarpCooldown(){
+            var elapsed = this.game.time.elapsedSecondsSince(this.player.warpCoolDown);
+            var cooldown = 30;
+
+            if (elapsed > cooldown) {
+                return;
+            }
+
+            var pj = elapsed / cooldown;
+            (<Superhero.PieMask> this.warpIcon.mask).drawWithFill(pj, 0xFFFFFF, 0.5);
+
+        }
+
         updateTime(){
             var minutes = Math.floor(this.timer.seconds / 60);
             var seconds = Math.floor(this.timer.seconds - (minutes * 60));
@@ -109,7 +143,7 @@ module Superhero {
         updateShields(){
             if (this.shieldLastCount == this.player.shield) return;
             if (this.shieldLastCount > this.player.shield) this.killNextShield();
-            //if (this.shieldLastCount > this.player.shield) this.killShieldIcon(this.shieldLastCount - this.player.shield);
+
             else this.reviveNextShield();
             this.shieldLastCount = this.player.shield;
         }
@@ -283,16 +317,27 @@ module Superhero {
 
         createPowerUpInterface () {
             var x = this.game.width - 50;
-            var y = 30;
+            var y = 15;
 
+            //TODO Finish Countdown
             var style = { font: "15px saranaigamebold", fill: "#FDCD08", align: "center"};
 
             // NUKES
             this.nukesIcon = this.game.add.sprite(x, y, 'pups', 'nuke_s');
-            this.nukesIcon.anchor.setTo(0,0.5);
-            this.nukesText = this.game.add.text(x + (this.nukesIcon.width / 2) + 1, y + 18, this.player.nukes.toString(), style);
+            //this.nukesIcon.anchor.setTo(0,0);
+            this.nukesText = this.game.add.text(x + (this.nukesIcon.width / 2) + 1, y + 33, this.player.nukes.toString(), style);
             this.nukesText.anchor.set(0.5,0);
             this.nukesLastCount = this.player.nukes;
+
+
+            var mask_x = x + (this.nukesIcon.width / 2);
+            var mask_y = y + (this.nukesIcon.height / 2);
+            var mask_radius = Math.max(this.nukesIcon.width,this.nukesIcon.height)/2;
+
+            this.nukesIcon.mask = new Superhero.PieMask(this.game, mask_radius, mask_x, mask_y);
+
+
+
 
             if (this.player.nukes == 0) {
                 this.nukesIcon.alpha = 0.3;
@@ -305,10 +350,16 @@ module Superhero {
 
             // WARPS
             this.warpIcon = this.game.add.sprite(x, y, 'pups', 'clock_s');
-            this.warpIcon.anchor.setTo(0,0.5);
-            this.warpText = this.game.add.text(x + (this.warpIcon.width / 2) + 1, y + 18, this.player.timeWarps.toString(), style);
+            this.warpIcon.anchor.setTo(0,0);
+            this.warpText = this.game.add.text(x + (this.warpIcon.width / 2) + 1, y + 33, this.player.timeWarps.toString(), style);
             this.warpText.anchor.set(0.5,0);
             this.warpLastCount = this.player.timeWarps;
+
+            mask_x = x + (this.warpIcon.width / 2);
+            mask_y = y + (this.warpIcon.height / 2);
+            mask_radius = Math.max(this.warpIcon.width,this.warpIcon.height)/2;
+            this.warpIcon.mask = new Superhero.PieMask(this.game, mask_radius, mask_x, mask_y);
+
 
             if (this.player.timeWarps == 0) {
                 this.warpIcon.alpha = 0.3;
@@ -320,8 +371,8 @@ module Superhero {
 
             // ROCKETS
             this.rocketIcon = this.game.add.sprite(x, y, 'pups', 'rocket_s');
-            this.rocketIcon.anchor.setTo(0,0.5);
-            this.rocketText = this.game.add.text(x + (this.rocketIcon.width / 2) + 1, y + 18, this.player.bombs.toString(), style);
+            this.rocketIcon.anchor.setTo(0,0);
+            this.rocketText = this.game.add.text(x + (this.rocketIcon.width / 2) + 1, y + 33, this.player.bombs.toString(), style);
             this.rocketText.anchor.set(0.5,0);
             this.rocketLastCount = this.player.bombs;
 
