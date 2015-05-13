@@ -113,11 +113,14 @@ module Superhero {
             var cooldown = 30;
 
             if (elapsed > cooldown) {
+                if (!(<Superhero.PieMask> this.nukesIcon.mask).atRest) (<Superhero.PieMask> this.nukesIcon.mask).drawCircleAtSelf();
+                (<Superhero.PieMask> this.nukesIcon.mask).atRest = true;
                 return;
             }
 
             var pj = elapsed / cooldown;
             (<Superhero.PieMask> this.nukesIcon.mask).drawWithFill(pj, 0xFFFFFF, 0.5);
+            (<Superhero.PieMask> this.nukesIcon.mask).atRest = false;
 
         }
 
@@ -126,11 +129,14 @@ module Superhero {
             var cooldown = 30;
 
             if (elapsed > cooldown) {
+                if (!(<Superhero.PieMask> this.warpIcon.mask).atRest) (<Superhero.PieMask> this.warpIcon.mask).drawCircleAtSelf();
+                (<Superhero.PieMask> this.warpIcon.mask).atRest = true;
                 return;
             }
 
             var pj = elapsed / cooldown;
             (<Superhero.PieMask> this.warpIcon.mask).drawWithFill(pj, 0xFFFFFF, 0.5);
+            (<Superhero.PieMask> this.warpIcon.mask).atRest = false;
 
         }
 
@@ -319,24 +325,19 @@ module Superhero {
             var x = this.game.width - 50;
             var y = 15;
 
-            //TODO Finish Countdown
             var style = { font: "15px saranaigamebold", fill: "#FDCD08", align: "center"};
 
             // NUKES
             this.nukesIcon = this.game.add.sprite(x, y, 'pups', 'nuke_s');
-            //this.nukesIcon.anchor.setTo(0,0);
             this.nukesText = this.game.add.text(x + (this.nukesIcon.width / 2) + 1, y + 33, this.player.nukes.toString(), style);
             this.nukesText.anchor.set(0.5,0);
             this.nukesLastCount = this.player.nukes;
 
-
+            // NUKE ICON MASK
             var mask_x = x + (this.nukesIcon.width / 2);
             var mask_y = y + (this.nukesIcon.height / 2);
             var mask_radius = Math.max(this.nukesIcon.width,this.nukesIcon.height)/2;
-
             this.nukesIcon.mask = new Superhero.PieMask(this.game, mask_radius, mask_x, mask_y);
-
-
 
 
             if (this.player.nukes == 0) {
@@ -350,11 +351,11 @@ module Superhero {
 
             // WARPS
             this.warpIcon = this.game.add.sprite(x, y, 'pups', 'clock_s');
-            this.warpIcon.anchor.setTo(0,0);
             this.warpText = this.game.add.text(x + (this.warpIcon.width / 2) + 1, y + 33, this.player.timeWarps.toString(), style);
             this.warpText.anchor.set(0.5,0);
             this.warpLastCount = this.player.timeWarps;
 
+            // WARP ICON MASK
             mask_x = x + (this.warpIcon.width / 2);
             mask_y = y + (this.warpIcon.height / 2);
             mask_radius = Math.max(this.warpIcon.width,this.warpIcon.height)/2;
@@ -371,7 +372,6 @@ module Superhero {
 
             // ROCKETS
             this.rocketIcon = this.game.add.sprite(x, y, 'pups', 'rocket_s');
-            this.rocketIcon.anchor.setTo(0,0);
             this.rocketText = this.game.add.text(x + (this.rocketIcon.width / 2) + 1, y + 33, this.player.bombs.toString(), style);
             this.rocketText.anchor.set(0.5,0);
             this.rocketLastCount = this.player.bombs;

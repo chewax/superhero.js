@@ -102,6 +102,7 @@ module Superhero {
         public radius:number;
         public rotation:number;
         public sides:number;
+        public atRest:boolean = false;
 
         constructor(game:Phaser.Game, radius:number = 50, x:number = 0, y:number = 0, rotation:number = 0, sides:number = 6){
 
@@ -110,13 +111,16 @@ module Superhero {
             this.radius = radius;
             this.rotation = rotation;
 
-            // graphics should have its beginFill function already called by now
             this.moveTo(this.x, this.y);
 
             if (sides < 3) this.sides = 3; // 3 sides minimum
             else this.sides = sides;
-            //this.drawCircle(this.x, this.y, radius);
+
             this.game.add.existing(this);
+        }
+
+        public drawCircleAtSelf(){
+            this.drawCircle(this.x, this.y, this.radius * 2);
         }
 
         public drawWithFill( pj:number, color:number=0, alpha:number=1){
