@@ -48,6 +48,9 @@ module Superhero {
         hero: Superhero.Character;
 
         fireButton: Gamepads.Button;
+        nukeButton: Gamepads.Button;
+        warpButton: Gamepads.Button;
+        bombButton: Gamepads.Button;
         heroStick: Gamepads.Joystick;
 
 
@@ -61,9 +64,10 @@ module Superhero {
             this.game = game;
             this.hero = hero;
             this.gamepad = (<Superhero.Game> this.game).gamepad;
-
             this.fireButton = this.gamepad.buttonPad.button1;
-
+            this.nukeButton = this.gamepad.buttonPad.button2;
+            this.warpButton = this.gamepad.buttonPad.button3;
+            this.bombButton = this.gamepad.buttonPad.button4;
             this.heroStick = this.gamepad.stick1;
         }
 
@@ -86,6 +90,14 @@ module Superhero {
                 //If fire on idle. Fire and remain in same state
                 if (this.fireButton.pressed) {
                     this.hero.fire();
+                }
+
+                if (this.bombButton.pressed) {
+                    this.hero.fireRocket();
+                }
+
+                if (this.nukeButton.pressed) {
+                    this.hero.fireNuke();
                 }
 
                 if (this.heroStick.receivingInput()) {
@@ -123,6 +135,14 @@ module Superhero {
                     this.hero.fire();
                 }
 
+                if (this.bombButton.pressed) {
+                    this.hero.fireRocket();
+                }
+
+                if (this.nukeButton.pressed) {
+                    this.hero.fireNuke();
+                }
+
                 if (!this.heroStick.receivingInput()) {
                     return new StateIdle(this.game, this.hero);
                 }
@@ -153,6 +173,18 @@ module Superhero {
                 //If fire on idle. Fire and remain in same state
                 if (this.fireButton.pressed) {
                     this.hero.fire();
+                }
+
+                if (this.bombButton.pressed) {
+                    this.hero.fireRocket();
+                }
+
+                if (this.nukeButton.pressed) {
+                    this.hero.fireNuke();
+                }
+
+                if (this.nukeButton.pressed) {
+                    this.hero.fireNuke();
                 }
 
                 if (!this.heroStick.receivingInput()) {

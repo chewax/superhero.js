@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'saranaigamebold';
+    src: url('/assets/fonts/webfonts/saranaigame-bold-webfont.eot');
+    src: url('/assets/fonts/webfonts/saranaigame-bold-webfont.eot?#iefix') format('embedded-opentype'),
+    url('/assets/fonts/webfonts/saranaigame-bold-webfont.woff2') format('woff2'),
+    url('/assets/fonts/webfonts/saranaigame-bold-webfont.woff') format('woff'),
+    url('/assets/fonts/webfonts/saranaigame-bold-webfont.ttf') format('truetype'),
+    url('/assets/fonts/webfonts/saranaigame-bold-webfont.svg#saranaigamebold') format('svg');
+}

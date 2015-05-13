@@ -18,10 +18,8 @@ module Obstacles {
 
         game: Phaser.Game;
         gameSpeed: number;
-        obstacleRespawnTime: number;
         obstacleTimer: number;
         multiplierTimer: number;
-        baseRespawn: number;
         obstacleEmitter: Phaser.Particles.Arcade.Emitter;
         obstacles: Obstacles.Obstacle[];
         multiplier: number = 0; //Each 20 secs + 0.1
@@ -33,8 +31,6 @@ module Obstacles {
 
         constructor (game:Phaser.Game, respawn:number=800){
             this.game = game;
-            this.obstacleRespawnTime = respawn;
-            this.baseRespawn = respawn;
             this.obstacleTimer = this.game.time.time;
             this.multiplierTimer = this.game.time.time;
             this.gameSpeed = -80;
@@ -44,7 +40,6 @@ module Obstacles {
         }
 
         update (): void {
-            var elapsedTime = this.game.time.elapsedSince(this.obstacleTimer);
             var elapsedSecs = this.game.time.elapsedSecondsSince(this.multiplierTimer);
 
             // Every 20 seconds increment the multiplier
@@ -52,21 +47,15 @@ module Obstacles {
 
             if (elapsedSecs > 10 ) {
                 this.multiplier += 0.1;
-                this.speedUp();
-                this.obstacleRespawnTime = this.baseRespawn / (1 + this.multiplier);
                 this.multiplierTimer = this.game.time.time;
+                this.speedUp();
             }
 
-            if (elapsedTime > this.obstacleRespawnTime && this.obstacles.length > 0) {
-                var index = this.game.rnd.integerInRange(0,this.obstacles.length-1);
-                var obstacle = this.obstacles[index];
+            var index = this.game.rnd.integerInRange(0,this.obstacles.length-1);
+            var obstacle = this.obstacles[index];
 
-                // Apply the multiplier
-                var rollspeed = this.gameSpeed * (1 + this.multiplier);
-
-                (<Obstacles.Obstacle> obstacle).resetAndRoll(10, rollspeed);
-                this.obstacleTimer = this.game.time.time;
-            }
+            (<Obstacles.Obstacle> obstacle).resetAndRoll(10, this.multiplier);
+            this.obstacleTimer = this.game.time.time;
         }
 
         speedUp(): void {
@@ -84,6 +73,12 @@ module Obstacles {
         diesWith(object:any, callback?: Function, listenerContext?: any): void{
             for (var j=0; j < this.obstacles.length; j++) {
                 (<Obstacles.Obstacle> this.obstacles[j]).diesWith(object, callback, listenerContext);
+            }
+        }
+
+        killAll(){
+            for (var j=0; j < this.obstacles.length; j++) {
+                (<Obstacles.Obstacle> this.obstacles[j]).killAll();
             }
         }
 

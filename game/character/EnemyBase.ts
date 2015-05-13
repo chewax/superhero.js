@@ -29,6 +29,7 @@ module Superhero {
             super(game, enemyChar.assetsKey, game.width - enemyChar.spawnLocation.x, enemyChar.spawnLocation.y);
             // Set custom properties
             this.setCustomEnemyProperties(enemyChar);
+            this.lives = 1;
         }
 
         update () {

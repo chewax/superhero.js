@@ -22,7 +22,10 @@ module Superhero {
 
         game: Phaser.Game;
         sprite: Phaser.Sprite;
+        shieldSprite: Phaser.Sprite;
         bullets: Phaser.Group;
+        rockets: Phaser.Group;
+
         shadow: Phaser.Sprite;
         fuel: number;
         maxFuel: number;
@@ -36,12 +39,16 @@ module Superhero {
         immunity: boolean = false;
         bombs: number = 0;
         shield: number = 0;
+        lives: number = 3;
 
         // 1 Diamond == 10 Coins
         coins: number = 0;
 
         fuelTimer: number;
         bulletTimer: number;
+        nukeCoolDown: number = 0;
+        warpCoolDown: number = 0;
+        dieTimer: number;
         facing: Facing;
         _state: Superhero.CharState;
 
@@ -77,6 +84,9 @@ module Superhero {
             this.maxFuel = 2000;
             this.fuelTimer = this.game.time.time;
             this.bulletTimer = this.game.time.time;
+            this.nukeCoolDown = this.game.time.time;
+            this.warpCoolDown = this.game.time.time;
+
             this.sprite.play('flystill');
         }
 
@@ -88,6 +98,8 @@ module Superhero {
          */
         initSprite (assetKey:string, x:number, y:number):void {
             this.sprite = this.game.add.sprite(x, y, assetKey, 'stand1');
+
+            //TODO Deacrease sprite size not to use scale, or properly update boundaries
             this.sprite.anchor.setTo(0.5,0);
             this.sprite.scale.setTo((<Superhero.Game> this.game).conf.WORLD.sprite_scaling);
             this.sprite.checkWorldBounds = (<Superhero.Game> this.game).conf.PLAYERDIEOUTOFBOUNDS;
@@ -186,13 +198,95 @@ module Superhero {
                         bullet.outOfBoundsKill = true;
                         bullet.body.velocity.x = this.bulletVelocity;
                         bullet.body.allowGravity = false;
-                        bullet.scale.setTo((<Superhero.Game> this.game).conf.WORLD.sprite_scaling);
+                        bullet.scale.setTo(0.4);
+                        //bullet.scale.setTo((<Superhero.Game> this.game).conf.WORLD.sprite_scaling);
                     }
 
 
                     //Reset the timer
                     this.bulletTimer = this.game.time.time;
                 }
+        }
+
+        /**
+         * Wraps the fire logic. Check if there is a "dead" bullet. If so, reset
+         * its position and sendit fo fly
+         */
+        fireRocket (): void {
+
+            if (this.bombs <= 0) return;
+
+            //Thou shalt only shoot if there is no shooting in progress
+            if (this.sprite.animations.currentAnim.name != 'shoot' || this.sprite.animations.currentAnim.isFinished) {
+
+                //Check for shootRate
+                var elapsedTime = this.game.time.elapsedSince(this.bulletTimer);
+                if (elapsedTime < this.shootDelay) return;
+
+                this.sprite.animations.play('shoot');
+
+                //Get the first bullet that has gone offscreen
+                var rocket = this.rockets.getFirstDead();
+                //If there is none (all are still flying) create new one.
+                if (!rocket) rocket = this.rockets.create(-10, -10, 'bullets', 'bullet2');
+
+                rocket.anchor.setTo(0.5, 1);
+                rocket.reset(this.sprite.x + (this.facing * 40), this.sprite.y + this.sprite.height/2);
+                rocket.checkWorldBounds = true;
+                rocket.outOfBoundsKill = true;
+                rocket.body.velocity.x = this.bulletVelocity;
+                rocket.body.allowGravity = false;
+                rocket.scale.setTo(0.6);
+                //rocket.scale.setTo((<Superhero.Game> this.game).conf.WORLD.sprite_scaling);
+
+                //Reset the timer
+                this.bulletTimer = this.game.time.time;
+                this.bombs -= 1;
+            }
+        }
+
+
+        /**
+         * Wraps the fire logic. Check if there is a "dead" bullet. If so, reset
+         * its position and sendit fo fly
+         */
+        fireNuke (): void {
+
+            if (this.nukes <= 0) return;
+            var coolDown = this.game.time.elapsedSecondsSince(this.nukeCoolDown);
+            if (coolDown < 30) return;
+            this.nukeCoolDown = this.game.time.time;
+
+
+            //Thou shalt only shoot if there is no shooting in progress
+            if (this.sprite.animations.currentAnim.name != 'shoot' || this.sprite.animations.currentAnim.isFinished) {
+
+                //Check for shootRate
+                var elapsedTime = this.game.time.elapsedSince(this.bulletTimer);
+                if (elapsedTime < this.shootDelay) return;
+
+                var graphics = this.game.add.graphics(0,0);
+
+                graphics.lineStyle(0);
+                graphics.beginFill(0xFFFFFF, 1);
+                var rect = graphics.drawRect(0,0,this.game.width, this.game.height);
+
+                var nukeTween = this.game.add.tween(rect);
+                nukeTween.to({alpha:0},1500);
+
+                nukeTween.onComplete.add(function(){
+                    graphics.destroy();
+                },this);
+
+                nukeTween.start();
+                this.game.state.states.Level1.obstacleManager.killAll();
+                this.game.state.states.Level1.enemyManager.killAll();
+
+                //Reset the timer
+                this.bulletTimer = this.game.time.time;
+                this.nukes -= 1;
+            }
+
         }
 
         /**
@@ -222,11 +316,18 @@ module Superhero {
             // Create a bullet group with Arcade physics
             this.bullets = this.game.add.group();
             this.bullets.enableBody = true;
-
             // The bullets are "dead" by default, so they are not visible in the game
             this.bullets.createMultiple(4,'bullets','bullet1');
+
+            this.rockets = this.game.add.group();
+            this.rockets.enableBody = true;
+            this.rockets.createMultiple(4,'bullets', 'bullet2');
         }
 
+        //renderShield():void{
+        //    this.shieldSprite = this.game.add.sprite(this.sprite.x + 20, this.sprite.y-40, 'enershield');
+        //    this.shieldSprite.scale.setTo(0.2);
+        //}
         /**
          * If it is flying, then decrease the fuel, if it is on the ground, slowly increase the fuel
          */
@@ -254,12 +355,22 @@ module Superhero {
 
         }
 
+        //updateShield(){
+        //    if (this.shieldSprite) {
+        //        if (this.shieldSprite.alive) {
+        //            this.shieldSprite.x = this.sprite.x + 20;
+        //            this.shieldSprite.y = this.sprite.y;
+        //        }
+        //    }
+        //}
+
         /**
          * Update method. Here should be all the logic related to the character's game loop
          */
         update (): void {
             //this.updateFuel();
             //this.updateShadow();
+            //this.updateShield();
         }
 
         /**
@@ -315,15 +426,51 @@ module Superhero {
          * @param {Phaser.Sprite} char   An instance of the character
          * @param {any}           object An instance of the collided object
          */
-        die (char:Phaser.Sprite, object:any) {
+        die (char:Phaser.Sprite, object?:any) {
+            var elapsedTime = this.game.time.elapsedSince(this.dieTimer);
+            if (elapsedTime < 100) return;
+            this.dieTimer = this.game.time.time;
+
             if((<Superhero.Game>this.game).conf.PLAYERISIMMORTAL && char.key == "hero1") {
                 return;
             }
-            this.sprite.alive = false;
+
+            if (object) object.kill();
+
+            if (this.shield > 0) {
+                this.shield -= 1;
+                this.flickerSprite(0xFF0000);
+                return;
+            }
+
+            if (this.lives > 1) {
+                this.lives -= 1;
+                this.dieReset();
+                return
+            }
+
+
+            char.alive = false;
+
+            if (this.bullets) this.bullets.forEachAlive(function(b){b.kill()},this);
+            if (this.rockets) this.rockets.forEachAlive(function(r){r.kill()},this);
+
             char.play('takehit',4,false,true);
-            object.kill();
 
         }
+
+        dieReset():void {
+            this.sprite.reset(100,this.game.world.centerY);
+            Utils.interval(this.flickerSprite.bind(this), 400, 5);
+        }
+
+        flickerSprite(color:number=0xFF0000):void {
+            this.sprite.tint = color;
+            setTimeout(function(){
+                this.sprite.tint = 0xFFFFFF;
+            }.bind(this), 150);
+        }
+
 
         /**
          * Callback method when the character collides with a collectable object

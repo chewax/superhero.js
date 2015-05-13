@@ -68,7 +68,8 @@ module Collectables {
         }
 
         collect( character: Superhero.Character ) {
-            if (character.shield < 5) character.shield += 1;
+            if (character.shield < 3) character.shield += 1;
+            //character.renderShield();
         }
 
     }
@@ -129,6 +130,18 @@ module Collectables {
 
         collect( character: Superhero.Character ) {
             character.bombs += 1;
+        }
+
+    }
+
+    export class Lives extends BaseCollectable{
+
+        constructor(game: Phaser.Game){
+            super(game, 'hero1');
+        }
+
+        collect( character: Superhero.Character ) {
+            character.lives += 1;
         }
 
     }
