@@ -6,6 +6,10 @@ module Obstacles {
 	export class Obstacle {
 		game: Phaser.Game;
 		group: Phaser.Group;
+        gameSpeed: number = -80;
+        timer: number;
+        obstacleRespawnTime: number;
+        baseRespawn: number;
 		
 		
 		constructor (game:Phaser.Game){
@@ -14,15 +18,20 @@ module Obstacles {
 			this.group.enableBody = true;
 			this.group.physicsBodyType = Phaser.Physics.ARCADE;
 			this.group.classType = ObstacleItem;
+            this.obstacleRespawnTime = 800;
+            this.baseRespawn = 800;
+            this.timer = this.game.time.time;
 		}
-		
-		resetAndRoll(n:number, speed:number):void{ }
+
+        resetAndRoll(n:number, multiplier:number, speed?:number):void{ }
 		collidesWith(object:any):void{ }
         diesWith(object:any, callback?: Function, listenerContext?: any){}
         speedUp(baseSpeed:number, multiplier:number): void {}
+        killAll():void {}
 	}
 	// TODO: maybe we can have an specific ts file for each obstacle type
 	export class WallObstacle extends Obstacle {
+
         // TODO Make wall obstacle without reutilizing code. It will create up to 50 sprites less.
 		upperObstacle: Obstacles.UpperObstacle;
 		lowerObstacle: Obstacles.LowerObstacle;
@@ -33,7 +42,12 @@ module Obstacles {
 			this.lowerObstacle = new LowerObstacle(game);
 		}
 		
-		resetAndRoll(n:number, speed:number):void{
+		resetAndRoll(n:number, multiplier:number, speed?:number):void{
+
+            var elapsedTime = this.game.time.elapsedSince(this.timer);
+            if (elapsedTime < this.obstacleRespawnTime) return;
+            this.timer = this.game.time.time;
+
 			var itemHeight = this.game.cache.getFrameByName('meteors', 'brown5').height;
 			var viewportHeight = this.game.height;
 			
@@ -42,12 +56,10 @@ module Obstacles {
 			
 			var low = center - 1;
 			var top = total - center - 1;
-			
-			this.upperObstacle.resetAndRoll(top, speed);
-			this.lowerObstacle.resetAndRoll(low, speed);
 
-            //Concat add the group items to wall group
-            this.group = this.upperObstacle.group.children.concat(this.lowerObstacle.group.children);
+            var speed =  this.gameSpeed * (1 + multiplier);
+			this.upperObstacle.resetAndRoll(top, multiplier, speed);
+			this.lowerObstacle.resetAndRoll(low, multiplier, speed);
 		}
 
         collidesWith(object:any):void{
@@ -61,16 +73,22 @@ module Obstacles {
         }
 
         speedUp(baseSpeed:number, multiplier:number):void{
+            this.obstacleRespawnTime = this.baseRespawn / (1 + multiplier);
             this.upperObstacle.speedUp(baseSpeed, multiplier);
             this.lowerObstacle.speedUp(baseSpeed, multiplier);
+        }
+
+        killAll(){
+            this.upperObstacle.killAll();
+            this.lowerObstacle.killAll();
         }
 
 	}
 	
 	
 	export class UpperObstacle extends Obstacle {
-		
-		resetAndRoll(n:number, speed:number):void{
+
+        resetAndRoll(n:number, multiplier:number, speed?:number):void{
 			var itemHeight = this.game.cache.getFrameByName('meteors', 'brown5').height;
 			var viewportWidth = this.game.width;
 			var positions = Superhero.Utils.orderdList(n);
@@ -109,12 +127,17 @@ module Obstacles {
                 if (o.alive) o.body.velocity.x = baseSpeed * (1 + multiplier);
             },this)
         }
-		
+
+        killAll(){
+            this.group.forEach(function(s){
+                s.kill();
+            },this);
+        }
 	}
 	
 	export class LowerObstacle extends Obstacle {
-				
-		resetAndRoll(n:number, speed:number):void{
+
+        resetAndRoll(n:number, multiplier:number, speed?:number):void{
             var itemHeight = this.game.cache.getFrameByName('meteors', 'brown5').height;
             var viewportHeight = this.game.height;
             var viewportWidth = this.game.width;
@@ -155,6 +178,12 @@ module Obstacles {
                 if (o.alive) o.body.velocity.x = baseSpeed * (1 + multiplier);
             },this)
         }
+
+        killAll(){
+            this.group.forEach(function(s){
+                s.kill();
+            },this);
+        }
 	}
 
     interface IMeteors {
@@ -165,15 +194,17 @@ module Obstacles {
 
     export class MeteoriteShower extends Obstacle {
 
-        extraStones: number = 0;
+        resetAndRoll(n:number, multiplier:number, speed?:number):void{
 
-        resetAndRoll(n:number, speed:number):void {
+            var elapsedTime = this.game.time.elapsedSince(this.timer);
+            if (elapsedTime < this.obstacleRespawnTime) return;
+            this.timer = this.game.time.time;
 
             if (this.group.countLiving() > 30)
                 return;
 
-            n = 3 + this.extraStones;
-            speed = -80;
+            n = 1;
+            speed = this.gameSpeed * Math.sqrt(1 + multiplier);
 
             var meteorites: IMeteors[] = [];
             var randKey: IMeteors[] = [];
@@ -202,24 +233,23 @@ module Obstacles {
             ];
 
             // Get the keys that are going to be spawned
-            for (var i = 0; i < n-1; i++){
+            for (var i = 0; i < n; i++){
                 randKey[i] = meteorites[this.game.rnd.integerInRange(0,meteorites.length-1)];
             }
 
             var viewportHeight = this.game.height;
             var viewportWidth = this.game.width;
-
             var sector = viewportHeight / n;
 
             var randY = [];
 
-            for (var i = 0; i < n-1; i++){
+            for (var i = 0; i < n; i++){
                 randY[i] = (this.game.rnd.integerInRange(i * sector, (i+1) * sector));
             }
 
             var randX = (viewportWidth + (30 * this.game.rnd.realInRange(0,3))) | 0;
 
-            for (var i = 0; i < n-1; i++){
+            for (var i = 0; i < n; i++){
 
                 var stone = this.group.getFirstDead();
 
@@ -245,9 +275,7 @@ module Obstacles {
 
                     stone.reset(randX,randY[i]);
                 }
-
                 stone.body.velocity.x = speed * this.game.rnd.realInRange(1,3);
-
             }
 
         }
@@ -262,7 +290,15 @@ module Obstacles {
         }
 
         speedUp(baseSpeed:number, multiplier:number):void{
-            this.extraStones += 1;
+            if (this.obstacleRespawnTime <= 200) return;
+            this.obstacleRespawnTime = this.baseRespawn / (1 + multiplier);
+            console.log(this.obstacleRespawnTime);
+        }
+
+        killAll(){
+            this.group.forEach(function(s){
+                s.kill();
+            },this);
         }
 
     }

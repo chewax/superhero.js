@@ -74,7 +74,7 @@ module Superhero {
             this.paralax1.autoScroll(-100,0);
 
             //Setup Obstacle
-            this.obstacleManager = new Obstacles.ObstacleManager(this.game, 2500);
+            this.obstacleManager = new Obstacles.ObstacleManager(this.game, 800);
             //this.obstacleManager.addObstacleToPool(Obstacles.ObstacleType.WALL);
             this.obstacleManager.addObstacleToPool(Obstacles.ObstacleType.METEORITE_SHOWER);
 
@@ -91,16 +91,21 @@ module Superhero {
             this.collectableManager.addCollectable(Collectables.CollectableType.IMPROVE_FIRE);
             this.collectableManager.addCollectable(Collectables.CollectableType.IMPROVE_SHIELD);
             this.collectableManager.addCollectable(Collectables.CollectableType.NUKE_BOMB);
-            this.collectableManager.addCollectable(Collectables.CollectableType.TIME_WARP);
-            this.collectableManager.addCollectable(Collectables.CollectableType.DIAMOND);
+            //this.collectableManager.addCollectable(Collectables.CollectableType.TIME_WARP);
+            //this.collectableManager.addCollectable(Collectables.CollectableType.DIAMOND);
             this.collectableManager.addCollectable(Collectables.CollectableType.BOMB);
-            this.collectableManager.addCollectable(Collectables.CollectableType.IMMUNITY);
+            //this.collectableManager.addCollectable(Collectables.CollectableType.IMMUNITY);
+            this.collectableManager.addCollectable(Collectables.CollectableType.LIVES);
+
         }
 
 
         configureInput(): void {
-            (<Superhero.Game> this.game).gamepad = new Gamepads.GamePad(this.game, Gamepads.GamepadType.STICK_BUTTON, Gamepads.ButtonPadType.ONE_FIXED);
+            (<Superhero.Game> this.game).gamepad = new Gamepads.GamePad(this.game, Gamepads.GamepadType.STICK_BUTTON, Gamepads.ButtonPadType.FOUR_FAN);
             (<Superhero.Game> this.game).gamepad.buttonPad.button1.type = Gamepads.ButtonType.CUSTOM;
+            (<Superhero.Game> this.game).gamepad.buttonPad.button2.type = Gamepads.ButtonType.CUSTOM;
+            (<Superhero.Game> this.game).gamepad.buttonPad.button3.type = Gamepads.ButtonType.CUSTOM;
+            (<Superhero.Game> this.game).gamepad.buttonPad.button4.type = Gamepads.ButtonType.CUSTOM;
             (<Superhero.Game> this.game).gamepad.stick1.settings.topSpeed = 600;
         }
 
@@ -125,14 +130,18 @@ module Superhero {
                 this.hero.diesWithGroup(enmy.bullets)
             );
 
+
             this.obstacleManager.collidesWith(this.hero.sprite);
             this.obstacleManager.diesWith(this.hero.bullets, this.killWall, this);
+            this.obstacleManager.diesWith(this.hero.rockets, this.killWall, this);
 
 
             enemies.forEach((enmy) => {
                 enmy.collideWithObject(enmy.shadow);
                 enmy.diesWithGroup(this.hero.bullets);
+                enmy.diesWithGroup(this.hero.rockets);
                 this.obstacleManager.diesWith(enmy.bullets, this.killWall, this);
+
             });
 
             this.collectableManager.checkCollectedBy(this.hero);
@@ -142,15 +151,27 @@ module Superhero {
 
         killWall(bullet:Phaser.Sprite, wall:Phaser.Sprite): void {
 
-            bullet.kill();
 
-            //If contains the word grey
-            if (wall.frameName.indexOf("grey") > -1) return;
+            if (bullet.frameName == 'bullet1'){
+                bullet.kill();
+                //If contains the word grey
+                if (wall.frameName.indexOf("grey") > -1) {
+                    return
+                }
+
+            }
+
+            wall.kill();
+
+
+            //if (wall.frameName.indexOf("grey") > -1) {
+            //    if (bullet.frameName == 'bullet1'){
+            //        return
+            //    }
+            //};
 
             //one out of 20 must drop something
             this.collectableManager.spawnCollectable(wall.position.x, wall.position.y);
-
-            wall.kill();
 
             this.obstacleManager.particleBurst(wall);
             this.ui.scoreUp(50);

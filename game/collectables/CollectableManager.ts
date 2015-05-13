@@ -12,7 +12,8 @@ module Collectables {
         COIN = 4,
         DIAMOND = 5,
         IMMUNITY = 6,
-        BOMB = 7
+        BOMB = 7,
+        LIVES = 8
     }
 
     export class CollectableManager {
@@ -61,6 +62,11 @@ module Collectables {
 
                 case CollectableType.BOMB:
                     var item = new Collectables.Bomb(this.game);
+                    this.collectables.add(item);
+                    break;
+
+                case CollectableType.LIVES:
+                    var item = new Collectables.Lives(this.game);
                     this.collectables.add(item);
                     break;
 
