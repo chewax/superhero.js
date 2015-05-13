@@ -14,18 +14,17 @@
 
 module Superhero {
 
-    export class Level1 extends Phaser.State {
+    export class Intro extends Phaser.State {
 
         hero: Superhero.Hero;
         background: Phaser.TileSprite;
         paralax1: Phaser.TileSprite;
-        debug: Superhero.Debug;
-        ui: Superhero.UI;
+        //ui: Superhero.UI;
         theme: Phaser.Sound;
         obstacleManager: Obstacles.ObstacleManager;
         enemyManager: Superhero.EnemyManager;
         collectableManager: Collectables.CollectableManager;
-        levelID: string = "level1";
+
 
         preload () {
 
@@ -42,7 +41,6 @@ module Superhero {
             //this.startMusic();
             this.setEnemyManager();
 
-            this.debug = new Debug(this.game);
         }
 
         update () {
@@ -54,7 +52,6 @@ module Superhero {
 
             this.enemyManager.update();
             this.ui.update();
-            //this.debug.update();
 
             //Obstacles
             this.obstacleManager.update();
@@ -82,7 +79,7 @@ module Superhero {
 
         private  setEnemyManager(): void {
             // Setup enemy manager
-            this.enemyManager = new Superhero.EnemyManager(this.game, this.levelID);
+            //this.enemyManager = new Superhero.EnemyManager(this.game, this.levelID);
         }
 
         initCollectables(): void {
@@ -103,9 +100,7 @@ module Superhero {
             (<Superhero.Game> this.game).gamepad = new Gamepads.GamePad(this.game, Gamepads.GamepadType.STICK_BUTTON, Gamepads.ButtonPadType.FOUR_FAN);
             (<Superhero.Game> this.game).gamepad.buttonPad.button1.type = Gamepads.ButtonType.CUSTOM;
             (<Superhero.Game> this.game).gamepad.buttonPad.button2.type = Gamepads.ButtonType.CUSTOM;
-            (<Superhero.Game> this.game).gamepad.buttonPad.button2.enableCooldown(30);
             (<Superhero.Game> this.game).gamepad.buttonPad.button3.type = Gamepads.ButtonType.CUSTOM;
-            (<Superhero.Game> this.game).gamepad.buttonPad.button3.enableCooldown(10);
             (<Superhero.Game> this.game).gamepad.buttonPad.button4.type = Gamepads.ButtonType.CUSTOM;
             (<Superhero.Game> this.game).gamepad.stick1.settings.topSpeed = 600;
         }
@@ -126,7 +121,7 @@ module Superhero {
             var enemies = this.enemyManager.enemies;
 
             enemies.forEach((enmy) =>
-                this.hero.diesWithGroup(enmy.bullets)
+                    this.hero.diesWithGroup(enmy.bullets)
             );
 
 
