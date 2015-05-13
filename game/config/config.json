@@ -39,7 +39,7 @@
   "enemies": {
     "multiplier": 0.1,
     "respawnLapse": 5000,
-    "shootDelay": 5000,
+    "shootDelay": 1000,
     "bulletSpeed": 400,
     "maxBulletSpeed": 1100,
     "spawnCoordinates": {
@@ -64,8 +64,101 @@
     "patrolTweenSpeed": 1500,
 
     "levels": {
-      "level1": ["badie"]
+      "level1": ["badie", "tentabot01"]
+    }
+  },
+
+  "charactersCollection": {
+    "hero1": {
+      "mainSprite": "stand1",
+      "childSprites": "",
+      "isImmortal": true,
+      "idleAnimation": "flystill",
+      "animations": {
+        "flystill": {"frames" :["stand1", "stand2"], "frameRate": 8,"loop": true, "useNumericIndex": false},
+        "shoot": {"frames" :["shoot1","shoot2", "shoot3", "shoot4"], "frameRate": 10, "loop": false, "useNumericIndex": false},
+        "flywalk": {"frames" :["walk1","walk2"], "frameRate": 6, "loop": true, "useNumericIndex": false},
+        "fly": {"frames" :["fly1","fly2"], "frameRate": 8, "loop": true, "useNumericIndex": false},
+        "takehit": {"frames" :["hit1","hit2", "hit3", "hit4"], "frameRate": 4, "loop": false, "useNumericIndex": false},
+        "stop": {"frames" :["hit1"], "frameRate": 3, "loop": false, "useNumericIndex": false}
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0
+      },
+      "scale": 0.3,
+      "diesOutOfBounds": false,
+      "firePower": 4,
+      "bullets": {
+        "qty": 4,
+        "key": "bullets",
+        "frame":"bullet1",
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        }
+      }
+
+    },
+
+    "badie": {
+      "mainSprite": "stand1",
+      "childSprites": "",
+      "isImmortal": false,
+      "idleAnimation": "flystill",
+      "animations": {
+        "flystill": {"frames" :["stand1", "stand2"], "frameRate": 8,"loop": true, "useNumericIndex": false},
+        "shoot": {"frames" :["shoot1","shoot2", "shoot3", "shoot4"], "frameRate": 10, "loop": false, "useNumericIndex": false},
+        "flywalk": {"frames" :["walk1","walk2"], "frameRate": 6, "loop": true, "useNumericIndex": false},
+        "fly": {"frames" :["fly1","fly2"], "frameRate": 8, "loop": true, "useNumericIndex": false},
+        "takehit": {"frames" :["hit1","hit2", "hit3", "hit4"], "frameRate": 4, "loop": false, "useNumericIndex": false},
+        "stop": {"frames" :["hit1"], "frameRate": 3, "loop": false, "useNumericIndex": false}
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0
+      },
+      "scale": 0.3,
+      "diesOutOfBounds": true,
+      "firePower": 4,
+      "shootAnimationFrames": 6,
+      "bullets": {
+        "qty": 4,
+        "key": "bullets",
+        "frame":"arrow1",
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        }
+      }
+    },
+
+    "tentabot01": {
+      "mainSprite": "tentabot01",
+      "childSprites": "",
+      "isImmortal": false,
+      "idleAnimation": "flystill",
+      "animations": {
+        "flystill": {"frames" :["tentabot01","tentabot02", "tentabot03", "tentabot04", "tentabot05", "tentabot04", "tentabot03", "tentabot02"], "frameRate": 8,"loop": true, "useNumericIndex": false},
+        "shoot": {"frames": ["fire01","fire02", "fire03", "fire02"], "frameRate": 4, "loop": false, "useNumericIndex": false}
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0
+      },
+      "scale": 1,
+      "diesOutOfBounds": true,
+      "firePower": 4,
+      "shootAnimationFrames": 4,
+      "bullets": {
+        "qty": 4,
+        "key": "tentabot01",
+        "frame":"withoutFire",
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        }
+      }
     }
   }
-
 }

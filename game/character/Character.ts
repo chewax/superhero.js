@@ -47,6 +47,7 @@ module Superhero {
 
         bulletVelocity: number = 1000;
         floor: number;
+        allowGravity: boolean = false;
 
         /**
          * Constructor. Creates the Character
@@ -73,11 +74,13 @@ module Superhero {
          * Starts the character default behaviour
          */
         startChar(): void {
+
             this.fuel = 2000;
             this.maxFuel = 2000;
             this.fuelTimer = this.game.time.time;
             this.bulletTimer = this.game.time.time;
-            this.sprite.play('flystill');
+
+            this.sprite.play((<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["idleAnimation"])
         }
 
         /**
@@ -87,11 +90,16 @@ module Superhero {
          * @param {number} y        Initial Y coordinate of the character
          */
         initSprite (assetKey:string, x:number, y:number):void {
-            this.sprite = this.game.add.sprite(x, y, assetKey, 'stand1');
-            this.sprite.anchor.setTo(0.5,0);
-            this.sprite.scale.setTo((<Superhero.Game> this.game).conf.WORLD.sprite_scaling);
-            this.sprite.checkWorldBounds = (<Superhero.Game> this.game).conf.PLAYERDIEOUTOFBOUNDS;
-            this.sprite.outOfBoundsKill = (<Superhero.Game> this.game).conf.PLAYERDIEOUTOFBOUNDS;
+
+            this.sprite = this.game.add.sprite(x, y, assetKey, (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[assetKey]["mainSprite"]);
+
+            this.sprite.anchor.setTo((<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[assetKey]["anchor"]["x"],
+                (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[assetKey]["anchor"]["y"]);
+            this.sprite.scale.setTo((<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[assetKey]["scale"]);
+            if((<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[assetKey]["diesOutOfBounds"]) {
+                this.sprite.checkWorldBounds = true;
+                this.sprite.outOfBoundsKill = true;
+            }
         }
 
         /**
@@ -163,13 +171,15 @@ module Superhero {
          * its position and sendit fo fly
          */
         fire (): void {
-                //Thou shalt only shoot if there is no shooting in progress
+            //Thou shalt only shoot if there is no shooting in progress
+            if(this.sprite.alive) {
                 if (this.sprite.animations.currentAnim.name != 'shoot' || this.sprite.animations.currentAnim.isFinished) {
 
                     //Check for shootRate
                     var elapsedTime = this.game.time.elapsedSince(this.bulletTimer);
                     if (elapsedTime < this.shootDelay) return;
 
+                    // TODO: implement fire play anim for every child (maybe a propertyor childs.count and hasFireAnim anim)
                     this.sprite.animations.play('shoot');
 
                     for (var i = 0; i < this.firePower; i++) {
@@ -178,9 +188,15 @@ module Superhero {
                         var bullet = this.bullets.getFirstDead();
 
                         //If there is none (all are still flying) create new one.
-                        if (!bullet) bullet = this.bullets.create(-10, -10, 'bullets', 'bullet1');
+                        if (!bullet) {
+                            bullet = this.createNewBullet();
+                        }
 
-                        bullet.anchor.setTo(0.5, 1);
+                        bullet.anchor.setTo(
+                            (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["bullets"]["anchor"]["x"],
+                            (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["bullets"]["anchor"]["y"]
+                        );
+
                         bullet.reset(this.sprite.x + (this.facing * 40), this.sprite.y + (10 * i + 1));
                         bullet.checkWorldBounds = true;
                         bullet.outOfBoundsKill = true;
@@ -189,10 +205,10 @@ module Superhero {
                         bullet.scale.setTo((<Superhero.Game> this.game).conf.WORLD.sprite_scaling);
                     }
 
-
                     //Reset the timer
                     this.bulletTimer = this.game.time.time;
                 }
+            }
         }
 
         /**
@@ -200,12 +216,11 @@ module Superhero {
          */
         addAnimations (): void {
 
-            this.sprite.animations.add('flystill',['stand1','stand2'], 8, true, false);
-            this.sprite.animations.add('shoot',['shoot1','shoot2', 'shoot3', 'shoot4'], 10, false, false);
-            this.sprite.animations.add('flywalk',['walk1','walk2'], 6, true, false);
-            this.sprite.animations.add('fly',['fly1','fly2'], 8, true, false);
-            this.sprite.animations.add('takehit',['hit1','hit2', 'hit3', 'hit4'], 4, false, false);
-            this.sprite.animations.add('stop',['hit1'], 3, false, false);
+            var newCharAnims = (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["animations"];
+            for (var key in newCharAnims) {
+                this.sprite.animations.add(key,newCharAnims[key]["frames"], newCharAnims[key]["frameRate"],
+                    newCharAnims[key]["loop"], newCharAnims[key]["useNumericIndex"]);
+            };
 
             this.sprite.events.onAnimationComplete.add(function () {
                 if(this.isAlive) {
@@ -215,6 +230,8 @@ module Superhero {
             }, this);
         }
 
+
+
         /**
          * Creates bullets group and enable physics
          */
@@ -222,9 +239,13 @@ module Superhero {
             // Create a bullet group with Arcade physics
             this.bullets = this.game.add.group();
             this.bullets.enableBody = true;
+            this.firePower = (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["firePower"];
 
             // The bullets are "dead" by default, so they are not visible in the game
-            this.bullets.createMultiple(4,'bullets','bullet1');
+            this.bullets.createMultiple(
+                (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["bullets"]["qty"],
+                (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["bullets"]["key"],
+                (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["bullets"]["frame"]);
         }
 
         /**
@@ -316,7 +337,7 @@ module Superhero {
          * @param {any}           object An instance of the collided object
          */
         die (char:Phaser.Sprite, object:any) {
-            if((<Superhero.Game>this.game).conf.PLAYERISIMMORTAL && char.key == "hero1") {
+            if((<Superhero.Game> this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["isImmortal"]){
                 return;
             }
             this.sprite.alive = false;
@@ -333,6 +354,18 @@ module Superhero {
         collect (char:Phaser.Sprite, object:Collectables.Collectable) {
             object.collect(this);
             object.kill();
+        }
+
+        /**
+         * Creates new bullet
+         */
+        public createNewBullet(): Phaser.Sprite{
+            return this.bullets.create(
+            -10,
+            -10,
+            (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["bullets"]["key"],
+            (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["bullets"]["frame"]
+            );
         }
 
     }

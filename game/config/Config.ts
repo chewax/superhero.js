@@ -52,6 +52,8 @@ module Superhero {
             }
         }
         patrolTweenSpeed: number;
+
+        "enemiesCollection": any
     }
 
     export class Config {
@@ -62,6 +64,7 @@ module Superhero {
         ISMUSICENABLED: boolean;
         PLAYERISIMMORTAL: boolean;
         ENEMIES: IEnemiesConfig;
+        CHARACTERSCOLLECTION: any;
 
         constructor () {
             // Parse JSON values from game config file path
@@ -72,6 +75,7 @@ module Superhero {
             this.ENEMIES = JSON.parse(remoteValues).enemies;
             this.PLAYERISIMMORTAL = JSON.parse(remoteValues).playerIsImmortal;
             this.ISMUSICENABLED = JSON.parse(remoteValues).isMusicEnabled;
+            this.CHARACTERSCOLLECTION =JSON.parse(remoteValues).charactersCollection;
         }
 
         private getRemote(): string {

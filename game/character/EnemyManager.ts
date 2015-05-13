@@ -62,18 +62,33 @@ module Superhero {
         public spawnRandomEnemy(): void {
 
             var enemySpawnPoint = this.getRandomEnemySpawnPosition(true);
-
             var enemyDefaultState = this.getRandomEnemyState();
+            var assetsKey = this.getRandomEnemyAsset();
+
+            //TODO: implement
+            if(assetsKey === "tentabot01") {
+                enemyDefaultState = EnemyState.STEADY;
+            }
+
             var newEnemy: IEnemy = {
-                assetsKey: this.getRandomEnemyAsset(),
+                assetsKey: assetsKey,
                 facing: Superhero.Facing.LEFT,
                 bulletVelocity: this.getBulletSpeed(),
                 spawnLocation: this.getSpawnCoordinates(enemyDefaultState, enemySpawnPoint),
-                firePower: this.getFirePower(),
+                firePower: this.getFirePower(assetsKey),
                 shootDelay: this.getShootDelay(),
                 defaultState: enemyDefaultState,
                 spawnPoint: enemySpawnPoint
             };
+
+            // TODO: implement
+            if(assetsKey === "tentabot01") {
+                if(newEnemy.spawnPoint == spawnEnemyPosition.TOP){
+                    newEnemy.spawnLocation.y -= 100;
+                } else {
+                    newEnemy.spawnLocation.y -= 25;
+                }
+            }
 
             //this.enemies.push(new Superhero.EnemyBase(this.game, newEnemy));
             var spawnEnemy = this.getFirstEnemyDead(newEnemy.assetsKey);
@@ -116,9 +131,8 @@ module Superhero {
             return (<Superhero.Game>this.game).conf.ENEMIES.levels[this.currentLevel][newEnemyAsset];
         }
 
-        private getFirePower(): number {
-            // TODO: implement different firePower or different weapon type
-            return 1;
+        private getFirePower(assetKey: string): number {
+            return (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[assetKey]["firePower"];
         }
 
         private getSpawnCoordinates(enemyDefaultState: EnemyState, enemySpawnPoint: spawnEnemyPosition): any {
@@ -182,6 +196,7 @@ module Superhero {
          * @param assetKey
          */
         public createLevelEnemies(): void {
+            // TODO: improve performance or implement level preloader
             (<Superhero.Game>this.game).conf.ENEMIES.levels[this.currentLevel].forEach((enemyAssetKey) => {
                 var newEnemy = this.getInitDefaultEnemyProperties(enemyAssetKey);
                 // create the new enemy twice
@@ -204,8 +219,14 @@ module Superhero {
             });
         }
 
-        private spawnEnemy(newEnemy: IEnemy): Superhero.EnemyBase {
-            return new Superhero.EnemyBase(this.game, newEnemy);
+        private spawnEnemy(newEnemy: IEnemy): any {
+
+            // TODO: implement...
+            if(newEnemy.assetsKey === "tentabot01") {
+                return new Superhero.TentacleBot(this.game, newEnemy);
+            } else {
+                return new Superhero.EnemyBase(this.game, newEnemy);
+            }
         }
 
         /**
@@ -221,7 +242,7 @@ module Superhero {
                 bulletVelocity: (<Superhero.Game>this.game).conf.ENEMIES.bulletSpeed,
                 // TODO: check if it's ok to spawn the enemy outside the world bounds this way
                 spawnLocation: {x: this.game.width + 200, y: this.game.height + 200},
-                firePower: 1,
+                firePower: this.getFirePower(assetKey),
                 shootDelay: (<Superhero.Game>this.game).conf.ENEMIES.shootDelay,
                 defaultState: EnemyState.STEADY,
                 spawnPoint: this.getRandomEnemySpawnPosition(false)

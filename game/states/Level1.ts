@@ -2,6 +2,7 @@
 /// <reference path="../character/Hero.ts"/>
 /// <reference path="../character/EnemyBase.ts"/>
 /// <reference path="../character/EnemyManager.ts"/>
+/// <reference path="../character/TentacleBot.ts"/>
 /// <reference path="../utils/Debug.ts"/>
 /// <reference path="../config/Config.ts"/>
 /// <reference path="../ui/UI.ts"/>

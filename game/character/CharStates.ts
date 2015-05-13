@@ -59,7 +59,10 @@ module Superhero {
          */
         constructor (game: Phaser.Game, hero: Superhero.Character){
             this.game = game;
+            // Is hero used for all the characters? even if it's an enemy?
             this.hero = hero;
+
+            // Are we adding to all the enemies the gamePad, fireButton and heroStick?
             this.gamepad = (<Superhero.Game> this.game).gamepad;
 
             this.fireButton = this.gamepad.buttonPad.button1;
