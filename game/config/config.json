@@ -140,7 +140,8 @@
       "idleAnimation": "flystill",
       "animations": {
         "flystill": {"frames" :["tentabot01","tentabot02", "tentabot03", "tentabot04", "tentabot05", "tentabot04", "tentabot03", "tentabot02"], "frameRate": 8,"loop": true, "useNumericIndex": false},
-        "shoot": {"frames": ["fire01","fire02", "fire03", "fire02"], "frameRate": 4, "loop": false, "useNumericIndex": false}
+        "shoot": {"frames": ["fire01","fire02", "fire03", "fire02"], "frameRate": 4, "loop": false, "useNumericIndex": false},
+        "takehit": {"frames" :["takehit01","takehit02", "takehit03", "takehit04"], "frameRate": 4, "loop": false, "useNumericIndex": false}
       },
       "anchor": {
         "x": 0.5,

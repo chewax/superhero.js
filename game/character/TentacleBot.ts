@@ -92,7 +92,7 @@ module Superhero {
                         // TODO: reset does not reset the texture of the sprite??
                         this.resetMisslesTexture("withoutFire");
                     }
-                    this.sprite.animations.play("idle");
+                    this.sprite.animations.play((<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["idleAnimation"]);
                 }
             }
         }
