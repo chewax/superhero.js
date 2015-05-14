@@ -450,6 +450,7 @@ module Superhero {
             }
 
 
+            this.lives -= 1;
             char.alive = false;
 
             if (this.bullets) this.bullets.forEachAlive(function(b){b.kill()},this);
