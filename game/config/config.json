@@ -39,7 +39,7 @@
   "enemies": {
     "multiplier": 0.1,
     "respawnLapse": 5000,
-    "shootDelay": 1000,
+    "shootDelay": 5000,
     "bulletSpeed": 400,
     "maxBulletSpeed": 1100,
     "spawnCoordinates": {
@@ -72,7 +72,7 @@
     "hero1": {
       "mainSprite": "stand1",
       "childSprites": "",
-      "isImmortal": true,
+      "isImmortal": false,
       "idleAnimation": "flystill",
       "animations": {
         "flystill": {"frames" :["stand1", "stand2"], "frameRate": 8,"loop": true, "useNumericIndex": false},
@@ -88,7 +88,7 @@
       },
       "scale": 0.3,
       "diesOutOfBounds": false,
-      "firePower": 4,
+      "firePower": 1,
       "bullets": {
         "qty": 4,
         "key": "bullets",
@@ -120,7 +120,7 @@
       },
       "scale": 0.3,
       "diesOutOfBounds": true,
-      "firePower": 4,
+      "firePower": 1,
       "shootAnimationFrames": 6,
       "bullets": {
         "qty": 4,
@@ -159,7 +159,13 @@
           "x": 0.5,
           "y": 1
         }
-      }
+      },
+      "missiles": [
+        {"x": 55, "y": 60},
+        {"x": -68, "y": 25},
+        {"x": -29, "y": 140},
+        {"x": -98, "y": 100}
+      ]
     }
   }
 }

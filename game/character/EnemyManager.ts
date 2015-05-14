@@ -218,6 +218,9 @@ module Superhero {
                                 }
                             }
                         }
+                        this.enemiesTimer.stop();
+                        this.enemiesTimer.start();
+                        this.enemiesTimer.loop((<Superhero.Game>this.game).conf.ENEMIES.respawnLapse, this.updateMultiplier, this);
 
                     }, this);
                     this.enemies.push(spawnedNewEnemy);
@@ -247,7 +250,7 @@ module Superhero {
                 facing: Superhero.Facing.LEFT,
                 bulletVelocity: (<Superhero.Game>this.game).conf.ENEMIES.bulletSpeed,
                 // TODO: check if it's ok to spawn the enemy outside the world bounds this way
-                spawnLocation: {x: this.game.width + 200, y: this.game.height + 200},
+                spawnLocation: {x: this.game.width - 200, y: this.game.height - 200},
                 firePower: this.getFirePower(assetKey),
                 shootDelay: (<Superhero.Game>this.game).conf.ENEMIES.shootDelay,
                 defaultState: EnemyState.STEADY,

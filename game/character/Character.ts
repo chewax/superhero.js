@@ -29,7 +29,7 @@ module Superhero {
         shadow: Phaser.Sprite;
         fuel: number;
         maxFuel: number;
-        shootDelay: number = 300;
+        shootDelay: number = 1000;
         allowFingerMargin: boolean = true;
 
         // Power Ups

@@ -96,33 +96,31 @@ module Superhero {
 
                 this.sprite.animations.play('shoot',(<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["shootAnimationFrames"]);
 
-                this.sprite.animations.currentAnim.onComplete.add(function() {
-                    for (var i = 0; i < this.firePower; i++) {
+                for (var i = 0; i < this.firePower; i++) {
 
-                        //Get the first bullet that has gone offscreen
-                        var bullet = this.bullets.getFirstDead();
+                    //Get the first bullet that has gone offscreen
+                    var bullet = this.bullets.getFirstDead();
 
-                        //If there is none (all are still flying) create new one.
-                        if (!bullet) {
-                            bullet = this.createNewBullet();
-                        }
-
-                        bullet.anchor.setTo(
-                            (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["bullets"]["anchor"]["x"],
-                            (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["bullets"]["anchor"]["y"]
-                        );
-
-                        bullet.reset(this.sprite.x + (this.facing * 40), this.sprite.y + (10 * i+1));
-                        bullet.angle = 180;
-                        bullet.checkWorldBounds = true;
-                        bullet.outOfBoundsKill = true;
-                        bullet.body.velocity.x = this.bulletVelocity;
-                        bullet.body.allowGravity = this.allowGravity;
-                        bullet.scale.setTo((<Superhero.Game>this.game).conf.WORLD.sprite_scaling);
+                    //If there is none (all are still flying) create new one.
+                    if (!bullet) {
+                        bullet = this.createNewBullet();
                     }
-                    //Reset the timer
-                    this.bulletTimer = this.game.time.time;
-                },this);
+
+                    bullet.anchor.setTo(
+                        (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["bullets"]["anchor"]["x"],
+                        (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["bullets"]["anchor"]["y"]
+                    );
+
+                    bullet.reset(this.sprite.x + (this.facing * 40), this.sprite.y + (10 * i+1));
+                    bullet.angle = 180;
+                    bullet.checkWorldBounds = true;
+                    bullet.outOfBoundsKill = true;
+                    bullet.body.velocity.x = this.bulletVelocity;
+                    bullet.body.allowGravity = this.allowGravity;
+                    bullet.scale.setTo((<Superhero.Game>this.game).conf.WORLD.sprite_scaling);
+                }
+                //Reset the timer
+                this.bulletTimer = this.game.time.time;
             }
         }
     }

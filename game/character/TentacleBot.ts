@@ -10,8 +10,8 @@ module Superhero {
      */
     export class TentacleBot extends Superhero.EnemyBase {
         missiles: Phaser.Sprite[];
-        misslesLaunched: boolean = false;
-        misslesTimer: Phaser.Timer;
+        missilesLaunched: boolean = false;
+        missilesTimer: Phaser.Timer;
 
         constructor(game: Phaser.Game, enemyChar: Superhero.IEnemy) {
             super(game, enemyChar);
@@ -22,15 +22,16 @@ module Superhero {
         }
 
         initTimer(): void {
-            this.misslesTimer = this.game.time.create(false);
-            this.misslesTimer.start();
+            this.missilesTimer = this.game.time.create(false);
+            this.missilesTimer.stop();
+            this.missilesTimer.start();
         }
 
         initMisslesPhysics(): void {
             for (var i=0; i<4; i++) {
                 this.missiles.push(this.bullets.create(
-                    -10,
-                    -10,
+                    -50,
+                    -50,
                     (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["bullets"]["key"],
                     (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["bullets"]["frame"]
                 ));
@@ -50,13 +51,11 @@ module Superhero {
         fire (): void {
 
             // TODO: implement groups for missles
-            if(this.misslesTimer.seconds > 10) {
-                this.bulletTimer = this.game.time.time;
-                this.misslesTimer.stop();
-                this.misslesTimer.start();
+            if(this.missilesTimer.seconds > 10 || this.missilesTimer.seconds < 0) {
+                this.initTimer()
             }
-            // TODO: use config instead of hardcoded fire power(4) and seconds
-            if (this.misslesLaunched && this.misslesTimer.seconds > 5) {
+
+            if (this.missilesLaunched && this.missilesTimer.seconds > 4) {
                 for (var i=0; i<4; i++) {
                     var bullet = this.missiles[i];
                     /* if(!soundFire && count > 158) {
@@ -69,26 +68,24 @@ module Superhero {
                 }
             }
             if (this.sprite.animations.currentAnim.name != 'shoot' || this.sprite.animations.currentAnim.isFinished) {
-                if(this.misslesTimer.seconds > 4 && this.misslesTimer.seconds < 4.4 ) {
-
+                if(this.missilesTimer.seconds > 3 && this.missilesTimer.seconds < 3.4 ) {
                     this.sprite.animations.play('fire');
-                    if(!this.misslesLaunched ) {
-                        // TODO: add coordinates for every missile on config file - e.g. missiles[i]
-                        this.missiles[0].reset(this.sprite.x + 55, this.sprite.y + 60);
-                        this.missiles[1].reset(this.sprite.x - 68, this.sprite.y + 25);
-                        this.missiles[2].reset(this.sprite.x - 29, this.sprite.y + 140);
-                        this.missiles[3].reset(this.sprite.x - 98, this.sprite.y + 100);
+                    if(!this.missilesLaunched ) {
                         for (var i=0; i<4; i++) {
                             this.missiles[i].body.gravity.y = 66;
+                            this.missiles[i].reset(
+                                this.sprite.x + ((<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["missiles"][i]["x"]),
+                                this.sprite.y + ((<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["missiles"][i]["y"])
+                            );
                         }
-                        this.misslesLaunched = true;
+                        this.missilesLaunched = true;
                     }
                 } else {
-                    if (this.misslesTimer.seconds > 6) {
-                        this.misslesLaunched = false;
+                    if (this.missilesTimer.seconds > 5) {
+                        this.missilesLaunched = false;
                         this.bulletTimer = this.game.time.time;
-                        this.misslesTimer.stop();
-                        this.misslesTimer.start();
+                        this.missilesTimer.stop();
+                        this.missilesTimer.start();
                         // TODO: reset does not reset the texture of the sprite??
                         this.resetMisslesTexture("withoutFire");
                     }
