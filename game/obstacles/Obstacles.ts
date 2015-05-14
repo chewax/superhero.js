@@ -292,7 +292,6 @@ module Obstacles {
         speedUp(baseSpeed:number, multiplier:number):void{
             if (this.obstacleRespawnTime <= 200) return;
             this.obstacleRespawnTime = this.baseRespawn / (1 + multiplier);
-            //console.log(this.obstacleRespawnTime);
         }
 
         killAll(){

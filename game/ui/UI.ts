@@ -27,10 +27,6 @@ module Superhero {
         livesText: Phaser.Text;
         livesLastCount: number = 0;
 
-        //// LIVES
-        //coinsIcon: Phaser.Sprite;
-        //coinsText: Phaser.Text;
-        //coinsLastCount: number = 0;
 
         // NUKES
         nukesIcon: Phaser.Sprite;
@@ -67,9 +63,12 @@ module Superhero {
             this.updateShields();
             this.updateLives();
             this.updatePUPIcons();
+            this.updateCooldowns();
             //this.updateCoins();
 
         }
+
+
 
         createTimer():void {
             this.timer = this.game.time.create(false);
@@ -83,9 +82,6 @@ module Superhero {
 
 
         createScoreBoard (): void {
-            //OLD UI Color
-            //var style = { font: "30px saranaigamebold", fill: "#FF9900", align: "center" };
-
             var style = { font: "30px saranaigamebold", fill: "#FDCD08", align: "center" };
             this.scoreText = this.game.add.text(20, 50, this.scoreCount.toString(), style);
         }
@@ -95,10 +91,42 @@ module Superhero {
             this.scoreText.setText(this.scoreCount.toString());
         }
 
-        //updateCoins(){
-        //    if (this.coinsLastCount == this.player.coins) return;
-        //    this.coinsText.setText(this.player.coins.toString());
-        //}
+        updateCooldowns(){
+            this.updateNukeCooldown();
+            this.updateWarpCooldown();
+        }
+
+        updateNukeCooldown(){
+            var elapsed = this.game.time.elapsedSecondsSince(this.player.nukeCoolDown);
+            var cooldown = 30;
+
+            if (elapsed > cooldown) {
+                if (!(<Superhero.PieMask> this.nukesIcon.mask).atRest) (<Superhero.PieMask> this.nukesIcon.mask).drawCircleAtSelf();
+                (<Superhero.PieMask> this.nukesIcon.mask).atRest = true;
+                return;
+            }
+
+            var pj = elapsed / cooldown;
+            (<Superhero.PieMask> this.nukesIcon.mask).drawWithFill(pj, 0xFFFFFF, 0.5);
+            (<Superhero.PieMask> this.nukesIcon.mask).atRest = false;
+
+        }
+
+        updateWarpCooldown(){
+            var elapsed = this.game.time.elapsedSecondsSince(this.player.warpCoolDown);
+            var cooldown = 30;
+
+            if (elapsed > cooldown) {
+                if (!(<Superhero.PieMask> this.warpIcon.mask).atRest) (<Superhero.PieMask> this.warpIcon.mask).drawCircleAtSelf();
+                (<Superhero.PieMask> this.warpIcon.mask).atRest = true;
+                return;
+            }
+
+            var pj = elapsed / cooldown;
+            (<Superhero.PieMask> this.warpIcon.mask).drawWithFill(pj, 0xFFFFFF, 0.5);
+            (<Superhero.PieMask> this.warpIcon.mask).atRest = false;
+
+        }
 
         updateTime(){
             var minutes = Math.floor(this.timer.seconds / 60);
@@ -109,7 +137,7 @@ module Superhero {
         updateShields(){
             if (this.shieldLastCount == this.player.shield) return;
             if (this.shieldLastCount > this.player.shield) this.killNextShield();
-            //if (this.shieldLastCount > this.player.shield) this.killShieldIcon(this.shieldLastCount - this.player.shield);
+
             else this.reviveNextShield();
             this.shieldLastCount = this.player.shield;
         }
@@ -250,9 +278,6 @@ module Superhero {
             var x = 20;
             var y = 30;
 
-            //OLD UI Color
-            //var style = { font: "20px saranaigamebold", fill: "#FF9900", align: "center"};
-
             var style = { font: "20px saranaigamebold", fill: "#FDCD08", align: "center"};
 
             // LIVES
@@ -264,15 +289,6 @@ module Superhero {
             this.livesLastCount = this.player.lives;
             x = x + this.livesText.width + 10;
 
-            //// COINS
-            //this.coinsIcon = this.game.add.sprite(x, y, 'pups', 'coin_s');
-            //this.coinsIcon.anchor.setTo(0,0.5);
-            //x = x + this.coinsIcon.width + 10;
-            //this.coinsText = this.game.add.text(x, y+5, this.player.coins.toString(), style);
-            //this.coinsText.anchor.set(0,0.5);
-            //this.coinsLastCount = this.player.coins;
-            //x = x + this.coinsText.width + 10;
-
             // SHIELDS
             this.shieldIcons = [];
             this.renderShieldIcons(3,x,y);
@@ -283,16 +299,22 @@ module Superhero {
 
         createPowerUpInterface () {
             var x = this.game.width - 50;
-            var y = 30;
+            var y = 15;
 
             var style = { font: "15px saranaigamebold", fill: "#FDCD08", align: "center"};
 
             // NUKES
             this.nukesIcon = this.game.add.sprite(x, y, 'pups', 'nuke_s');
-            this.nukesIcon.anchor.setTo(0,0.5);
-            this.nukesText = this.game.add.text(x + (this.nukesIcon.width / 2) + 1, y + 18, this.player.nukes.toString(), style);
+            this.nukesText = this.game.add.text(x + (this.nukesIcon.width / 2) + 1, y + 33, this.player.nukes.toString(), style);
             this.nukesText.anchor.set(0.5,0);
             this.nukesLastCount = this.player.nukes;
+
+            // NUKE ICON MASK
+            var mask_x = x + (this.nukesIcon.width / 2);
+            var mask_y = y + (this.nukesIcon.height / 2);
+            var mask_radius = Math.max(this.nukesIcon.width,this.nukesIcon.height)/2;
+            this.nukesIcon.mask = new Superhero.PieMask(this.game, mask_radius, mask_x, mask_y);
+
 
             if (this.player.nukes == 0) {
                 this.nukesIcon.alpha = 0.3;
@@ -305,10 +327,16 @@ module Superhero {
 
             // WARPS
             this.warpIcon = this.game.add.sprite(x, y, 'pups', 'clock_s');
-            this.warpIcon.anchor.setTo(0,0.5);
-            this.warpText = this.game.add.text(x + (this.warpIcon.width / 2) + 1, y + 18, this.player.timeWarps.toString(), style);
+            this.warpText = this.game.add.text(x + (this.warpIcon.width / 2) + 1, y + 33, this.player.timeWarps.toString(), style);
             this.warpText.anchor.set(0.5,0);
             this.warpLastCount = this.player.timeWarps;
+
+            // WARP ICON MASK
+            mask_x = x + (this.warpIcon.width / 2);
+            mask_y = y + (this.warpIcon.height / 2);
+            mask_radius = Math.max(this.warpIcon.width,this.warpIcon.height)/2;
+            this.warpIcon.mask = new Superhero.PieMask(this.game, mask_radius, mask_x, mask_y);
+
 
             if (this.player.timeWarps == 0) {
                 this.warpIcon.alpha = 0.3;
@@ -320,8 +348,7 @@ module Superhero {
 
             // ROCKETS
             this.rocketIcon = this.game.add.sprite(x, y, 'pups', 'rocket_s');
-            this.rocketIcon.anchor.setTo(0,0.5);
-            this.rocketText = this.game.add.text(x + (this.rocketIcon.width / 2) + 1, y + 18, this.player.bombs.toString(), style);
+            this.rocketText = this.game.add.text(x + (this.rocketIcon.width / 2) + 1, y + 33, this.player.bombs.toString(), style);
             this.rocketText.anchor.set(0.5,0);
             this.rocketLastCount = this.player.bombs;
 
@@ -330,46 +357,6 @@ module Superhero {
                 this.rocketText.alpha = 0.3;
                 (<Superhero.Game> this.game).gamepad.buttonPad.button4.sprite.alpha = 0.3;
             }
-
-            x = x - (this.rocketIcon.width  + 10);
-
-        }
-
-
-        // DEPRECATED METHODS
-        // ================================================================
-
-        fireInfo: Phaser.Sprite;
-        nukeInfo: Phaser.Sprite;
-        warpInfo: Phaser.Sprite;
-        coinInfo: Phaser.Sprite;
-        shieldInfo: Phaser.Sprite;
-
-        //Deprecated
-        createPowerUPInfo(){
-            var x = 20;
-            var y = 20;
-            var style = { font: "40px saranaigamebold", fill: "#FF9900", align: "center" };
-
-            //Fire Info
-            this.fireInfo = this.game.add.sprite(x, y, 'puinfo');
-            this.fireInfo.addChild(this.game.add.sprite(34, 24, 'pups', 'bullet'));
-            this.fireInfo.addChild(this.game.add.text(150, 37, this.player.firePower.toString(), style));
-            this.fireInfo.scale.setTo(0.5);
-
-            x = x + this.fireInfo.width + 10;
-            //Shield Info
-            this.shieldInfo = this.game.add.sprite(x, y, 'puinfo');
-            this.shieldInfo.addChild(this.game.add.sprite(28, 33, 'pups', 'shield'));
-            this.shieldInfo.addChild(this.game.add.text(150, 37, this.player.shield.toString(), style));
-            this.shieldInfo.scale.setTo(0.5);
-
-            x = x + this.shieldInfo.width + 10;
-            //Shield Info
-            this.coinInfo = this.game.add.sprite(x, y, 'puinfo');
-            this.coinInfo.addChild(this.game.add.sprite(27, 29, 'pups', 'coin'));
-            this.coinInfo.addChild(this.game.add.text(150, 37, this.player.coins.toString(), style));
-            this.coinInfo.scale.setTo(0.5);
 
         }
 
