@@ -10,6 +10,7 @@ module Superhero {
             super(game,'hero1',game.world.centerX - 200,100);
             this.facing = Facing.RIGHT;
             //this.firePower = 10;
+            this.shootDelay = 500;
 
             this.setBulletVelocity(1000);
         }
