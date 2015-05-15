@@ -134,6 +134,8 @@ module Superhero {
 
         setActors(): void {
             this.hero = new Hero(this.game);
+            this.hero.sprite.body.gravity.y = 1500;
+            this.hero.sprite.body.drag = 0;
             this.ui = new Superhero.UI(this.game, this.hero);
         }
 
