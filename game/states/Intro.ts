@@ -122,20 +122,24 @@ module Superhero {
 
 
         configureInput(): void {
-            (<Superhero.Game> this.game).gamepad = new Gamepads.GamePad(this.game, Gamepads.GamepadType.STICK_BUTTON, Gamepads.ButtonPadType.FOUR_FAN);
+            (<Superhero.Game> this.game).gamepad = new Gamepads.GamePad(this.game, Gamepads.GamepadType.GESTURE_BUTTON, Gamepads.ButtonPadType.FOUR_FAN);
+            (<Superhero.Game> this.game).gamepad.touchInput.touchType = Gamepads.TouchInputType.TOUCH;
             (<Superhero.Game> this.game).gamepad.buttonPad.button1.type = Gamepads.ButtonType.CUSTOM;
             (<Superhero.Game> this.game).gamepad.buttonPad.button2.type = Gamepads.ButtonType.CUSTOM;
             (<Superhero.Game> this.game).gamepad.buttonPad.button2.enableCooldown(30);
             (<Superhero.Game> this.game).gamepad.buttonPad.button3.type = Gamepads.ButtonType.CUSTOM;
             (<Superhero.Game> this.game).gamepad.buttonPad.button3.enableCooldown(10);
             (<Superhero.Game> this.game).gamepad.buttonPad.button4.type = Gamepads.ButtonType.CUSTOM;
-            (<Superhero.Game> this.game).gamepad.stick1.settings.topSpeed = 600;
         }
 
         setActors(): void {
             this.hero = new Hero(this.game);
             this.hero.sprite.body.gravity.y = 1500;
             this.hero.sprite.body.drag = 0;
+            this.hero._state = new Superhero.StateRun(this.game,this.hero);
+            this.hero._state.enterState();
+
+            (<Superhero.Game> this.game).gamepad.touchInput.onTouchDownCallback = this.hero.jump.bind(this.hero);
             this.ui = new Superhero.UI(this.game, this.hero);
         }
 

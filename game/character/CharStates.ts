@@ -117,6 +117,37 @@ module Superhero {
 
 
     ///**
+    // * STATE_RUN Class
+    // */
+    export class StateRun extends BaseState{
+
+        public update ():CharState {
+            if(this.hero.sprite.alive) {
+                //If fire on idle. Fire and remain in same state
+                if (this.fireButton.pressed) {
+                    this.hero.fire();
+                }
+
+                if (this.bombButton.pressed) {
+                    this.hero.fireRocket();
+                }
+
+                if (this.nukeButton.pressed) {
+                    this.hero.fireNuke();
+                }
+            }
+            //If nothing was commanded remain on the same state
+            return this;
+        }
+
+        public enterState () {
+            this.hero.sprite.play('run');
+        }
+
+        public exitState () {}
+    }
+
+    ///**
     // * STATE_FLY Class
     // */
     export class StateFly extends BaseState{
