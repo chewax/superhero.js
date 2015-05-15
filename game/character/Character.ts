@@ -153,6 +153,16 @@ module Superhero {
         }
 
         /**
+         * Wraps the jump logic
+         */
+        jump (): void {
+            if (this.sprite.alive && this.sprite.body.touching.down) {
+                this.sprite.body.velocity.y = -650;
+            }
+
+        }
+
+        /**
          * Wraps the mid air flight logic
          */
         flyStill (): void {
