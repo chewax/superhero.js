@@ -34,6 +34,8 @@
 
   "playerDieOutofBounds": false,
 
+  "isMusicEnabled": true,
+
   "enemies": {
     "multiplier": 0.1,
     "respawnLapse": 5000,
