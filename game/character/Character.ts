@@ -157,7 +157,7 @@ module Superhero {
          */
         jump (): void {
             if (this.sprite.alive && this.sprite.body.touching.down) {
-                this.sprite.body.velocity.y = -650;
+
             }
 
         }
