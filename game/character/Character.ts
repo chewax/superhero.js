@@ -427,6 +427,7 @@ module Superhero {
          * @param {any}           object An instance of the collided object
          */
         die (char:Phaser.Sprite, object?:any) {
+            if (object) object.kill();
             var elapsedTime = this.game.time.elapsedSince(this.dieTimer);
             if (elapsedTime < 100) return;
             this.dieTimer = this.game.time.time;
@@ -434,8 +435,6 @@ module Superhero {
             if((<Superhero.Game>this.game).conf.PLAYERISIMMORTAL && char.key == "hero1") {
                 return;
             }
-
-            if (object) object.kill();
 
             if (this.shield > 0) {
                 this.shield -= 1;
@@ -448,7 +447,6 @@ module Superhero {
                 this.dieReset();
                 return
             }
-
 
             this.lives -= 1;
             char.alive = false;
@@ -471,7 +469,6 @@ module Superhero {
                 this.sprite.tint = 0xFFFFFF;
             }.bind(this), 150);
         }
-
 
         /**
          * Callback method when the character collides with a collectable object

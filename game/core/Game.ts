@@ -3,6 +3,7 @@
 /// <reference path="../states/Preloader.ts"/>
 /// <reference path="../states/Menu.ts"/>
 /// <reference path="../states/Level1.ts"/>
+/// <reference path="../states/Intro.ts"/>
 /// <reference path="../config/Config.ts"/>
 /// <reference path="../plugins/GamePad.ts"/>
 /// <reference path="../../lib/jquery.d.ts" />
@@ -34,6 +35,7 @@ module Superhero{
             this.state.add('Preloader', Preloader, false);
             this.state.add('Menu', Menu, false);
             this.state.add('Level1', Level1, false);
+            this.state.add('Intro', Intro, false);
 
             this.state.start('Boot');
         }
