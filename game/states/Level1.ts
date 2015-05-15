@@ -88,31 +88,36 @@ module Superhero {
 
         initCollectables(): void {
             this.collectableManager = new Collectables.CollectableManager(this.game);
-            this.collectableManager.addCollectable(Collectables.CollectableType.IMPROVE_FIRE);
-            this.collectableManager.addCollectable(Collectables.CollectableType.IMPROVE_SHIELD);
+            //this.collectableManager.addCollectable(Collectables.CollectableType.IMPROVE_FIRE);
+            //this.collectableManager.addCollectable(Collectables.CollectableType.IMPROVE_SHIELD);
             this.collectableManager.addCollectable(Collectables.CollectableType.NUKE_BOMB);
             //this.collectableManager.addCollectable(Collectables.CollectableType.TIME_WARP);
             //this.collectableManager.addCollectable(Collectables.CollectableType.DIAMOND);
-            this.collectableManager.addCollectable(Collectables.CollectableType.BOMB);
+            //this.collectableManager.addCollectable(Collectables.CollectableType.BOMB);
             //this.collectableManager.addCollectable(Collectables.CollectableType.IMMUNITY);
-            this.collectableManager.addCollectable(Collectables.CollectableType.LIVES);
+            //this.collectableManager.addCollectable(Collectables.CollectableType.LIVES);
 
         }
 
 
         configureInput(): void {
             (<Superhero.Game> this.game).gamepad = new Gamepads.GamePad(this.game, Gamepads.GamepadType.STICK_BUTTON, Gamepads.ButtonPadType.FOUR_FAN);
-            (<Superhero.Game> this.game).gamepad.buttonPad.button1.type = Gamepads.ButtonType.CUSTOM;
-            (<Superhero.Game> this.game).gamepad.buttonPad.button2.type = Gamepads.ButtonType.CUSTOM;
+            (<Superhero.Game> this.game).gamepad.buttonPad.button1.type = Gamepads.ButtonType.SINGLE_THEN_TURBO;
+            (<Superhero.Game> this.game).gamepad.buttonPad.button2.type = Gamepads.ButtonType.SINGLE;
             (<Superhero.Game> this.game).gamepad.buttonPad.button2.enableCooldown(30);
-            (<Superhero.Game> this.game).gamepad.buttonPad.button3.type = Gamepads.ButtonType.CUSTOM;
+            (<Superhero.Game> this.game).gamepad.buttonPad.button3.type = Gamepads.ButtonType.SINGLE;
             (<Superhero.Game> this.game).gamepad.buttonPad.button3.enableCooldown(10);
-            (<Superhero.Game> this.game).gamepad.buttonPad.button4.type = Gamepads.ButtonType.CUSTOM;
+            (<Superhero.Game> this.game).gamepad.buttonPad.button4.type = Gamepads.ButtonType.SINGLE_THEN_TURBO;
             (<Superhero.Game> this.game).gamepad.stick1.settings.topSpeed = 600;
         }
 
         setActors(): void {
             this.hero = new Hero(this.game);
+
+            (<Superhero.Game> this.game).gamepad.buttonPad.button1.setOnPressedCallback(this.hero.fire, this.hero);
+            (<Superhero.Game> this.game).gamepad.buttonPad.button2.setOnPressedCallback(this.hero.fireNuke, this.hero);
+            (<Superhero.Game> this.game).gamepad.buttonPad.button4.setOnPressedCallback(this.hero.fireRocket, this.hero);
+
             this.ui = new Superhero.UI(this.game, this.hero);
         }
 
