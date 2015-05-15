@@ -88,7 +88,7 @@ module Superhero {
             this.paralax4.autoScroll(-200,0);
 
 
-            this.paralax5 = this.game.add.tileSprite(0,this.world.height-80,this.world.width,this.world.height-80, 'steel', 'floor_c');
+            this.paralax5 = this.game.add.tileSprite(0,this.world.height-25,this.world.width,this.world.height-25, 'steel', 'floor_c');
             this.paralax5.autoScroll(-200,0);
             this.game.physics.arcade.enable(this.paralax5);
             this.paralax5.body.immovable = true;
@@ -136,10 +136,14 @@ module Superhero {
             this.hero = new Hero(this.game);
             this.hero.sprite.body.gravity.y = 1500;
             this.hero.sprite.body.drag = 0;
+
+
+            (<Superhero.Game> this.game).gamepad.touchInput.onTouchDownCallback = this.hero.jump.bind(this.hero);
+
             this.hero._state = new Superhero.StateRun(this.game,this.hero);
             this.hero._state.enterState();
 
-            (<Superhero.Game> this.game).gamepad.touchInput.onTouchDownCallback = this.hero.jump.bind(this.hero);
+
             this.ui = new Superhero.UI(this.game, this.hero);
         }
 
