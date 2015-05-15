@@ -76,12 +76,12 @@ module Superhero {
                             this.sprite.animations.play('shootRightWhenUp');
                             setTimeout(function(){
                                 this.fireBullet("downProjectile", BulletDirection.DOWN);
-                            }.bind(this), 150);
+                            }.bind(this), 250);
                         } else {
                             this.sprite.animations.play('shootRightWhenDown');
                             setTimeout(function(){
                                 this.fireBullet("upperProjectile", BulletDirection.UP);
-                            }.bind(this), 150);
+                            }.bind(this), 250);
                         }
                     } else {
                         // fire left hand
@@ -89,7 +89,7 @@ module Superhero {
                         this.sprite.animations.play('shootLeft');
                         setTimeout(function(){
                             this.fireBullet("mainProjectile", BulletDirection.STRAIGHT);
-                        }.bind(this), 150);
+                        }.bind(this), 250);
                     }
                     //Reset the timer
                     this.bulletTimer = this.game.time.time;
@@ -105,7 +105,7 @@ module Superhero {
             if (!bullet) {
                 bullet = this.createNewBullet("twoHandedWeapon", bulletKey);
             }
-            bullet.reset(this.sprite.x + (this.facing * 40), this.sprite.y + 5);
+            bullet.reset(this.sprite.x + (this.facing * 40), this.sprite.y + 15);
             if(bulletDirection != BulletDirection.STRAIGHT) {
                 if (bulletDirection == BulletDirection.DOWN) {
                     bullet.body.velocity.y = 100;
