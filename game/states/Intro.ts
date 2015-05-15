@@ -18,13 +18,21 @@ module Superhero {
 
         hero: Superhero.Hero;
         background: Phaser.TileSprite;
+
         paralax1: Phaser.TileSprite;
-        //ui: Superhero.UI;
+        paralax2: Phaser.TileSprite;
+        paralax3: Phaser.TileSprite;
+        paralax4: Phaser.TileSprite;
+        paralax5: Phaser.TileSprite;
+
+
+        debug: Superhero.Debug;
+        ui: Superhero.UI;
         theme: Phaser.Sound;
         obstacleManager: Obstacles.ObstacleManager;
         enemyManager: Superhero.EnemyManager;
         collectableManager: Collectables.CollectableManager;
-
+        levelID: string = "level1";
 
         preload () {
 
@@ -41,6 +49,7 @@ module Superhero {
             //this.startMusic();
             this.setEnemyManager();
 
+            this.debug = new Debug(this.game);
         }
 
         update () {
@@ -52,6 +61,7 @@ module Superhero {
 
             this.enemyManager.update();
             this.ui.update();
+            //this.debug.update();
 
             //Obstacles
             this.obstacleManager.update();
@@ -64,22 +74,37 @@ module Superhero {
 
 
         setBaseStage():void {
-
-            // Setup paralax layer
             this.paralax1 = this.game.add.tileSprite(0,0,1800,600, 'starfield');
-            this.paralax1.autoScroll(-100,0);
+            this.paralax1.autoScroll(-10,0);
+
+            this.paralax2 = this.game.add.tileSprite(0,0,3600,600, 'planets');
+            this.paralax2.autoScroll(-30,0);
+
+            //this.paralax3 = this.game.add.tileSprite(0,0,3600,600, 'meteos');
+            //this.paralax3.autoScroll(-400,0);s
+
+
+            this.paralax4 = this.game.add.tileSprite(0,0,this.world.width,this.world.height, 'steeltile');
+            this.paralax4.autoScroll(-200,0);
+
+
+            this.paralax5 = this.game.add.tileSprite(0,this.world.height-80,this.world.width,this.world.height-80, 'steel', 'floor_c');
+            this.paralax5.autoScroll(-200,0);
+            this.game.physics.arcade.enable(this.paralax5);
+            this.paralax5.body.immovable = true;
+            this.paralax5.physicsType =  Phaser.SPRITE;
 
             //Setup Obstacle
             this.obstacleManager = new Obstacles.ObstacleManager(this.game, 800);
             //this.obstacleManager.addObstacleToPool(Obstacles.ObstacleType.WALL);
-            this.obstacleManager.addObstacleToPool(Obstacles.ObstacleType.METEORITE_SHOWER);
+            //this.obstacleManager.addObstacleToPool(Obstacles.ObstacleType.METEORITE_SHOWER);
 
             this.initCollectables();
         }
 
         private  setEnemyManager(): void {
             // Setup enemy manager
-            //this.enemyManager = new Superhero.EnemyManager(this.game, this.levelID);
+            this.enemyManager = new Superhero.EnemyManager(this.game, this.levelID);
         }
 
         initCollectables(): void {
@@ -100,7 +125,9 @@ module Superhero {
             (<Superhero.Game> this.game).gamepad = new Gamepads.GamePad(this.game, Gamepads.GamepadType.STICK_BUTTON, Gamepads.ButtonPadType.FOUR_FAN);
             (<Superhero.Game> this.game).gamepad.buttonPad.button1.type = Gamepads.ButtonType.CUSTOM;
             (<Superhero.Game> this.game).gamepad.buttonPad.button2.type = Gamepads.ButtonType.CUSTOM;
+            (<Superhero.Game> this.game).gamepad.buttonPad.button2.enableCooldown(30);
             (<Superhero.Game> this.game).gamepad.buttonPad.button3.type = Gamepads.ButtonType.CUSTOM;
+            (<Superhero.Game> this.game).gamepad.buttonPad.button3.enableCooldown(10);
             (<Superhero.Game> this.game).gamepad.buttonPad.button4.type = Gamepads.ButtonType.CUSTOM;
             (<Superhero.Game> this.game).gamepad.stick1.settings.topSpeed = 600;
         }
@@ -117,6 +144,8 @@ module Superhero {
         }
 
         checkForCollisions(): void {
+
+            this.hero.collideWithObject(this.paralax5);
 
             var enemies = this.enemyManager.enemies;
 

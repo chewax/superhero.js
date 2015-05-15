@@ -179,5 +179,12 @@ module Superhero {
             this.ui.scoreUp(50);
         }
 
+        render() {
+            //this.game.debug.body(this.hero.sprite);
+            //this.obstacleManager.obstacles[0].group.forEach(function(e){
+            //    this.game.debug.body(e);
+            //},this);
+        }
+
     }
 }

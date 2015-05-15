@@ -33,8 +33,9 @@
   "playerIsImmortal": false,
 
   "playerDieOutofBounds": false,
-
+  
   "isMusicEnabled": false,
+
 
   "enemies": {
     "multiplier": 0.1,

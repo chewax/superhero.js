@@ -281,6 +281,7 @@ module Obstacles {
                 stone.body.angularVelocity = this.game.rnd.integerInRange(-100,100);
             }
 
+
         }
 
 

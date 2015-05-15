@@ -1,7 +1,6 @@
 /**
  * UI Class
  * Wraps the logic to setup and handle the ui
- * @author Daniel Waksman
  */
 
 /// <reference path="../../lib/phaser.d.ts"/>
@@ -64,7 +63,6 @@ module Superhero {
             this.updateLives();
             this.updatePUPIcons();
             this.updateCooldowns();
-            //this.updateCoins();
 
         }
 
