@@ -420,7 +420,7 @@ module Superhero {
          * Sets the collitions of the character with an object
          * @param {Phaser.Sprite} object Object upon which the character sould collide
          */
-        collideWithObject (object:Phaser.Sprite): void{
+        collideWithObject (object:any): void{
             this.game.physics.arcade.collide(object, this.sprite, null, null, this);
         }
 
