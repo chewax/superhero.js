@@ -90,6 +90,9 @@ module Superhero {
 
             this.paralax5 = this.game.add.tileSprite(0,this.world.height-80,this.world.width,this.world.height-80, 'steel', 'floor_c');
             this.paralax5.autoScroll(-200,0);
+            this.game.physics.arcade.enable(this.paralax5);
+            this.paralax5.body.immovable = true;
+            this.paralax5.physicsType =  Phaser.SPRITE;
 
             //Setup Obstacle
             this.obstacleManager = new Obstacles.ObstacleManager(this.game, 800);
@@ -141,6 +144,8 @@ module Superhero {
         }
 
         checkForCollisions(): void {
+
+            this.hero.collideWithObject(this.paralax5);
 
             var enemies = this.enemyManager.enemies;
 

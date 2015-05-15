@@ -116,7 +116,6 @@ module Superhero {
             this.sprite.body.gravity.y = (<Superhero.Game> this.game).conf.PHYISICS.player.gravity.y;
             this.sprite.body.drag.x = (<Superhero.Game> this.game).conf.PHYISICS.player.drag;
             this.sprite.body.drag.y = (<Superhero.Game> this.game).conf.PHYISICS.player.drag;
-            this.sprite.body.setSize(100,220);
         }
         /**
          * Wraps the left movement logic

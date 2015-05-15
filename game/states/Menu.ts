@@ -21,7 +21,7 @@ module Superhero {
             //var menuText = this.game.add.text(this.game.world.centerX, this.game.world.centerY, text, style);
             //menuText.anchor.set(0.5,0.5);
 
-            this.game.state.start('Level1', true, false);
+            this.game.state.start('Intro', true, false);
 
         }
 
