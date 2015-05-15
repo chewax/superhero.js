@@ -15,6 +15,8 @@ module Superhero {
         defaultState?: EnemyState;
         patrolSpeed?: number;
         spawnPoint?: spawnEnemyPosition;
+        deadSince?: number;
+        respawnDelay?: number;
     }
 
     /**
@@ -102,9 +104,11 @@ module Superhero {
                 // Fix x position
                 newEnemy.spawnLocation.x = this.game.width - newEnemy.spawnLocation.x;
                 (<Superhero.StateEnemyHostile>spawnEnemy._state).stopPatrol();
-                spawnEnemy.sprite.reset(newEnemy.spawnLocation.x, newEnemy.spawnLocation.y);
-                spawnEnemy.setCustomEnemyProperties(newEnemy);
-                this.enemiesAlive.push(spawnEnemy);
+                if(!spawnEnemy.sprite.alive) {
+                    spawnEnemy.sprite.reset(newEnemy.spawnLocation.x, newEnemy.spawnLocation.y);
+                    spawnEnemy.setCustomEnemyProperties(newEnemy);
+                    this.enemiesAlive.push(spawnEnemy);
+                }
             }
 
             // TODO: implement timer when dead to 0 again so it doesn't appear again
@@ -113,7 +117,7 @@ module Superhero {
 
         private getFirstEnemyDead(key:string): Superhero.EnemyBase {
             for (var i = 0; i < this.enemies.length; i++) {
-                if (this.enemies[i].sprite.key === key && !this.enemies[i].sprite.alive ) return this.enemies[i];
+                if (this.enemies[i].sprite.key === key && !this.enemies[i].sprite.alive && this.enemies[i].canRespawn()) return this.enemies[i];
             }
             return null
         }
@@ -210,6 +214,8 @@ module Superhero {
                     var spawnedNewEnemy = this.spawnEnemy(newEnemy);
                     spawnedNewEnemy.sprite.kill();
                     spawnedNewEnemy.sprite.events.onKilled.add(function(s) {
+                        this.enemiesTimer.stop();
+                        this.enemiesTimer.start();
                         for (var i = 0; i < this.enemiesAlive.length; i++) {
                             if (this.enemiesAlive[i].sprite === s ){
                                 var index = this.enemiesAlive.indexOf(this.enemiesAlive[i], 0);
@@ -218,8 +224,6 @@ module Superhero {
                                 }
                             }
                         }
-                        this.enemiesTimer.stop();
-                        this.enemiesTimer.start();
                         this.enemiesTimer.loop((<Superhero.Game>this.game).conf.ENEMIES.respawnLapse, this.updateMultiplier, this);
 
                     }, this);
@@ -233,6 +237,8 @@ module Superhero {
             // TODO: implement...
             if(newEnemy.assetsKey === "tentabot01") {
                 return new Superhero.TentacleBot(this.game, newEnemy);
+            } else if (newEnemy.assetsKey === "twoHandedWeapon") {
+                return new Superhero.TwoHandedEnemy(this.game, newEnemy);
             } else {
                 return new Superhero.EnemyBase(this.game, newEnemy);
             }
@@ -254,7 +260,8 @@ module Superhero {
                 firePower: this.getFirePower(assetKey),
                 shootDelay: (<Superhero.Game>this.game).conf.ENEMIES.shootDelay,
                 defaultState: EnemyState.STEADY,
-                spawnPoint: this.getRandomEnemySpawnPosition(false)
+                spawnPoint: this.getRandomEnemySpawnPosition(false),
+                deadSince: this.game.time.time
             };
 
             return newEnemy;

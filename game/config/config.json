@@ -64,7 +64,7 @@
     "patrolTweenSpeed": 1500,
 
     "levels": {
-      "level1": ["badie", "tentabot01"]
+      "level1": ["badie","tentabot01","twoHandedWeapon"]
     }
   },
 
@@ -72,7 +72,7 @@
     "hero1": {
       "mainSprite": "stand1",
       "childSprites": "",
-      "isImmortal": false,
+      "isImmortal": true,
       "idleAnimation": "flystill",
       "animations": {
         "flystill": {"frames" :["stand1", "stand2"], "frameRate": 8,"loop": true, "useNumericIndex": false},
@@ -119,6 +119,7 @@
         "y": 0
       },
       "scale": 0.3,
+      "bulletScale": 1,
       "diesOutOfBounds": true,
       "firePower": 1,
       "shootAnimationFrames": 6,
@@ -151,6 +152,7 @@
       "diesOutOfBounds": true,
       "firePower": 4,
       "shootAnimationFrames": 4,
+      "bulletScale": 1,
       "bullets": {
         "qty": 4,
         "key": "tentabot01",
@@ -166,6 +168,38 @@
         {"x": -29, "y": 140},
         {"x": -98, "y": 100}
       ]
+    },
+
+    "twoHandedWeapon": {
+      "mainSprite": "idle01",
+      "childSprites": "",
+      "isImmortal": false,
+      "idleAnimation": "flystill",
+      "animations": {
+        "flystill": {"frames" :["idle01", "idle02", "idle03", "idle02"], "frameRate": 4,"loop": true, "useNumericIndex": false},
+        "shootRightWhenDown": {"frames" :["fireRight01","fireRight02", "fireRight03", "fireRight04", "fireRight05UP", "fireRight06", "fireRight04", "fireRight03", "fireRight02", "fireRight01"], "frameRate": 10, "loop": false, "useNumericIndex": false},
+        "shootRightWhenUp": {"frames" :["fireRight01","fireRight02", "fireRight03", "fireRight04", "fireRight05DOWN", "fireRight06", "fireRight04", "fireRight03", "fireRight02", "fireRight01"], "frameRate": 10, "loop": false, "useNumericIndex": false},
+        "shootLeft": {"frames" :["idle02", "idle03", "fireLeft03", "fireLeft04", "fireLeft05", "fireLeft04", "fireLeft03", "idle03", "idle02"], "frameRate": 9, "loop": false, "useNumericIndex": false},
+        "takehit": {"frames" :["die01","die02", "die03", "die04"], "frameRate": 4, "loop": false, "useNumericIndex": false}
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0
+      },
+      "scale": 0.7,
+      "diesOutOfBounds": true,
+      "firePower": 1,
+      "shootAnimationFrames": 6,
+      "bulletScale": 1,
+      "bullets": {
+        "qty": 4,
+        "key": "bullets",
+        "frame":"arrow1",
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        }
+      }
     }
   }
 }

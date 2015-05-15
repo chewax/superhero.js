@@ -42,9 +42,12 @@ module Superhero {
             //this.game.load.audio('theme', '/assets/sounds/demon_destroyer.mp3');
             this.game.load.audio('theme', '/assets/sounds/demon_destroyer.ogg');
 
-            // tentacle bot
+            // Tentacle bot
             this.game.load.atlasJSONHash('tentabot01', 'assets/tentacleBot.png', '/assets/tentacleBot.json');
             //this.game.load.audio('tentacleMissileLaunch', 'assets/missleLaunc1.ogg');
+
+            // Two handed weapon enemy
+            this.game.load.atlasJSONHash('twoHandedWeapon', 'assets/twoHandedWeapon.png', '/assets/twoHandedWeapon.json');
 
             Gamepads.GamePad.preloadAssets(this.game, '/assets');
 

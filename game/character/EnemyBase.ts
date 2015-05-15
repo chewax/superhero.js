@@ -56,7 +56,8 @@ module Superhero {
             this.facing = enemyChar.facing;
             this.setBulletVelocity(enemyChar.bulletVelocity);
             this.shootDelay = enemyChar.shootDelay;
-
+            this.deadSince = enemyChar.deadSince;
+            this.sprite.rotation = 0;
             // TODO: implement tween speed
             //this.patrolSpeed = enemyChar.patrolSpeed;
 

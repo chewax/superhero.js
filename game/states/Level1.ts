@@ -3,6 +3,7 @@
 /// <reference path="../character/EnemyBase.ts"/>
 /// <reference path="../character/EnemyManager.ts"/>
 /// <reference path="../character/TentacleBot.ts"/>
+/// <reference path="../character/TwoHandedWeapon.ts"/>
 /// <reference path="../utils/Debug.ts"/>
 /// <reference path="../config/Config.ts"/>
 /// <reference path="../ui/UI.ts"/>
@@ -113,6 +114,7 @@ module Superhero {
 
         setActors(): void {
             this.hero = new Hero(this.game);
+            this.hero.setRespawnDelay(2000);
             this.ui = new Superhero.UI(this.game, this.hero);
         }
 

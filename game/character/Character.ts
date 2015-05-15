@@ -49,12 +49,15 @@ module Superhero {
         nukeCoolDown: number = 0;
         warpCoolDown: number = 0;
         dieTimer: number;
+        deadSince: number;
+        respawnDelay: number = 5000;
         facing: Facing;
         _state: Superhero.CharState;
 
         bulletVelocity: number = 1000;
         floor: number;
         allowGravity: boolean = false;
+
 
         /**
          * Constructor. Creates the Character
@@ -447,13 +450,15 @@ module Superhero {
          * @param {any}           object An instance of the collided object
          */
         die (char:Phaser.Sprite, object?:any) {
-            var elapsedTime = this.game.time.elapsedSince(this.dieTimer);
-            if (elapsedTime < 100) return;
-            this.dieTimer = this.game.time.time;
 
+            //TODO: IF enemy RESET TIMER
             if((<Superhero.Game> this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["isImmortal"]){
                 return;
             }
+
+            var elapsedTime = this.game.time.elapsedSince(this.dieTimer);
+            if (elapsedTime < this.respawnDelay) return;
+            this.dieTimer = this.game.time.time;
 
             if (object) object.kill();
 
@@ -469,20 +474,20 @@ module Superhero {
                 return
             }
 
-
             this.lives -= 1;
             char.alive = false;
+            this.deadSince = this.game.time.time;
 
             if (this.bullets) this.bullets.forEachAlive(function(b){b.kill()},this);
             if (this.rockets) this.rockets.forEachAlive(function(r){r.kill()},this);
 
-            char.play('takehit',4,false,true);
-
+            char.animations.play('takehit',4,false,true);
         }
 
         dieReset():void {
             this.sprite.reset(100,this.game.world.centerY);
-            Utils.interval(this.flickerSprite.bind(this), 400, 5);
+            var flickerRepeats =  Math.floor(this.respawnDelay / 550);
+            Utils.interval(this.flickerSprite.bind(this), 400, flickerRepeats);
         }
 
         flickerSprite(color:number=0xFF0000):void {
@@ -506,14 +511,36 @@ module Superhero {
         /**
          * Creates new bullet
          */
-        public createNewBullet(): Phaser.Sprite{
+        public createNewBullet(key?: string, frame?: string): Phaser.Sprite{
+            var keyBullet;
+            var frameBullet;
+
+            if(key && frame){
+                keyBullet = key;
+                frameBullet = frame;
+            } else {
+                keyBullet = (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["bullets"]["key"];
+                frameBullet = (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["bullets"]["frame"];
+            }
+
             return this.bullets.create(
             -10,
             -10,
-            (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["bullets"]["key"],
-            (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["bullets"]["frame"]
+            keyBullet,
+            frameBullet
             );
         }
 
+        setRespawnDelay(delay: number): void {
+            this.respawnDelay = delay;
+        }
+
+        canRespawn(): boolean {
+            var elapsedTime = this.game.time.elapsedSince(this.deadSince);
+            if(elapsedTime > this.respawnDelay) {
+                return true;
+            }
+            return false;
+        }
     }
 }
