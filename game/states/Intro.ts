@@ -122,6 +122,7 @@ module Superhero {
 
 
         configureInput(): void {
+            // Create Gamepad using the plugin
             (<Superhero.Game> this.game).gamepad = new Gamepads.GamePad(this.game, Gamepads.GamepadType.GESTURE_BUTTON, Gamepads.ButtonPadType.FOUR_FAN);
             (<Superhero.Game> this.game).gamepad.touchInput.touchType = Gamepads.TouchInputType.TOUCH;
             (<Superhero.Game> this.game).gamepad.buttonPad.button1.type = Gamepads.ButtonType.SINGLE_THEN_TURBO;
@@ -136,8 +137,9 @@ module Superhero {
             this.hero = new Hero(this.game);
             this.hero.sprite.body.gravity.y = 1500;
             this.hero.sprite.body.drag = 0;
+            this.hero.setIdleCallback(this.hero.run);
 
-
+            // Set gamepad callbacks
             (<Superhero.Game> this.game).gamepad.touchInput.onTouchDownCallback = this.hero.jump.bind(this.hero);
             (<Superhero.Game> this.game).gamepad.buttonPad.button1.setOnPressedCallback(this.hero.fire, this.hero);
             (<Superhero.Game> this.game).gamepad.buttonPad.button2.setOnPressedCallback(this.hero.fireNuke, this.hero);

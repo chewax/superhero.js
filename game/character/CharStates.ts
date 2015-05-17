@@ -222,7 +222,9 @@ module Superhero {
     export class StateRun extends BaseState {
 
         public update():CharState {
-
+            if (this.hero.sprite.animations.currentAnim.isFinished){
+                this.hero.sprite.animations.play('run');
+            }
             //If nothing was commanded remain on the same state
             return this;
         }

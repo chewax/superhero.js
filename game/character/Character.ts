@@ -40,9 +40,7 @@ module Superhero {
         bombs: number = 0;
         shield: number = 0;
         lives: number = 3;
-
-        // 1 Diamond == 10 Coins
-        coins: number = 0;
+        coins: number = 0; // 1 Diamond == 10 Coins
 
         fuelTimer: number;
         bulletTimer: number;
@@ -51,6 +49,7 @@ module Superhero {
         dieTimer: number;
         facing: Facing;
         _state: Superhero.CharState;
+        idleCallback: Function;
 
         bulletVelocity: number = 1000;
         floor: number;
@@ -88,9 +87,12 @@ module Superhero {
             this.bulletTimer = this.game.time.time;
             this.nukeCoolDown = this.game.time.time;
             this.warpCoolDown = this.game.time.time;
-
             this.sprite.play((<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["idleAnimation"])
+            this.setIdleCallback(this.flyStill);
+
         }
+
+
 
         /**
          * Initializes the character sprite
@@ -168,6 +170,15 @@ module Superhero {
         flyStill (): void {
             if (this.sprite.animations.currentAnim.isFinished){
                 this.sprite.play('flystill');
+            }
+        }
+
+        /**
+         * Wraps the run logic
+         */
+        run (): void {
+            if (this.sprite.animations.currentAnim.isFinished){
+                this.sprite.play('run');
             }
         }
 
@@ -318,7 +329,7 @@ module Superhero {
             this.sprite.events.onAnimationComplete.add(function () {
                 if(this.isAlive) {
                     this.sprite.animations.stop();
-                    this.flyStill();
+                    this.idleCallback();
                 }
             }, this);
         }
@@ -511,6 +522,17 @@ module Superhero {
             (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["bullets"]["key"],
             (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["bullets"]["frame"]
             );
+        }
+
+        /**
+         * Each state has a different idle state (in the intro the character runs on idle, on the main level the character
+         flies still. So the State can set the idle state to whichever fits. Note that this does not alter the FSM. It only alters
+         the function that is called upon finishing an animation.
+         * @param listener the Function Handler
+         * @param listenerContext the Context with which it should be called
+         */
+        setIdleCallback(listener: Function, listenerContext: any = this): void {
+            this.idleCallback = listener.bind(listenerContext);
         }
 
     }
