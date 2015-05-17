@@ -89,10 +89,11 @@ module Collectables {
          * @param x - X Coordinate
          * @param y - Y Coordinate
          */
-        spawnCollectable(x:number, y:number){
+        spawnCollectable(x:number, y:number, index?:number){
 
-            // Randomly respawn 1 out of 20 times
-            // if (this.game.rnd.integerInRange(0,12) != 10) return;
+            // Randomly respawn 1 out of 20 times unless a specific collectable was instructed
+            //if (!index) if (this.game.rnd.integerInRange(0,12) != 10) return;
+
 
             // If there are no collectables created, return
             if (this.collectables.length < 1) return;
@@ -102,7 +103,14 @@ module Collectables {
 
             // Otherwise spawn a random collectable
             // For now the respawn is random
-            var coll = this.collectables.getRandom();
+            if (index) {
+                var coll = this.collectables.getAt(index);
+            }
+            else
+            {
+                var coll = this.collectables.getRandom();
+            }
+
             if (!coll) return;
             if (coll.alive) return;
 
