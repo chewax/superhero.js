@@ -124,12 +124,12 @@ module Superhero {
         configureInput(): void {
             (<Superhero.Game> this.game).gamepad = new Gamepads.GamePad(this.game, Gamepads.GamepadType.GESTURE_BUTTON, Gamepads.ButtonPadType.FOUR_FAN);
             (<Superhero.Game> this.game).gamepad.touchInput.touchType = Gamepads.TouchInputType.TOUCH;
-            (<Superhero.Game> this.game).gamepad.buttonPad.button1.type = Gamepads.ButtonType.CUSTOM;
-            (<Superhero.Game> this.game).gamepad.buttonPad.button2.type = Gamepads.ButtonType.CUSTOM;
+            (<Superhero.Game> this.game).gamepad.buttonPad.button1.type = Gamepads.ButtonType.SINGLE_THEN_TURBO;
+            (<Superhero.Game> this.game).gamepad.buttonPad.button2.type = Gamepads.ButtonType.SINGLE;
             (<Superhero.Game> this.game).gamepad.buttonPad.button2.enableCooldown(30);
-            (<Superhero.Game> this.game).gamepad.buttonPad.button3.type = Gamepads.ButtonType.CUSTOM;
+            (<Superhero.Game> this.game).gamepad.buttonPad.button3.type = Gamepads.ButtonType.SINGLE;
             (<Superhero.Game> this.game).gamepad.buttonPad.button3.enableCooldown(10);
-            (<Superhero.Game> this.game).gamepad.buttonPad.button4.type = Gamepads.ButtonType.CUSTOM;
+            (<Superhero.Game> this.game).gamepad.buttonPad.button4.type = Gamepads.ButtonType.SINGLE_THEN_TURBO;
         }
 
         setActors(): void {
@@ -139,6 +139,9 @@ module Superhero {
 
 
             (<Superhero.Game> this.game).gamepad.touchInput.onTouchDownCallback = this.hero.jump.bind(this.hero);
+            (<Superhero.Game> this.game).gamepad.buttonPad.button1.setOnPressedCallback(this.hero.fire, this.hero);
+            (<Superhero.Game> this.game).gamepad.buttonPad.button2.setOnPressedCallback(this.hero.fireNuke, this.hero);
+            (<Superhero.Game> this.game).gamepad.buttonPad.button4.setOnPressedCallback(this.hero.fireRocket, this.hero);
 
             this.hero._state = new Superhero.StateRun(this.game,this.hero);
             this.hero._state.enterState();
