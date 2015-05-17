@@ -196,12 +196,19 @@ module Superhero {
             this.sprite.animations.play('stop');
         }
 
-        canShoot(){
+        shootTimeUp():boolean{
             var elapsedTime = this.game.time.elapsedSince(this.bulletTimer);
-            if (elapsedTime < this.shootDelay) return false;
+            return !(elapsedTime < this.shootDelay);
+        }
+
+        okToShoot(): boolean{
             if (!this.sprite.alive) return false;
             if ((this.sprite.animations.currentAnim.name == 'shoot') && !this.sprite.animations.currentAnim.isFinished) return false;
             return true;
+        }
+
+        canShoot(){
+            return this.shootTimeUp() && this.okToShoot();
         }
 
         /**
@@ -288,7 +295,7 @@ module Superhero {
          */
         fireNuke (): void {
 
-            if (this.nukes <= 0 || !this.canShoot()) return;
+            if (this.nukes <= 0 || !this.okToShoot()) return;
             //var coolDown = this.game.time.elapsedSecondsSince(this.nukeCoolDown);
             //if (coolDown < 30) return;
             //this.nukeCoolDown = this.game.time.time;

@@ -7,7 +7,7 @@ module Superhero {
     export class Hero extends Character {
 
         constructor (game:Phaser.Game) {
-            super(game,'hero1',game.world.centerX - 200,100);
+            super(game,'hero1',game.world.centerX - 200,game.world.centerY);
             this.facing = Facing.RIGHT;
             //this.firePower = 10;
             this.shootDelay = 500;
