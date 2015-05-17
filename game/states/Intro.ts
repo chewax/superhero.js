@@ -148,7 +148,6 @@ module Superhero {
             this.hero._state = new Superhero.StateRun(this.game,this.hero);
             this.hero._state.enterState();
 
-
             this.ui = new Superhero.UI(this.game, this.hero);
         }
 

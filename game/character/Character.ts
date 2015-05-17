@@ -491,7 +491,7 @@ module Superhero {
         }
 
         dieReset():void {
-            this.sprite.reset(100,this.game.world.centerY);
+            this.sprite.reset(this.game.world.centerX-200,this.game.world.centerY);
             Utils.interval(this.flickerSprite.bind(this), 400, 5);
         }
 
