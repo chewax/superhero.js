@@ -67,6 +67,11 @@ module Superhero {
             this.updatePUPIcons();
             this.updateCooldowns();
 
+            if (!this.player.sprite.alive) {
+                this.menu.reset(this.game.world.centerX, this.game.world.centerY);
+                this.game.input.onDown.add(this.unPause, this);
+            }
+
         }
 
 
