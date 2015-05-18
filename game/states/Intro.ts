@@ -65,6 +65,10 @@ module Superhero {
 
             //Obstacles
             this.obstacleManager.update();
+
+            //if (this.game.input.keyboard.addKey(Phaser.Keyboard.P).isDown){
+            //    this.game.paused != this.game.paused
+            //}
         }
 
         configurePhysics():void {
@@ -79,9 +83,6 @@ module Superhero {
 
             this.paralax2 = this.game.add.tileSprite(0,0,3600,600, 'planets');
             this.paralax2.autoScroll(-30,0);
-
-            //this.paralax3 = this.game.add.tileSprite(0,0,3600,600, 'meteos');
-            //this.paralax3.autoScroll(-400,0);s
 
 
             this.paralax4 = this.game.add.tileSprite(0,0,this.world.width,this.world.height, 'steeltile');
@@ -131,6 +132,7 @@ module Superhero {
             (<Superhero.Game> this.game).gamepad.buttonPad.button3.type = Gamepads.ButtonType.SINGLE;
             (<Superhero.Game> this.game).gamepad.buttonPad.button3.enableCooldown(10);
             (<Superhero.Game> this.game).gamepad.buttonPad.button4.type = Gamepads.ButtonType.SINGLE_THEN_TURBO;
+
         }
 
         setActors(): void {
@@ -141,16 +143,17 @@ module Superhero {
 
             // Set gamepad callbacks
             (<Superhero.Game> this.game).gamepad.touchInput.onTouchDownCallback = this.hero.jump.bind(this.hero);
+
             (<Superhero.Game> this.game).gamepad.buttonPad.button1.setOnPressedCallback(this.hero.fire, this.hero);
 
             // BUTTON2
             (<Superhero.Game> this.game).gamepad.buttonPad.button2.setOnPressedCallback(this.hero.fireNuke, this.hero);
-            (<Superhero.Game> this.game).gamepad.buttonPad.button2.customCanTriggerCallback = (function():boolean {return this.hero.nukes>0}).bind(this)
-
-            // BUTTON 3
-            (<Superhero.Game> this.game).gamepad.buttonPad.button3.customCanTriggerCallback = (function():boolean {return this.hero.timeWarps>0}).bind(this)
-
-            // BUTTON 4
+            (<Superhero.Game> this.game).gamepad.buttonPad.button2.customCanTriggerCallback = (function():boolean {return this.hero.nukes>0}).bind(this);
+            //
+            //// BUTTON 3
+            (<Superhero.Game> this.game).gamepad.buttonPad.button3.customCanTriggerCallback = (function():boolean {return this.hero.timeWarps>0}).bind(this);
+            //
+            //// BUTTON 4
             (<Superhero.Game> this.game).gamepad.buttonPad.button4.setOnPressedCallback(this.hero.fireRocket, this.hero);
 
             this.hero._state = new Superhero.StateRun(this.game,this.hero);
@@ -220,6 +223,10 @@ module Superhero {
 
             this.obstacleManager.particleBurst(wall);
             this.ui.scoreUp(50);
+        }
+
+        shutdown() {
+            this.game.world.removeAll();
         }
 
     }

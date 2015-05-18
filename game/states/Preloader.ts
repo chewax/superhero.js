@@ -41,6 +41,12 @@ module Superhero {
             this.game.load.image('meteos', '/assets/meteos.png');
             this.game.load.image('windowMask', '/assets/windowMask.png');
             this.game.load.image('puinfo', '/assets/PUInfo.png');
+            this.game.load.image('pauseBtn', '/assets/pauseBtn.png');
+            this.game.load.image('menuBack', '/assets/menuBack.png');
+            this.game.load.image('mainMenu', '/assets/mainMenu.png');
+            this.game.load.image('menuBackground', '/assets/menuBackground.png');
+
+
 
 
             //Audio

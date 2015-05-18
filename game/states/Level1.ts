@@ -42,8 +42,13 @@ module Superhero {
             this.setActors();
             this.startMusic();
             this.setEnemyManager();
+            this.startUI();
 
             this.debug = new Debug(this.game);
+        }
+
+        startUI(){
+            this.ui = new Superhero.UI(this.game, this.hero);
         }
 
         update () {
@@ -59,6 +64,10 @@ module Superhero {
 
             //Obstacles
             this.obstacleManager.update();
+
+            //if (this.game.input.keyboard.addKey(Phaser.Keyboard.P).onUp){
+            //    this.game.paused = this.game.paused? false : true;
+            //}
         }
 
         configurePhysics():void {
@@ -77,8 +86,8 @@ module Superhero {
             this.obstacleManager = new Obstacles.ObstacleManager(this.game, 800);
             //this.obstacleManager.addObstacleToPool(Obstacles.ObstacleType.WALL);
             this.obstacleManager.addObstacleToPool(Obstacles.ObstacleType.METEORITE_SHOWER);
-
             this.initCollectables();
+
         }
 
         private  setEnemyManager(): void {
@@ -117,15 +126,13 @@ module Superhero {
             (<Superhero.Game> this.game).gamepad.buttonPad.button1.setOnPressedCallback(this.hero.fire, this.hero);
             // BUTTON2
             (<Superhero.Game> this.game).gamepad.buttonPad.button2.setOnPressedCallback(this.hero.fireNuke, this.hero);
-            (<Superhero.Game> this.game).gamepad.buttonPad.button2.customCanTriggerCallback = (function():boolean {return this.hero.nukes>0}).bind(this);
+            (<Superhero.Game> this.game).gamepad.buttonPad.button2.customCanTriggerCallback = (function():boolean {return this.hero.nukes>0 && this.hero.sprite.alive}).bind(this);
 
                 // BUTTON 3
-            (<Superhero.Game> this.game).gamepad.buttonPad.button3.customCanTriggerCallback = (function():boolean {return this.hero.timeWarps>0}).bind(this);
+            (<Superhero.Game> this.game).gamepad.buttonPad.button3.customCanTriggerCallback = (function():boolean {return this.hero.timeWarps>0 && this.hero.sprite.alive}).bind(this);
 
                 // BUTTON 4
             (<Superhero.Game> this.game).gamepad.buttonPad.button4.setOnPressedCallback(this.hero.fireRocket, this.hero);
-
-            this.ui = new Superhero.UI(this.game, this.hero);
         }
 
 
@@ -196,6 +203,10 @@ module Superhero {
             //this.obstacleManager.obstacles[0].group.forEach(function(e){
             //    this.game.debug.body(e);
             //},this);
+        }
+
+        shutdown() {
+            this.game.world.removeAll();
         }
 
     }
