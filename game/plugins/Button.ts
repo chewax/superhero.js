@@ -19,6 +19,7 @@ module Gamepads {
         height: number;
         pressed: boolean = false;
         onPressedCallback: Function;
+        customCanTriggerCallback: Function; // Custom function to trigger callback.
         type: ButtonType;
 
         timerId: number;
@@ -49,6 +50,9 @@ module Gamepads {
                 this.onPressedCallback = onPressedCallback.bind(listenerContext);
             }
 
+            //By default the custom canTriggerCallback User control is empty.
+            this.customCanTriggerCallback = this.empty;
+
             this.sprite.events.onInputDown.add(this.pressButton, this);
             this.sprite.events.onInputUp.add(this.releaseButton, this);
             this.sprite.anchor.setTo(1,1);
@@ -56,8 +60,8 @@ module Gamepads {
 
         }
 
-        empty (): void {
-
+        empty (): boolean {
+            return true;
         }
 
         enableCooldown(seconds:number){
@@ -113,7 +117,7 @@ module Gamepads {
         }
 
         triggerCallback(){
-            if (this.canTriggerCallback()){
+            if (this.canTriggerCallback() && this.customCanTriggerCallback()){
                 this.onPressedCallback();
 
                 if (this.cooldown.enabled) {
