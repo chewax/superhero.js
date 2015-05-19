@@ -121,6 +121,8 @@ module Superhero {
                 if (Math.abs(this.heroStick.speed.x) > 0 || Math.abs(this.heroStick.speed.y) > 0) {
                     this.hero.move(this.heroStick.speed);
                 }
+
+
                 this.hero.sprite.play('flystill');
 
                 if (this.heroStick.cursors.right) {
@@ -150,8 +152,6 @@ module Superhero {
         public update():CharState {
             if (this.hero.sprite.alive) {
                 this.hero.sprite.play('fly');
-                //var speed = this.heroStick.speed;
-                //speed.x *= 2;
 
                 if (Math.abs(this.heroStick.speed.x) > 0 || Math.abs(this.heroStick.speed.y) > 0) {
                     this.hero.move(this.heroStick.speed);

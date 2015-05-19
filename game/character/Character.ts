@@ -187,16 +187,11 @@ module Superhero {
         }
 
         move (speed:{x:number ; y:number}): void {
-            if (this.allowFingerMargin && (this.sprite.x <= this.game.width / 2 && speed.x < 0)) speed.x = 0;
 
-            // TODO: improve
-            if(this.game.time.slowMotion === 5.0) {
-                this.sprite.body.velocity.x = speed.x * 5;
-                if (this.fuel) this.sprite.body.velocity.y = speed.y * 5;
-            } else {
-                this.sprite.body.velocity.x = speed.x;
-                if (this.fuel) this.sprite.body.velocity.y = speed.y;
-            }
+            if (this.allowFingerMargin && (this.sprite.x <= this.game.width / 2 && speed.x < 0)) speed.x = 0;
+            this.sprite.body.velocity.x = speed.x * this.game.time.slowMotion;
+            if (this.fuel) this.sprite.body.velocity.y = speed.y * this.game.time.slowMotion;
+
         }
 
         /**
@@ -256,11 +251,9 @@ module Superhero {
                         bullet.reset(this.sprite.x + (this.facing * 40), this.sprite.y + (10 * i + 1));
                         bullet.checkWorldBounds = true;
                         bullet.outOfBoundsKill = true;
-                        if(this.game.time.slowMotion === 5.0) {
-                            bullet.body.velocity.x = this.bulletVelocity * 5;
-                        } else {
-                            bullet.body.velocity.x = this.bulletVelocity;
-                        }
+
+                        bullet.body.velocity.x = this.bulletVelocity * this.game.time.slowMotion;
+
                         bullet.body.allowGravity = false;
                         bullet.scale.setTo(0.4);
                         //bullet.scale.setTo((<Superhero.Game> this.game).conf.WORLD.sprite_scaling);
@@ -277,6 +270,29 @@ module Superhero {
          */
         resetFireTimer(): void{
             this.bulletTimer = this.game.time.time;
+        }
+
+
+        fireWarp (): void {
+
+            if (this.timeWarps <= 0 || !this.okToShoot()) return;
+
+            //console.log(this.sprite.body.drag.multiply(this));
+            //var slowTween = this.game.add.tween(this.game.time):
+            this.game.add.tween(this.game.time).to( {slowMotion:5.0} , 300, Phaser.Easing.Linear.None, true , 0,  0 , false).onComplete.add(
+                function(){
+                    this.sprite.body.drag.x *= 3*this.game.time.slowMotion;
+                    this.sprite.body.drag.y *= 3*this.game.time.slowMotion;
+                    console.log(this.sprite.body.drag);
+                },this);
+
+            setTimeout(function(){
+                this.sprite.body.drag.x /= 3*this.game.time.slowMotion;
+                this.sprite.body.drag.y /= 3*this.game.time.slowMotion;
+                this.game.add.tween(this.game.time).to( {slowMotion:1.0} , 1000, Phaser.Easing.Linear.None, true , 0,  0 , false);
+
+            }.bind(this),10000)
+
         }
 
         /**

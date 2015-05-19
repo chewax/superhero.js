@@ -102,8 +102,8 @@ module Superhero {
             this.collectableManager = new Collectables.CollectableManager(this.game);
             //this.collectableManager.addCollectable(Collectables.CollectableType.IMPROVE_FIRE);
             //this.collectableManager.addCollectable(Collectables.CollectableType.IMPROVE_SHIELD);
-            this.collectableManager.addCollectable(Collectables.CollectableType.NUKE_BOMB);
-            //this.collectableManager.addCollectable(Collectables.CollectableType.TIME_WARP);
+            //this.collectableManager.addCollectable(Collectables.CollectableType.NUKE_BOMB);
+            this.collectableManager.addCollectable(Collectables.CollectableType.TIME_WARP);
             //this.collectableManager.addCollectable(Collectables.CollectableType.DIAMOND);
             //this.collectableManager.addCollectable(Collectables.CollectableType.BOMB);
             //this.collectableManager.addCollectable(Collectables.CollectableType.IMMUNITY);
@@ -135,6 +135,7 @@ module Superhero {
             (<Superhero.Game> this.game).gamepad.buttonPad.button2.customCanTriggerCallback = (function():boolean {return this.hero.nukes>0 && this.hero.sprite.alive}).bind(this);
 
                 // BUTTON 3
+            (<Superhero.Game> this.game).gamepad.buttonPad.button3.setOnPressedCallback(this.hero.fireWarp, this.hero);
             (<Superhero.Game> this.game).gamepad.buttonPad.button3.customCanTriggerCallback = (function():boolean {return this.hero.timeWarps>0 && this.hero.sprite.alive}).bind(this);
 
                 // BUTTON 4
