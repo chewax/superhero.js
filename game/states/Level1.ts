@@ -43,8 +43,13 @@ module Superhero {
             this.setActors();
             this.startMusic();
             this.setEnemyManager();
+            this.startUI();
 
             this.debug = new Debug(this.game);
+        }
+
+        startUI(){
+            this.ui = new Superhero.UI(this.game, this.hero);
         }
 
         update () {
@@ -60,6 +65,10 @@ module Superhero {
 
             //Obstacles
             this.obstacleManager.update();
+
+            //if (this.game.input.keyboard.addKey(Phaser.Keyboard.P).onUp){
+            //    this.game.paused = this.game.paused? false : true;
+            //}
         }
 
         configurePhysics():void {
@@ -78,8 +87,8 @@ module Superhero {
             this.obstacleManager = new Obstacles.ObstacleManager(this.game, 800);
             //this.obstacleManager.addObstacleToPool(Obstacles.ObstacleType.WALL);
             this.obstacleManager.addObstacleToPool(Obstacles.ObstacleType.METEORITE_SHOWER);
-
             this.initCollectables();
+
         }
 
         private  setEnemyManager(): void {
@@ -89,26 +98,26 @@ module Superhero {
 
         initCollectables(): void {
             this.collectableManager = new Collectables.CollectableManager(this.game);
-            this.collectableManager.addCollectable(Collectables.CollectableType.IMPROVE_FIRE);
-            this.collectableManager.addCollectable(Collectables.CollectableType.IMPROVE_SHIELD);
+            //this.collectableManager.addCollectable(Collectables.CollectableType.IMPROVE_FIRE);
+            //this.collectableManager.addCollectable(Collectables.CollectableType.IMPROVE_SHIELD);
             this.collectableManager.addCollectable(Collectables.CollectableType.NUKE_BOMB);
             //this.collectableManager.addCollectable(Collectables.CollectableType.TIME_WARP);
             //this.collectableManager.addCollectable(Collectables.CollectableType.DIAMOND);
-            this.collectableManager.addCollectable(Collectables.CollectableType.BOMB);
+            //this.collectableManager.addCollectable(Collectables.CollectableType.BOMB);
             //this.collectableManager.addCollectable(Collectables.CollectableType.IMMUNITY);
-            this.collectableManager.addCollectable(Collectables.CollectableType.LIVES);
+            //this.collectableManager.addCollectable(Collectables.CollectableType.LIVES);
 
         }
 
 
         configureInput(): void {
             (<Superhero.Game> this.game).gamepad = new Gamepads.GamePad(this.game, Gamepads.GamepadType.STICK_BUTTON, Gamepads.ButtonPadType.FOUR_FAN);
-            (<Superhero.Game> this.game).gamepad.buttonPad.button1.type = Gamepads.ButtonType.CUSTOM;
-            (<Superhero.Game> this.game).gamepad.buttonPad.button2.type = Gamepads.ButtonType.CUSTOM;
+            (<Superhero.Game> this.game).gamepad.buttonPad.button1.type = Gamepads.ButtonType.SINGLE_THEN_TURBO;
+            (<Superhero.Game> this.game).gamepad.buttonPad.button2.type = Gamepads.ButtonType.SINGLE;
             (<Superhero.Game> this.game).gamepad.buttonPad.button2.enableCooldown(30);
-            (<Superhero.Game> this.game).gamepad.buttonPad.button3.type = Gamepads.ButtonType.CUSTOM;
+            (<Superhero.Game> this.game).gamepad.buttonPad.button3.type = Gamepads.ButtonType.SINGLE;
             (<Superhero.Game> this.game).gamepad.buttonPad.button3.enableCooldown(10);
-            (<Superhero.Game> this.game).gamepad.buttonPad.button4.type = Gamepads.ButtonType.CUSTOM;
+            (<Superhero.Game> this.game).gamepad.buttonPad.button4.type = Gamepads.ButtonType.SINGLE_THEN_TURBO;
             (<Superhero.Game> this.game).gamepad.stick1.settings.topSpeed = 600;
         }
 
@@ -116,6 +125,18 @@ module Superhero {
             this.hero = new Hero(this.game);
             this.hero.setRespawnDelay(2000);
             this.ui = new Superhero.UI(this.game, this.hero);
+
+
+            (<Superhero.Game> this.game).gamepad.buttonPad.button1.setOnPressedCallback(this.hero.fire, this.hero);
+            // BUTTON2
+            (<Superhero.Game> this.game).gamepad.buttonPad.button2.setOnPressedCallback(this.hero.fireNuke, this.hero);
+            (<Superhero.Game> this.game).gamepad.buttonPad.button2.customCanTriggerCallback = (function():boolean {return this.hero.nukes>0 && this.hero.sprite.alive}).bind(this);
+
+                // BUTTON 3
+            (<Superhero.Game> this.game).gamepad.buttonPad.button3.customCanTriggerCallback = (function():boolean {return this.hero.timeWarps>0 && this.hero.sprite.alive}).bind(this);
+
+                // BUTTON 4
+            (<Superhero.Game> this.game).gamepad.buttonPad.button4.setOnPressedCallback(this.hero.fireRocket, this.hero);
         }
 
 
@@ -179,6 +200,17 @@ module Superhero {
 
             this.obstacleManager.particleBurst(wall);
             this.ui.scoreUp(50);
+        }
+
+        render() {
+            //this.game.debug.body(this.hero.sprite);
+            //this.obstacleManager.obstacles[0].group.forEach(function(e){
+            //    this.game.debug.body(e);
+            //},this);
+        }
+
+        shutdown() {
+            this.game.world.removeAll();
         }
 
     }

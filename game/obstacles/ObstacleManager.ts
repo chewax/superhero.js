@@ -40,6 +40,7 @@ module Obstacles {
         }
 
         update (): void {
+            if (this.obstacles.length <= 0) return;
             var elapsedSecs = this.game.time.elapsedSecondsSince(this.multiplierTimer);
 
             // Every 20 seconds increment the multiplier

@@ -1,7 +1,6 @@
 /**
  * UI Class
  * Wraps the logic to setup and handle the ui
- * @author Daniel Waksman
  */
 
 /// <reference path="../../lib/phaser.d.ts"/>
@@ -43,6 +42,9 @@ module Superhero {
         rocketText: Phaser.Text;
         rocketLastCount: number = 0;
 
+        // BUTTONS
+        pauseButton: Phaser.Sprite;
+        menu: Phaser.Sprite;
 
         scoreCount: number = 0;
         scoreText: Phaser.Text;
@@ -64,26 +66,96 @@ module Superhero {
             this.updateLives();
             this.updatePUPIcons();
             this.updateCooldowns();
-            //this.updateCoins();
+
+            if (!this.player.sprite.alive) {
+                this.menu.reset(this.game.world.centerX, this.game.world.centerY);
+                this.timer.stop();
+                this.game.input.onDown.add(this.unPause, this);
+            }
 
         }
 
 
 
         createTimer():void {
+            var puinfo = this.game.add.sprite(this.game.world.centerX + 60, 10, 'puinfo');
+            puinfo.scale.setTo(-0.5,0.5);
+
+
+            this.pauseButton = this.game.add.sprite(this.game.world.centerX + 15, 25, 'pauseBtn');
+            this.pauseButton.inputEnabled = true;
+            this.pauseButton.scale.setTo(1.5, 1.5);
+
+
+            this.menu = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'menuBack');
+            this.menu.anchor.setTo(0.5,0.5);
+            this.menu.inputEnabled = true;
+
+            this.menu.kill();
+
+
+            this.pauseButton.events.onInputDown.add(function(){
+                this.menu.reset(this.game.world.centerX, this.game.world.centerY);
+                this.game.input.onDown.add(this.unPause, this);
+                this.game.paused = true;
+            }, this);
+
             this.timer = this.game.time.create(false);
 
-            var style = { font: "30px saranaigamebold", fill: "#FFFFFF", align: "center" };
-            this.timerText = this.game.add.text(this.game.world.centerX, 35, "0:00", style);
+            var style = { font: "25px saranaigamebold", fill: "#FFFFFF", align: "center" };
+            this.timerText = this.game.add.text(this.game.world.centerX - 60, 40, "0:00", style);
             this.timerText.anchor.set(0, 0.5);
             this.timer.loop(Phaser.Timer.SECOND, this.updateTime, this);
             this.timer.start();
+
+
+        }
+
+        unPause(event){
+            // Calculate the corners of the menu
+            var x1 = this.game.world.centerX - this.menu.width/2, x2 = this.game.world.centerX + this.menu.width/2,
+                y1 = this.game.world.centerY - this.menu.height/2, y2 = this.game.world.centerY + this.menu.height/2;
+
+            // Check if the click was inside the menu
+            if(event.x > x1 && event.x < x2 && event.y > y1 && event.y < y2 ){
+                // The choicemap is an array that will help us see which item was clicked
+
+                // Get menu local coordinates for the click
+                var x = event.x - x1,
+                    y = event.y - y1;
+
+                // Calculate the choice
+                var choice = Math.floor((y / 4) / 13);
+                switch (choice){
+                    case 1:
+                        this.menu.kill();
+                        this.game.paused = false;
+                        break;
+
+                    case 2:
+                        this.game.paused = false;
+                        this.game.state.restart(true,false);
+                        break;
+
+                    case 3:
+                        this.game.paused = false;
+                        this.game.state.start('Menu');
+                        break;
+
+                }
+            }
+            else{
+                // Remove the menu and the label
+                this.menu.kill();
+                // Unpause the game
+                this.game.paused = false;
+            }
         }
 
 
         createScoreBoard (): void {
             var style = { font: "30px saranaigamebold", fill: "#FDCD08", align: "center" };
-            this.scoreText = this.game.add.text(20, 50, this.scoreCount.toString(), style);
+            this.scoreText = this.game.add.text(20, 50, "", style);
         }
 
         scoreUp (amount:number): void {
