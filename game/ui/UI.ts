@@ -134,21 +134,25 @@ module Superhero {
                 switch (choice){
                     case 1:
                         this.menu.kill();
+                        this.game.input.onDown.remove(this.unPause,this);
                         this.game.paused = false;
                         break;
 
                     case 2:
                         this.game.paused = false;
+                        this.game.input.onDown.remove(this.unPause,this);
                         this.game.state.restart(true,false);
                         break;
 
                     case 3:
                         this.game.paused = false;
+                        this.game.input.onDown.remove(this.unPause,this);
                         this.game.state.start('Menu');
                         break;
 
                     default:
                         this.menu.kill();
+                        this.game.input.onDown.remove(this.unPause,this);
                         this.game.paused = false;
                         break;
 
