@@ -40,9 +40,7 @@ module Superhero {
         bombs: number = 0;
         shield: number = 0;
         lives: number = 3;
-
-        // 1 Diamond == 10 Coins
-        coins: number = 0;
+        coins: number = 0; // 1 Diamond == 10 Coins
 
         fuelTimer: number;
         bulletTimer: number;
@@ -53,6 +51,7 @@ module Superhero {
         respawnDelay: number = 5000;
         facing: Facing;
         _state: Superhero.CharState;
+        idleCallback: Function;
 
         bulletVelocity: number = 1000;
         floor: number;
@@ -92,9 +91,12 @@ module Superhero {
             this.bulletTimer = this.game.time.time;
             this.nukeCoolDown = this.game.time.time;
             this.warpCoolDown = this.game.time.time;
-
             this.sprite.play((<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["idleAnimation"])
+            this.setIdleCallback(this.flyStill);
+
         }
+
+
 
         /**
          * Initializes the character sprite
@@ -126,7 +128,6 @@ module Superhero {
             this.sprite.body.gravity.y = (<Superhero.Game> this.game).conf.PHYISICS.player.gravity.y;
             this.sprite.body.drag.x = (<Superhero.Game> this.game).conf.PHYISICS.player.drag;
             this.sprite.body.drag.y = (<Superhero.Game> this.game).conf.PHYISICS.player.drag;
-            //this.sprite.body.setSize(100,220);
         }
         /**
          * Wraps the left movement logic
@@ -158,11 +159,30 @@ module Superhero {
         }
 
         /**
+         * Wraps the jump logic
+         */
+        jump (): void {
+            if (this.sprite.alive && this.sprite.body.touching.down) {
+                this.sprite.body.velocity.y = -650;
+            }
+
+        }
+
+        /**
          * Wraps the mid air flight logic
          */
         flyStill (): void {
             if (this.sprite.animations.currentAnim.isFinished){
                 this.sprite.play('flystill');
+            }
+        }
+
+        /**
+         * Wraps the run logic
+         */
+        run (): void {
+            if (this.sprite.animations.currentAnim.isFinished){
+                this.sprite.play('run');
             }
         }
 
@@ -186,18 +206,34 @@ module Superhero {
             this.sprite.animations.play('stop');
         }
 
+        shootTimeUp():boolean{
+            var elapsedTime = this.game.time.elapsedSince(this.bulletTimer);
+            return !(elapsedTime < this.shootDelay);
+        }
+
+        okToShoot(): boolean{
+            if (!this.sprite.alive) return false;
+            if ((this.sprite.animations.currentAnim.name == 'shoot') && !this.sprite.animations.currentAnim.isFinished) return false;
+            return true;
+        }
+
+        canShoot(){
+            return this.shootTimeUp() && this.okToShoot();
+        }
+
         /**
          * Wraps the fire logic. Check if there is a "dead" bullet. If so, reset
          * its position and sendit fo fly
          */
         fire (): void {
             //Thou shalt only shoot if there is no shooting in progress
-            if(this.sprite.alive) {
-                if (this.sprite.animations.currentAnim.name != 'shoot' || this.sprite.animations.currentAnim.isFinished) {
+            //if(this.sprite.alive && this.canShoot()) {
+            //    if (this.sprite.animations.currentAnim.name != 'shoot' || this.sprite.animations.currentAnim.isFinished) {
 
-                    //Check for shootRate
-                    var elapsedTime = this.game.time.elapsedSince(this.bulletTimer);
-                    if (elapsedTime < this.shootDelay) return;
+                    ////Check for shootRate
+                    //var elapsedTime = this.game.time.elapsedSince(this.bulletTimer);
+                    //if (elapsedTime < this.shootDelay) return;
+                    if (!this.canShoot()) return;
 
                     // TODO: implement fire play anim for every child (maybe a propertyor childs.count and hasFireAnim anim)
                     this.sprite.animations.play('shoot');
@@ -233,8 +269,8 @@ module Superhero {
                     //Reset the timer
                     this.resetFireTimer();
                 }
-            }
-        }
+        //    }
+        //}
 
         /**
          * Resets the bullet timer
@@ -249,36 +285,29 @@ module Superhero {
          */
         fireRocket (): void {
 
-            if (this.bombs <= 0) return;
+            if (this.bombs <= 0 || !this.canShoot()) return;
 
-            //Thou shalt only shoot if there is no shooting in progress
-            if (this.sprite.animations.currentAnim.name != 'shoot' || this.sprite.animations.currentAnim.isFinished) {
+            this.sprite.animations.play('shoot');
 
-                //Check for shootRate
-                var elapsedTime = this.game.time.elapsedSince(this.bulletTimer);
-                if (elapsedTime < this.shootDelay) return;
+            //Get the first bullet that has gone offscreen
+            var rocket = this.rockets.getFirstDead();
+            //If there is none (all are still flying) create new one.
+            if (!rocket) rocket = this.rockets.create(-10, -10, 'bullets', 'bullet2');
 
-                this.sprite.animations.play('shoot');
+            rocket.anchor.setTo(0.5, 1);
+            rocket.reset(this.sprite.x + (this.facing * 40), this.sprite.y + this.sprite.height/2);
+            rocket.checkWorldBounds = true;
+            rocket.outOfBoundsKill = true;
+            rocket.body.velocity.x = this.bulletVelocity;
+            rocket.body.allowGravity = false;
+            rocket.scale.setTo(0.6);
+            //rocket.scale.setTo((<Superhero.Game> this.game).conf.WORLD.sprite_scaling);
 
-                //Get the first bullet that has gone offscreen
-                var rocket = this.rockets.getFirstDead();
-                //If there is none (all are still flying) create new one.
-                if (!rocket) rocket = this.rockets.create(-10, -10, 'bullets', 'bullet2');
-
-                rocket.anchor.setTo(0.5, 1);
-                rocket.reset(this.sprite.x + (this.facing * 40), this.sprite.y + this.sprite.height/2);
-                rocket.checkWorldBounds = true;
-                rocket.outOfBoundsKill = true;
-                rocket.body.velocity.x = this.bulletVelocity;
-                rocket.body.allowGravity = false;
-                rocket.scale.setTo(0.6);
-                //rocket.scale.setTo((<Superhero.Game> this.game).conf.WORLD.sprite_scaling);
-
-                //Reset the timer
-                this.bulletTimer = this.game.time.time;
-                this.bombs -= 1;
-            }
+            //Reset the timer
+            this.bulletTimer = this.game.time.time;
+            this.bombs -= 1;
         }
+
 
 
         /**
@@ -287,41 +316,31 @@ module Superhero {
          */
         fireNuke (): void {
 
-            if (this.nukes <= 0) return;
-            var coolDown = this.game.time.elapsedSecondsSince(this.nukeCoolDown);
-            if (coolDown < 30) return;
-            this.nukeCoolDown = this.game.time.time;
+            if (this.nukes <= 0 || !this.okToShoot()) return;
+            //var coolDown = this.game.time.elapsedSecondsSince(this.nukeCoolDown);
+            //if (coolDown < 30) return;
+            //this.nukeCoolDown = this.game.time.time;
 
+            var graphics = this.game.add.graphics(0,0);
 
-            //Thou shalt only shoot if there is no shooting in progress
-            if (this.sprite.animations.currentAnim.name != 'shoot' || this.sprite.animations.currentAnim.isFinished) {
+            graphics.lineStyle(0);
+            graphics.beginFill(0xFFFFFF, 1);
+            var rect = graphics.drawRect(0,0,this.game.width, this.game.height);
 
-                //Check for shootRate
-                var elapsedTime = this.game.time.elapsedSince(this.bulletTimer);
-                if (elapsedTime < this.shootDelay) return;
+            var nukeTween = this.game.add.tween(rect);
+            nukeTween.to({alpha:0},1500);
 
-                var graphics = this.game.add.graphics(0,0);
+            nukeTween.onComplete.add(function(){
+                graphics.destroy();
+            },this);
 
-                graphics.lineStyle(0);
-                graphics.beginFill(0xFFFFFF, 1);
-                var rect = graphics.drawRect(0,0,this.game.width, this.game.height);
+            nukeTween.start();
+            this.game.state.states.Level1.obstacleManager.killAll();
+            this.game.state.states.Level1.enemyManager.killAll();
 
-                var nukeTween = this.game.add.tween(rect);
-                nukeTween.to({alpha:0},1500);
-
-                nukeTween.onComplete.add(function(){
-                    graphics.destroy();
-                },this);
-
-                nukeTween.start();
-                this.game.state.states.Level1.obstacleManager.killAll();
-                this.game.state.states.Level1.enemyManager.killAll();
-
-                //Reset the timer
-                this.bulletTimer = this.game.time.time;
-                this.nukes -= 1;
-            }
-
+            //Reset the timer
+            this.bulletTimer = this.game.time.time;
+            this.nukes -= 1;
         }
 
         /**
@@ -338,7 +357,7 @@ module Superhero {
             this.sprite.events.onAnimationComplete.add(function () {
                 if(this.isAlive) {
                     this.sprite.animations.stop();
-                    this.flyStill();
+                    this.idleCallback();
                 }
             }, this);
         }
@@ -440,7 +459,7 @@ module Superhero {
          * Sets the collitions of the character with an object
          * @param {Phaser.Sprite} object Object upon which the character sould collide
          */
-        collideWithObject (object:Phaser.Sprite): void{
+        collideWithObject (object:any): void{
             this.game.physics.arcade.collide(object, this.sprite, null, null, this);
         }
 
@@ -477,6 +496,7 @@ module Superhero {
             this.dieTimer = this.game.time.time;
             if (object) object.kill();
 
+
             if (this.shield > 0) {
                 this.shield -= 1;
                 this.flickerSprite(0xFF0000);
@@ -512,7 +532,6 @@ module Superhero {
             }.bind(this), 150);
         }
 
-
         /**
          * Callback method when the character collides with a collectable object
          * @param {Phaser.Sprite} char   An instance of the character
@@ -546,6 +565,7 @@ module Superhero {
             );
         }
 
+
         setRespawnDelay(delay: number): void {
             this.respawnDelay = delay;
         }
@@ -557,5 +577,16 @@ module Superhero {
             }
             return false;
         }
+        /**
+         * Each state has a different idle state (in the intro the character runs on idle, on the main level the character
+         flies still. So the State can set the idle state to whichever fits. Note that this does not alter the FSM. It only alters
+         the function that is called upon finishing an animation.
+         * @param listener the Function Handler
+         * @param listenerContext the Context with which it should be called
+         */
+        setIdleCallback(listener: Function, listenerContext: any = this): void {
+            this.idleCallback = listener.bind(listenerContext);
+        }
+
     }
 }

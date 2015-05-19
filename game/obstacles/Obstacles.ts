@@ -274,10 +274,10 @@ module Obstacles {
 
                 stone.checkWorldBounds = true;
                 stone.body.velocity.x = speed * this.game.rnd.realInRange(1,3);
-                stone.body.velocity.y = this.game.rnd.integerInRange(20,-20);
                 stone.anchor.setTo(0.5,0.5);
                 stone.body.angularVelocity = this.game.rnd.integerInRange(-100,100);
             }
+
 
         }
 

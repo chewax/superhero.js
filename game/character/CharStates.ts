@@ -44,23 +44,23 @@ module Superhero {
      */
     class BaseState implements CharState {
 
-        game: Phaser.Game;
-        hero: Superhero.Character;
+        game:Phaser.Game;
+        hero:Superhero.Character;
 
-        fireButton: Gamepads.Button;
-        nukeButton: Gamepads.Button;
-        warpButton: Gamepads.Button;
-        bombButton: Gamepads.Button;
-        heroStick: Gamepads.Joystick;
+        fireButton:Gamepads.Button;
+        nukeButton:Gamepads.Button;
+        warpButton:Gamepads.Button;
+        bombButton:Gamepads.Button;
+        heroStick:Gamepads.Joystick;
 
 
-        gamepad: Gamepads.GamePad;
+        gamepad:Gamepads.GamePad;
 
         /**
          * @param {Phaser.game} game instance
          * @param {Superher.Character} hero instance
          */
-        constructor (game: Phaser.Game, hero: Superhero.Character){
+        constructor(game:Phaser.Game, hero:Superhero.Character) {
             this.game = game;
             // Is hero used for all the characters? even if it's an enemy?
             this.hero = hero;
@@ -74,34 +74,25 @@ module Superhero {
             this.heroStick = this.gamepad.stick1;
         }
 
-        public update (): CharState {
+        public update():CharState {
             return null;
         }
 
-        public enterState(): void {}
-        public exitState(): void {}
+        public enterState():void {
+        }
+
+        public exitState():void {
+        }
 
     }
 
     ///**
     // * STATE_IDLE Class
     // */
-    export class StateIdle extends BaseState{
+    export class StateIdle extends BaseState {
 
-        public update ():CharState {
-            if(this.hero.sprite.alive) {
-                //If fire on idle. Fire and remain in same state
-                if (this.fireButton.pressed) {
-                    this.hero.fire();
-                }
-
-                if (this.bombButton.pressed) {
-                    this.hero.fireRocket();
-                }
-
-                if (this.nukeButton.pressed) {
-                    this.hero.fireNuke();
-                }
+        public update():CharState {
+            if (this.hero.sprite.alive) {
 
                 if (this.heroStick.receivingInput()) {
                     return new StateFly(this.game, this.hero);
@@ -111,19 +102,22 @@ module Superhero {
             return this;
         }
 
-        public enterState () {}
-        public exitState () {}
+        public enterState() {
+        }
+
+        public exitState() {
+        }
     }
 
 
     ///**
     // * STATE_FLY Class
     // */
-    export class StateFly extends BaseState{
+    export class StateFly extends BaseState {
 
-        public update ():CharState {
+        public update():CharState {
 
-            if(this.hero.sprite.alive) {
+            if (this.hero.sprite.alive) {
                 if (Math.abs(this.heroStick.speed.x) > 0 || Math.abs(this.heroStick.speed.y) > 0) {
                     this.hero.move(this.heroStick.speed);
                 }
@@ -133,19 +127,6 @@ module Superhero {
                     return new StateSprint(this.game, this.hero);
                 }
 
-                //If fire on idle. Fire and remain in same state
-                if (this.fireButton.pressed) {
-                    this.hero.fire();
-                }
-
-                if (this.bombButton.pressed) {
-                    this.hero.fireRocket();
-                }
-
-                if (this.nukeButton.pressed) {
-                    this.hero.fireNuke();
-                }
-
                 if (!this.heroStick.receivingInput()) {
                     return new StateIdle(this.game, this.hero);
                 }
@@ -153,41 +134,27 @@ module Superhero {
             return this;
         }
 
-        public enterState () {}
-        public exitState () {}
+        public enterState() {
+        }
+
+        public exitState() {
+        }
     }
 
 
     ///**
     // * STATE_SPRINT Class
     // */
-    export class StateSprint extends BaseState{
+    export class StateSprint extends BaseState {
 
-        public update ():CharState {
-            if(this.hero.sprite.alive) {
+        public update():CharState {
+            if (this.hero.sprite.alive) {
                 this.hero.sprite.play('fly');
                 //var speed = this.heroStick.speed;
                 //speed.x *= 2;
 
                 if (Math.abs(this.heroStick.speed.x) > 0 || Math.abs(this.heroStick.speed.y) > 0) {
                     this.hero.move(this.heroStick.speed);
-                }
-
-                //If fire on idle. Fire and remain in same state
-                if (this.fireButton.pressed) {
-                    this.hero.fire();
-                }
-
-                if (this.bombButton.pressed) {
-                    this.hero.fireRocket();
-                }
-
-                if (this.nukeButton.pressed) {
-                    this.hero.fireNuke();
-                }
-
-                if (this.nukeButton.pressed) {
-                    this.hero.fireNuke();
                 }
 
                 if (!this.heroStick.receivingInput()) {
@@ -201,8 +168,10 @@ module Superhero {
             return this;
         }
 
-        public enterState () {}
-        public exitState () {
+        public enterState() {
+        }
+
+        public exitState() {
             this.hero.stop();
         }
     }
@@ -210,13 +179,14 @@ module Superhero {
     ///**
     // * Hostile state Class
     // */
-    export class StateEnemyHostile extends BaseState{
+    export class StateEnemyHostile extends BaseState {
 
-        tween: Phaser.Tween;
+        tween:Phaser.Tween;
 
-        public patrol (patrolPoint: Superhero.spawnEnemyPosition): void {
+        public patrol(patrolPoint:Superhero.spawnEnemyPosition):void {
 
             this.tween = this.game.add.tween(this.hero.sprite);
+
             if(this.hero.sprite.key == "miniBoss") {
                 // TODO: implement method for miniBoss longPatrol
                 this.tween.to({y: this.game.world.y}, 3000, Phaser.Easing.Linear.None, true, 0, -1, true);
@@ -224,7 +194,11 @@ module Superhero {
                 if (patrolPoint == Superhero.spawnEnemyPosition.TOP) {
                     this.tween.to({y: this.game.world.centerY - 50}, (<Superhero.Game>this.game).conf.ENEMIES.patrolTweenSpeed, Phaser.Easing.Linear.None, true, 0, -1, true);
                 } else {
-                    this.tween.to({y: this.game.world.centerY + 50}, (<Superhero.Game>this.game).conf.ENEMIES.patrolTweenSpeed, Phaser.Easing.Linear.None, true, 0, -1, true);
+                    if (patrolPoint == Superhero.spawnEnemyPosition.TOP) {
+                        this.tween.to({y: this.game.world.centerY - 50}, (<Superhero.Game>this.game).conf.ENEMIES.patrolTweenSpeed, Phaser.Easing.Linear.None, true, 0, -1, true);
+                    } else {
+                        this.tween.to({y: this.game.world.centerY + 50}, (<Superhero.Game>this.game).conf.ENEMIES.patrolTweenSpeed, Phaser.Easing.Linear.None, true, 0, -1, true);
+                    }
                 }
             }
         }
@@ -254,8 +228,8 @@ module Superhero {
             }
         }
 
-        public stopPatrol(): void {
-            if(this.tween) {
+        public stopPatrol():void {
+            if (this.tween) {
                 this.tween.stop();
             }
         }
@@ -273,7 +247,34 @@ module Superhero {
             return this;
         }
 
-        public enterState () {}
-        public exitState () {}
+        public enterState() {
+        }
+
+        public exitState() {
+        }
+    }
+
+    // SM LevelIntro
+
+
+    /**
+     * STATE_RUN Class
+     */
+    export class StateRun extends BaseState {
+
+        public update():CharState {
+            if (this.hero.sprite.animations.currentAnim.isFinished){
+                this.hero.sprite.animations.play('run');
+            }
+            //If nothing was commanded remain on the same state
+            return this;
+        }
+
+        public enterState() {
+            this.hero.sprite.play('run');
+        }
+
+        public exitState() {
+        }
     }
 }

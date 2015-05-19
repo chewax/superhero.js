@@ -19,6 +19,7 @@ module Gamepads {
         height: number;
         pressed: boolean = false;
         onPressedCallback: Function;
+        customCanTriggerCallback: Function; // Custom function to trigger callback.
         type: ButtonType;
 
         timerId: number;
@@ -49,6 +50,9 @@ module Gamepads {
                 this.onPressedCallback = onPressedCallback.bind(listenerContext);
             }
 
+            //By default the custom canTriggerCallback User control is empty.
+            this.customCanTriggerCallback = this.empty;
+
             this.sprite.events.onInputDown.add(this.pressButton, this);
             this.sprite.events.onInputUp.add(this.releaseButton, this);
             this.sprite.anchor.setTo(1,1);
@@ -56,8 +60,8 @@ module Gamepads {
 
         }
 
-        empty (): void {
-
+        empty (): boolean {
+            return true;
         }
 
         enableCooldown(seconds:number){
@@ -82,7 +86,7 @@ module Gamepads {
             switch (this.type){
 
                 case ButtonType.SINGLE:
-                    this.onPressedCallback();
+                    this.triggerCallback();
                     break;
 
                 case ButtonType.TURBO:
@@ -96,7 +100,7 @@ module Gamepads {
                     break;
 
                 case ButtonType.SINGLE_THEN_TURBO:
-                    this.onPressedCallback();
+                    this.triggerCallback();
                     this.timerId = setTimeout(function(){
                         this.pressed = true;
                     }.bind(this), 300);
@@ -112,51 +116,61 @@ module Gamepads {
             clearTimeout(this.timerId);
         }
 
+        triggerCallback(){
+            if (this.canTriggerCallback() && this.customCanTriggerCallback()){
+                this.onPressedCallback();
+
+                if (this.cooldown.enabled) {
+                    this.cooldown.timer = this.game.time.time;
+                    (<Superhero.PieMask> this.sprite.mask).atRest = false;
+                }
+
+            }
+        }
+
         setOnPressedCallback(listener: Function, listenerContext: any): void{
             this.onPressedCallback = listener.bind(listenerContext);
         }
 
-        update() {
 
-            if (this.cooldown.enabled) {
-                var elapsed = this.game.time.elapsedSecondsSince(this.cooldown.timer);
-                var cooldown = this.cooldown.seconds;
+        isTriggerTimerUp():boolean {
+            var elapsed = this.game.time.elapsedSecondsSince(this.cooldown.timer);
+            return (elapsed > this.cooldown.seconds)
+        }
 
-                if (elapsed > cooldown) {
+        canTriggerCallback():boolean {
+            if (!this.cooldown.enabled) return true;
+            return this.isTriggerTimerUp();
+        }
 
-                    if (this.pressed) {
-                        this.cooldown.timer = this.game.time.time;
-                        if (this.type != ButtonType.CUSTOM){
-                            this.onPressedCallback();
-                        }
-                    }
+        updatePieMask(){
 
-                    if (!(<Superhero.PieMask> this.sprite.mask).atRest) {
-                        (<Superhero.PieMask> this.sprite.mask).drawCircleAtSelf();
-                        (<Superhero.PieMask> this.sprite.mask).atRest = true;
-                    }
+            if ((<Superhero.PieMask> this.sprite.mask).atRest) return;
 
-                    return;
+            if (this.isTriggerTimerUp()) {
+                if (!(<Superhero.PieMask> this.sprite.mask).atRest) {
+                    (<Superhero.PieMask> this.sprite.mask).drawCircleAtSelf();
+                    (<Superhero.PieMask> this.sprite.mask).atRest = true;
                 }
-
-                var pj = elapsed / cooldown;
-                (<Superhero.PieMask> this.sprite.mask).drawWithFill(pj, 0xFFFFFF, 1);
-                (<Superhero.PieMask> this.sprite.mask).atRest = false;
-
-            } else {
-
-                //If it is custom, we assume the programmer will check for the state in his own update,
-                //we just set the state to pressed
-                if (this.pressed) {
-                    this.cooldown.timer = this.game.time.time;
-                    if (this.type != ButtonType.CUSTOM){
-                        this.onPressedCallback();
-                    }
-                }
-
+                return;
             }
 
+            var elapsed = this.game.time.elapsedSecondsSince(this.cooldown.timer);
+            var pj = elapsed / this.cooldown.seconds;
+            (<Superhero.PieMask> this.sprite.mask).drawWithFill(pj, 0xFFFFFF, 1);
+            (<Superhero.PieMask> this.sprite.mask).atRest = false;
+        }
 
+        update() {
+            if (this.pressed) {
+                if (this.type != ButtonType.CUSTOM){
+                    this.triggerCallback();
+                }
+            }
+
+            if (this.cooldown.enabled) {
+                this.updatePieMask()
+            }
         }
 
     }

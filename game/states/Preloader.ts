@@ -31,11 +31,22 @@ module Superhero {
             this.game.load.atlasJSONHash('pups', '/assets/pups.png', '/assets/pups.json');
             this.game.load.atlasJSONHash('meteors', '/assets/meteors.png', '/assets/meteors.json');
             this.game.load.atlasJSONHash('bullets', '/assets/bullets.png', '/assets/bullets.json');
+            this.game.load.atlasJSONHash('steel', '/assets/steel.png', '/assets/steel.json');
 
             //Single Images
             this.game.load.image('fuelbar', '/assets/fuel.png');
             this.game.load.image('starfield', '/assets/starfield.png');
+            this.game.load.image('steeltile', '/assets/steeltile.png');
+            this.game.load.image('planets', '/assets/planets.png');
+            this.game.load.image('meteos', '/assets/meteos.png');
+            this.game.load.image('windowMask', '/assets/windowMask.png');
             this.game.load.image('puinfo', '/assets/PUInfo.png');
+            this.game.load.image('pauseBtn', '/assets/pauseBtn.png');
+            this.game.load.image('menuBack', '/assets/menuBack.png');
+            this.game.load.image('mainMenu', '/assets/mainMenu.png');
+            this.game.load.image('menuBackground', '/assets/menuBackground.png');
+
+
 
 
             //Audio

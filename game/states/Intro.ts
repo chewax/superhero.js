@@ -18,13 +18,21 @@ module Superhero {
 
         hero: Superhero.Hero;
         background: Phaser.TileSprite;
+
         paralax1: Phaser.TileSprite;
-        //ui: Superhero.UI;
+        paralax2: Phaser.TileSprite;
+        paralax3: Phaser.TileSprite;
+        paralax4: Phaser.TileSprite;
+        paralax5: Phaser.TileSprite;
+
+
+        debug: Superhero.Debug;
+        ui: Superhero.UI;
         theme: Phaser.Sound;
         obstacleManager: Obstacles.ObstacleManager;
         enemyManager: Superhero.EnemyManager;
         collectableManager: Collectables.CollectableManager;
-
+        levelID: string = "level1";
 
         preload () {
 
@@ -41,6 +49,7 @@ module Superhero {
             //this.startMusic();
             this.setEnemyManager();
 
+            this.debug = new Debug(this.game);
         }
 
         update () {
@@ -52,9 +61,14 @@ module Superhero {
 
             this.enemyManager.update();
             this.ui.update();
+            //this.debug.update();
 
             //Obstacles
             this.obstacleManager.update();
+
+            //if (this.game.input.keyboard.addKey(Phaser.Keyboard.P).isDown){
+            //    this.game.paused != this.game.paused
+            //}
         }
 
         configurePhysics():void {
@@ -64,22 +78,34 @@ module Superhero {
 
 
         setBaseStage():void {
-
-            // Setup paralax layer
             this.paralax1 = this.game.add.tileSprite(0,0,1800,600, 'starfield');
-            this.paralax1.autoScroll(-100,0);
+            this.paralax1.autoScroll(-10,0);
+
+            this.paralax2 = this.game.add.tileSprite(0,0,3600,600, 'planets');
+            this.paralax2.autoScroll(-30,0);
+
+
+            this.paralax4 = this.game.add.tileSprite(0,0,this.world.width,this.world.height, 'steeltile');
+            this.paralax4.autoScroll(-200,0);
+
+
+            this.paralax5 = this.game.add.tileSprite(0,this.world.height-25,this.world.width,this.world.height-25, 'steel', 'floor_c');
+            this.paralax5.autoScroll(-200,0);
+            this.game.physics.arcade.enable(this.paralax5);
+            this.paralax5.body.immovable = true;
+            this.paralax5.physicsType =  Phaser.SPRITE;
 
             //Setup Obstacle
             this.obstacleManager = new Obstacles.ObstacleManager(this.game, 800);
             //this.obstacleManager.addObstacleToPool(Obstacles.ObstacleType.WALL);
-            this.obstacleManager.addObstacleToPool(Obstacles.ObstacleType.METEORITE_SHOWER);
+            //this.obstacleManager.addObstacleToPool(Obstacles.ObstacleType.METEORITE_SHOWER);
 
             this.initCollectables();
         }
 
         private  setEnemyManager(): void {
             // Setup enemy manager
-            //this.enemyManager = new Superhero.EnemyManager(this.game, this.levelID);
+            this.enemyManager = new Superhero.EnemyManager(this.game, this.levelID);
         }
 
         initCollectables(): void {
@@ -97,16 +123,42 @@ module Superhero {
 
 
         configureInput(): void {
-            (<Superhero.Game> this.game).gamepad = new Gamepads.GamePad(this.game, Gamepads.GamepadType.STICK_BUTTON, Gamepads.ButtonPadType.FOUR_FAN);
-            (<Superhero.Game> this.game).gamepad.buttonPad.button1.type = Gamepads.ButtonType.CUSTOM;
-            (<Superhero.Game> this.game).gamepad.buttonPad.button2.type = Gamepads.ButtonType.CUSTOM;
-            (<Superhero.Game> this.game).gamepad.buttonPad.button3.type = Gamepads.ButtonType.CUSTOM;
-            (<Superhero.Game> this.game).gamepad.buttonPad.button4.type = Gamepads.ButtonType.CUSTOM;
-            (<Superhero.Game> this.game).gamepad.stick1.settings.topSpeed = 600;
+            // Create Gamepad using the plugin
+            (<Superhero.Game> this.game).gamepad = new Gamepads.GamePad(this.game, Gamepads.GamepadType.GESTURE_BUTTON, Gamepads.ButtonPadType.FOUR_FAN);
+            (<Superhero.Game> this.game).gamepad.touchInput.touchType = Gamepads.TouchInputType.TOUCH;
+            (<Superhero.Game> this.game).gamepad.buttonPad.button1.type = Gamepads.ButtonType.SINGLE_THEN_TURBO;
+            (<Superhero.Game> this.game).gamepad.buttonPad.button2.type = Gamepads.ButtonType.SINGLE;
+            (<Superhero.Game> this.game).gamepad.buttonPad.button2.enableCooldown(30);
+            (<Superhero.Game> this.game).gamepad.buttonPad.button3.type = Gamepads.ButtonType.SINGLE;
+            (<Superhero.Game> this.game).gamepad.buttonPad.button3.enableCooldown(10);
+            (<Superhero.Game> this.game).gamepad.buttonPad.button4.type = Gamepads.ButtonType.SINGLE_THEN_TURBO;
+
         }
 
         setActors(): void {
             this.hero = new Hero(this.game);
+            this.hero.sprite.body.gravity.y = 1500;
+            this.hero.sprite.body.drag = 0;
+            this.hero.setIdleCallback(this.hero.run);
+
+            // Set gamepad callbacks
+            (<Superhero.Game> this.game).gamepad.touchInput.onTouchDownCallback = this.hero.jump.bind(this.hero);
+
+            (<Superhero.Game> this.game).gamepad.buttonPad.button1.setOnPressedCallback(this.hero.fire, this.hero);
+
+            // BUTTON2
+            (<Superhero.Game> this.game).gamepad.buttonPad.button2.setOnPressedCallback(this.hero.fireNuke, this.hero);
+            (<Superhero.Game> this.game).gamepad.buttonPad.button2.customCanTriggerCallback = (function():boolean {return this.hero.nukes>0}).bind(this);
+            //
+            //// BUTTON 3
+            (<Superhero.Game> this.game).gamepad.buttonPad.button3.customCanTriggerCallback = (function():boolean {return this.hero.timeWarps>0}).bind(this);
+            //
+            //// BUTTON 4
+            (<Superhero.Game> this.game).gamepad.buttonPad.button4.setOnPressedCallback(this.hero.fireRocket, this.hero);
+
+            this.hero._state = new Superhero.StateRun(this.game,this.hero);
+            this.hero._state.enterState();
+
             this.ui = new Superhero.UI(this.game, this.hero);
         }
 
@@ -117,6 +169,8 @@ module Superhero {
         }
 
         checkForCollisions(): void {
+
+            this.hero.collideWithObject(this.paralax5);
 
             var enemies = this.enemyManager.enemies;
 
@@ -169,6 +223,10 @@ module Superhero {
 
             this.obstacleManager.particleBurst(wall);
             this.ui.scoreUp(50);
+        }
+
+        shutdown() {
+            this.game.world.removeAll();
         }
 
     }
