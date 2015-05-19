@@ -231,9 +231,7 @@ module Superhero {
         }
 
         updateLives(){
-            if (this.livesLastCount == this.player.lives) return;
-            this.livesText.setText("x" + this.player.lives);
-            this.livesLastCount = this.player.lives;
+            this.livesText.setText('x'+this.player.lives.toString());
         }
 
         updatePUPIcons(){
@@ -372,7 +370,8 @@ module Superhero {
             this.livesIcon = this.game.add.sprite(x, y, 'pups', 'hero1_s');
             this.livesIcon.anchor.setTo(0,0.5);
             x = x + this.livesIcon.width + 10;
-            this.livesText = this.game.add.text(x, y+5, 'x' + this.player.lives.toString(), style);
+            //this.livesText = this.game.add.text(x, y+5, 'x' + this.player.lives.toString(), style);
+            this.livesText = this.game.add.text(x, y+5, '', style);
             this.livesText.anchor.set(0,0.5);
             this.livesLastCount = this.player.lives;
             x = x + this.livesText.width + 10;
