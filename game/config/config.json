@@ -64,7 +64,7 @@
     "patrolTweenSpeed": 1500,
 
     "levels": {
-      "level1": ["badie","tentabot01","twoHandedWeapon"]
+      "level1": ["badie", "twoHandedWeapon", "miniBoss", "tentabot01", "smallMissileEnemy"]
     }
   },
 
@@ -72,7 +72,8 @@
     "hero1": {
       "mainSprite": "stand1",
       "childSprites": "",
-      "isImmortal": true,
+      "isImmortal": false,
+      "minShootDelay": 1515,
       "idleAnimation": "flystill",
       "animations": {
         "flystill": {"frames" :["stand1", "stand2"], "frameRate": 8,"loop": true, "useNumericIndex": false},
@@ -105,6 +106,7 @@
       "mainSprite": "stand1",
       "childSprites": "",
       "isImmortal": false,
+      "minShootDelay": 1515,
       "idleAnimation": "flystill",
       "animations": {
         "flystill": {"frames" :["stand1", "stand2"], "frameRate": 8,"loop": true, "useNumericIndex": false},
@@ -138,6 +140,7 @@
       "mainSprite": "tentabot01",
       "childSprites": "",
       "isImmortal": false,
+      "minShootDelay": 1515,
       "idleAnimation": "flystill",
       "animations": {
         "flystill": {"frames" :["tentabot01","tentabot02", "tentabot03", "tentabot04", "tentabot05", "tentabot04", "tentabot03", "tentabot02"], "frameRate": 8,"loop": true, "useNumericIndex": false},
@@ -174,6 +177,7 @@
       "mainSprite": "idle01",
       "childSprites": "",
       "isImmortal": false,
+      "minShootDelay": 1515,
       "idleAnimation": "flystill",
       "animations": {
         "flystill": {"frames" :["idle01", "idle02", "idle03", "idle02"], "frameRate": 4,"loop": true, "useNumericIndex": false},
@@ -195,6 +199,67 @@
         "qty": 4,
         "key": "bullets",
         "frame":"arrow1",
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        }
+      }
+    },
+
+    "miniBoss": {
+      "mainSprite": "idle01",
+      "childSprites": "",
+      "isImmortal": false,
+      "minShootDelay": 1515,
+      "idleAnimation": "flystill",
+      "animations": {
+        "flystill": {"frames" :["idle01", "idle02", "idle03", "idle04", "idle03", "idle02"], "frameRate": 6,"loop": true, "useNumericIndex": false},
+        "shoot": {"frames": ["fire01","fire02", "fire03", "fire04", "fire04", "fire05", "fire06", "fire06", "fire06", "fire06", "fire06", "fire06", "fire06", "fire07", "fire07", "fire07","fire07","fire06", "fire05", "fire04", "fire03", "fire02"], "frameRate": 6, "loop": false, "useNumericIndex": false},
+        "takehit": {"frames" :["die01","die02", "die03", "die04", "die05", "die06", "die07"], "frameRate": 7, "loop": false, "useNumericIndex": false}
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0
+      },
+      "scale": 0.7,
+      "diesOutOfBounds": true,
+      "firePower": 1,
+      "shootAnimationFrames": 14,
+      "bulletScale": 1,
+      "bullets": {
+        "qty": 4,
+        "key": "miniBoss",
+        "frame":"blueBeamLong",
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        }
+      }
+    },
+    "smallMissileEnemy": {
+      "mainSprite": "idle1",
+      "childSprites": "",
+      "isImmortal": false,
+      "minShootDelay": 1515,
+      "idleAnimation": "flystill",
+      "animations": {
+        "flystill": {"frames" :["warning", "", "warning", ""], "frameRate": 50,"loop": true, "useNumericIndex": false},
+        "shoot": {"frames": ["idle1","idle2", "idle3", "idle2"], "frameRate": 6, "loop": false, "useNumericIndex": false},
+        "takehit": {"frames" :["die1","die2", "die3", "die4"], "frameRate": 4, "loop": false, "useNumericIndex": false}
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0
+      },
+      "scale": 0.7,
+      "diesOutOfBounds": true,
+      "firePower": 1,
+      "shootAnimationFrames": 14,
+      "bulletScale": 1,
+      "bullets": {
+        "qty": 4,
+        "key": "smallMissileEnemy",
+        "frame":"warning",
         "anchor": {
           "x": 0.5,
           "y": 1

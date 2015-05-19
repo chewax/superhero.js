@@ -27,6 +27,7 @@ module Obstacles {
 		collidesWith(object:any):void{ }
         diesWith(object:any, callback?: Function, listenerContext?: any){}
         speedUp(baseSpeed:number, multiplier:number): void {}
+        overlapsWith(object: any, callback?: Function, listenerContext?: any){}
         killAll():void {}
 	}
 	// TODO: maybe we can have an specific ts file for each obstacle type
@@ -253,14 +254,12 @@ module Obstacles {
 
                 var stone = this.group.getFirstDead();
 
-                if (!stone)
-                {
+                if (!stone) {
                     stone = this.group.create(randX, randY[i], 'meteors', randKey[i].key);
                     stone.body.immovable = randKey[i].mass > 10;
 
                     // This is to prevent the stones from dying before entering the world
                     // ==================================================================
-
                     stone.events.onEnterBounds.add(function(s){
                         s.outOfBoundsKill = true;
                     },this);
@@ -269,12 +268,11 @@ module Obstacles {
                         s.outOfBoundsKill = false;
                     },this);
 
-                }
-                else
-                {
-
+                } else {
                     stone.reset(randX,randY[i]);
                 }
+
+                stone.checkWorldBounds = true;
                 stone.body.velocity.x = speed * this.game.rnd.realInRange(1,3);
                 stone.body.velocity.y = this.game.rnd.integerInRange(20,-20);
                 stone.anchor.setTo(0.5,0.5);
@@ -310,7 +308,6 @@ module Obstacles {
 
 		constructor(game:Phaser.Game, x:number, y:number, key?:any, frame?:any) {
 			super(game, x, y, key, frame);
-            this.checkWorldBounds = true;
 		}
 
 			

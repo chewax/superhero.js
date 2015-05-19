@@ -217,16 +217,52 @@ module Superhero {
         public patrol (patrolPoint: Superhero.spawnEnemyPosition): void {
 
             this.tween = this.game.add.tween(this.hero.sprite);
-            if(patrolPoint == Superhero.spawnEnemyPosition.TOP) {
-                this.tween.to({y: this.game.world.centerY - 50}, (<Superhero.Game>this.game).conf.ENEMIES.patrolTweenSpeed, Phaser.Easing.Linear.None, true, 0, -1, true);
+            if(this.hero.sprite.key == "miniBoss") {
+                // TODO: implement method for miniBoss longPatrol
+                this.tween.to({y: this.game.world.y}, 3000, Phaser.Easing.Linear.None, true, 0, -1, true);
             } else {
-                this.tween.to({y: this.game.world.centerY + 50}, (<Superhero.Game>this.game).conf.ENEMIES.patrolTweenSpeed, Phaser.Easing.Linear.None, true, 0, -1, true);
+                if (patrolPoint == Superhero.spawnEnemyPosition.TOP) {
+                    this.tween.to({y: this.game.world.centerY - 50}, (<Superhero.Game>this.game).conf.ENEMIES.patrolTweenSpeed, Phaser.Easing.Linear.None, true, 0, -1, true);
+                } else {
+                    this.tween.to({y: this.game.world.centerY + 50}, (<Superhero.Game>this.game).conf.ENEMIES.patrolTweenSpeed, Phaser.Easing.Linear.None, true, 0, -1, true);
+                }
+            }
+        }
+
+        public engage(){
+            this.stopPatrol();
+            this.hero.sprite.alpha = 1;
+            this.hero.sprite.body.enable = true;
+            this.hero.sprite.body.velocity.x = -1000;
+            this.hero.sprite.checkWorldBounds = true;
+            this.hero.sprite.outOfBoundsKill = true;
+        }
+
+        public startWarning(): void {
+            this.hero.sprite.animations.play("flystill");
+            this.hero.sprite.body.enable = false;
+            this.hero.sprite.alpha = 0;
+            this.tween = this.game.add.tween(this.hero.sprite);
+            this.tween.to({ alpha: 1 }, 500, Phaser.Easing.Linear.None, true, 0, 1000, true);
+        }
+
+        public resumePatrol(){
+            if(this.tween) {
+                if ((<EnemyBase>this.hero).isPatrolling) {
+                    this.tween.resume();
+                }
             }
         }
 
         public stopPatrol(): void {
             if(this.tween) {
                 this.tween.stop();
+            }
+        }
+
+        public pausePatrol(): void {
+            if(this.tween){
+                this.tween.pause();
             }
         }
 

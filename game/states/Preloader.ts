@@ -49,6 +49,12 @@ module Superhero {
             // Two handed weapon enemy
             this.game.load.atlasJSONHash('twoHandedWeapon', 'assets/twoHandedWeapon.png', '/assets/twoHandedWeapon.json');
 
+            // Mini Boss
+            this.game.load.atlasJSONHash('miniBoss', 'assets/miniBoss.png', '/assets/miniBoss.json');
+
+            // SmallMissileEnemy
+            this.game.load.atlasJSONHash('smallMissileEnemy', 'assets/smallMissileEnemy.png', '/assets/smallMissileEnemy.json');
+
             Gamepads.GamePad.preloadAssets(this.game, '/assets');
 
         }

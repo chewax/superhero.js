@@ -76,6 +76,11 @@ module Superhero {
             //TODO: implement
             if(assetsKey === "tentabot01") {
                 enemyDefaultState = EnemyState.STEADY;
+            } else if(assetsKey == "miniBoss") {
+                enemyDefaultState = EnemyState.PATROL;
+                enemySpawnPoint = spawnEnemyPosition.DOWN;
+            } else if(assetsKey == "smallMissileEnemy") {
+                enemyDefaultState = EnemyState.STEADY;
             }
 
             var newEnemy: IEnemy = {
@@ -84,7 +89,7 @@ module Superhero {
                 bulletVelocity: this.getBulletSpeed(),
                 spawnLocation: this.getSpawnCoordinates(enemyDefaultState, enemySpawnPoint),
                 firePower: this.getFirePower(assetsKey),
-                shootDelay: this.getShootDelay(),
+                shootDelay: this.getShootDelay(assetsKey),
                 defaultState: enemyDefaultState,
                 spawnPoint: enemySpawnPoint
             };
@@ -122,8 +127,13 @@ module Superhero {
             return null
         }
 
-        private getShootDelay(): number {
-            return (<Superhero.Game>this.game).conf.ENEMIES.shootDelay / (1 + this.multiplier);
+        private getShootDelay(enemyAssetKey: string): number {
+            var shootDelay = (<Superhero.Game>this.game).conf.ENEMIES.shootDelay / (1 + this.multiplier);
+            if((<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[enemyAssetKey]["minShootDelay"] > shootDelay) {
+                shootDelay = (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[enemyAssetKey]["minShootDelay"];
+            }
+            return shootDelay
+
         }
 
         private getBulletSpeed(): number {
@@ -234,11 +244,15 @@ module Superhero {
 
         private spawnEnemy(newEnemy: IEnemy): any {
 
-            // TODO: implement...
+            // TODO: improve this...
             if(newEnemy.assetsKey === "tentabot01") {
                 return new Superhero.TentacleBot(this.game, newEnemy);
             } else if (newEnemy.assetsKey === "twoHandedWeapon") {
                 return new Superhero.TwoHandedEnemy(this.game, newEnemy);
+            } else if(newEnemy.assetsKey === "miniBoss") {
+                return new Superhero.MiniBoss(this.game, newEnemy);
+            } else if(newEnemy.assetsKey === "smallMissileEnemy") {
+                return new Superhero.SmallMissileEnemy(this.game, newEnemy);
             } else {
                 return new Superhero.EnemyBase(this.game, newEnemy);
             }
@@ -283,10 +297,6 @@ module Superhero {
             if(this.totalEnemiesAlive() < 2) {
                 this.spawnRandomEnemy();
             }
-        }
-
-        enemyDied(): void {
-            this.enemiesOnTheStage --;
         }
 
         /**

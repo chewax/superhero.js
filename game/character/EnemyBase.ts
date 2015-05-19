@@ -58,6 +58,7 @@ module Superhero {
             this.shootDelay = enemyChar.shootDelay;
             this.deadSince = enemyChar.deadSince;
             this.sprite.rotation = 0;
+            this.resetFireTimer();
             // TODO: implement tween speed
             //this.patrolSpeed = enemyChar.patrolSpeed;
 
@@ -68,6 +69,10 @@ module Superhero {
             if (enemyChar.defaultState == EnemyState.PATROL) {
                 this.isPatrolling = true;
                 (<Superhero.StateEnemyHostile>this._state).patrol(enemyChar.spawnPoint);
+            }
+
+            if(enemyChar.assetsKey == "smallMissileEnemy"){
+                (<Superhero.StateEnemyHostile>this._state).startWarning();
             }
         }
 
@@ -87,7 +92,6 @@ module Superhero {
          * its position and sendit fo fly
          */
         fire (): void {
-
             //Thou shalt only shoot if there is no shooting in progress
             if (this.sprite.animations.currentAnim.name != 'shoot' || this.sprite.animations.currentAnim.isFinished) {
 

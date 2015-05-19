@@ -4,6 +4,8 @@
 /// <reference path="../character/EnemyManager.ts"/>
 /// <reference path="../character/TentacleBot.ts"/>
 /// <reference path="../character/TwoHandedWeapon.ts"/>
+/// <reference path="../character/MiniBoss.ts"/>
+/// <reference path="../character/SmallMissileEnemy.ts"/>
 /// <reference path="../utils/Debug.ts"/>
 /// <reference path="../config/Config.ts"/>
 /// <reference path="../ui/UI.ts"/>
@@ -139,13 +141,10 @@ module Superhero {
             this.obstacleManager.diesWith(this.hero.bullets, this.killWall, this);
             this.obstacleManager.diesWith(this.hero.rockets, this.killWall, this);
 
-
             enemies.forEach((enmy) => {
-                enmy.collideWithObject(enmy.shadow);
                 enmy.diesWithGroup(this.hero.bullets);
                 enmy.diesWithGroup(this.hero.rockets);
                 this.obstacleManager.diesWith(enmy.bullets, this.killWall, this);
-
             });
 
             this.collectableManager.checkCollectedBy(this.hero);
@@ -181,5 +180,14 @@ module Superhero {
             this.ui.scoreUp(50);
         }
 
+        /*render() {
+            for(var i = 0; i < this.enemyManager.enemiesAlive.length; i++) {
+                this.game.debug.body(this.enemyManager.enemiesAlive[i].sprite);
+                this.enemyManager.enemiesAlive[i].bullets.forEach(function(b){
+                    this.game.debug.body(b);
+                }, this)
+
+            }
+        }*/
     }
 }

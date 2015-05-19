@@ -57,6 +57,7 @@ module Superhero {
         bulletVelocity: number = 1000;
         floor: number;
         allowGravity: boolean = false;
+        isTimeWarped: boolean = false;
 
 
         /**
@@ -125,7 +126,7 @@ module Superhero {
             this.sprite.body.gravity.y = (<Superhero.Game> this.game).conf.PHYISICS.player.gravity.y;
             this.sprite.body.drag.x = (<Superhero.Game> this.game).conf.PHYISICS.player.drag;
             this.sprite.body.drag.y = (<Superhero.Game> this.game).conf.PHYISICS.player.drag;
-            this.sprite.body.setSize(100,220);
+            //this.sprite.body.setSize(100,220);
         }
         /**
          * Wraps the left movement logic
@@ -166,10 +167,16 @@ module Superhero {
         }
 
         move (speed:{x:number ; y:number}): void {
-                if (this.allowFingerMargin && (this.sprite.x <= this.game.width / 2 && speed.x < 0)) speed.x = 0;
+            if (this.allowFingerMargin && (this.sprite.x <= this.game.width / 2 && speed.x < 0)) speed.x = 0;
 
+            // TODO: improve
+            if(this.game.time.slowMotion === 5.0) {
+                this.sprite.body.velocity.x = speed.x * 5;
+                if (this.fuel) this.sprite.body.velocity.y = speed.y * 5;
+            } else {
                 this.sprite.body.velocity.x = speed.x;
                 if (this.fuel) this.sprite.body.velocity.y = speed.y;
+            }
         }
 
         /**
@@ -213,16 +220,27 @@ module Superhero {
                         bullet.reset(this.sprite.x + (this.facing * 40), this.sprite.y + (10 * i + 1));
                         bullet.checkWorldBounds = true;
                         bullet.outOfBoundsKill = true;
-                        bullet.body.velocity.x = this.bulletVelocity;
+                        if(this.game.time.slowMotion === 5.0) {
+                            bullet.body.velocity.x = this.bulletVelocity * 5;
+                        } else {
+                            bullet.body.velocity.x = this.bulletVelocity;
+                        }
                         bullet.body.allowGravity = false;
                         bullet.scale.setTo(0.4);
                         //bullet.scale.setTo((<Superhero.Game> this.game).conf.WORLD.sprite_scaling);
                     }
 
                     //Reset the timer
-                    this.bulletTimer = this.game.time.time;
+                    this.resetFireTimer();
                 }
             }
+        }
+
+        /**
+         * Resets the bullet timer
+         */
+        resetFireTimer(): void{
+            this.bulletTimer = this.game.time.time;
         }
 
         /**
@@ -391,9 +409,7 @@ module Superhero {
          * Update method. Here should be all the logic related to the character's game loop
          */
         update (): void {
-            //this.updateFuel();
-            //this.updateShadow();
-            //this.updateShield();
+
         }
 
         /**
@@ -451,7 +467,7 @@ module Superhero {
          */
         die (char:Phaser.Sprite, object?:any) {
 
-            //TODO: IF enemy RESET TIMER
+            // TODO: implement lives and different animations for enemies
             if((<Superhero.Game> this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["isImmortal"]){
                 return;
             }
@@ -459,7 +475,6 @@ module Superhero {
             var elapsedTime = this.game.time.elapsedSince(this.dieTimer);
             if (elapsedTime < this.respawnDelay) return;
             this.dieTimer = this.game.time.time;
-
             if (object) object.kill();
 
             if (this.shield > 0) {
@@ -524,8 +539,8 @@ module Superhero {
             }
 
             return this.bullets.create(
-            -10,
-            -10,
+            -200,
+            -200,
             keyBullet,
             frameBullet
             );
