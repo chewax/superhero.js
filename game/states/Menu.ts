@@ -63,8 +63,11 @@ module Superhero {
                 var x = event.x - x1,
                     y = event.y - y1;
 
+                //console.log(Math.floor((y/5)/14) + 1);
+                //console.log(Math.floor((y/5)))
                 // Calculate the choice
-                var choice = Math.floor((y/5)/14) + 1;
+                var choice = Math.floor((y/5)/18) + 1;
+                console.log(choice);
                 switch (choice){
                     case 1:
                         this.game.state.start('Level1', true, false);

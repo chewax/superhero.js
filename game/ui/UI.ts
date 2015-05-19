@@ -75,12 +75,17 @@ module Superhero {
 
         }
 
-
-
+        
         createTimer():void {
             var puinfo = this.game.add.sprite(this.game.world.centerX + 60, 10, 'puinfo');
             puinfo.scale.setTo(-0.5,0.5);
+            puinfo.inputEnabled = true;
 
+            puinfo.events.onInputDown.add(function(){
+                this.menu.reset(this.game.world.centerX, this.game.world.centerY);
+                this.game.input.onDown.add(this.unPause, this);
+                this.game.paused = true;
+            }, this);
 
             this.pauseButton = this.game.add.sprite(this.game.world.centerX + 15, 25, 'pauseBtn');
             this.pauseButton.inputEnabled = true;
@@ -125,7 +130,7 @@ module Superhero {
                     y = event.y - y1;
 
                 // Calculate the choice
-                var choice = Math.floor((y / 4) / 13);
+                var choice = Math.floor(((y/4)-28)/22) + 1;
                 switch (choice){
                     case 1:
                         this.menu.kill();
@@ -142,7 +147,14 @@ module Superhero {
                         this.game.state.start('Menu');
                         break;
 
+                    default:
+                        this.menu.kill();
+                        this.game.paused = false;
+                        break;
+
+
                 }
+
             }
             else{
                 // Remove the menu and the label
