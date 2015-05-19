@@ -248,7 +248,8 @@ module Obstacles {
                 randY[i] = (this.game.rnd.integerInRange(i * sector, (i+1) * sector));
             }
 
-            var randX = (viewportWidth + (30 * this.game.rnd.realInRange(0,3))) | 0;
+            //var randX = (viewportWidth + (30 * this.game.rnd.realInRange(0,3))) | 0;
+            var randX = viewportWidth - 1;
 
             for (var i = 0; i < n; i++){
 
@@ -256,27 +257,23 @@ module Obstacles {
 
                 if (!stone) {
                     stone = this.group.create(randX, randY[i], 'meteors', randKey[i].key);
+
                     stone.body.immovable = randKey[i].mass > 10;
-
-                    // This is to prevent the stones from dying before entering the world
-                    // ==================================================================
-                    stone.events.onEnterBounds.add(function(s){
-                        s.outOfBoundsKill = true;
-                    },this);
-
-                    stone.events.onKilled.add(function(s){
-                        s.outOfBoundsKill = false;
-                    },this);
+                    stone.checkWorldBounds = true;
+                    stone.onOutOfBoundsKill = true;
 
                 } else {
                     stone.reset(randX,randY[i]);
                 }
 
-                stone.checkWorldBounds = true;
+
                 stone.body.velocity.x = speed * this.game.rnd.realInRange(1,3);
                 stone.anchor.setTo(0.5,0.5);
                 stone.body.angularVelocity = this.game.rnd.integerInRange(-100,100);
             }
+
+            this.group.setAll('checkWorldBounds', true);
+            this.group.setAll('outOfBoundsKill', true);
 
 
         }

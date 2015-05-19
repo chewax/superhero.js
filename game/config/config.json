@@ -30,7 +30,7 @@
     }
   },
 
-  "playerIsImmortal": false,
+  "playerIsImmortal": true,
 
   "playerDieOutofBounds": false,
   
@@ -65,7 +65,7 @@
     "patrolTweenSpeed": 1500,
 
     "levels": {
-      "level1": ["badie", "twoHandedWeapon", "miniBoss", "tentabot01", "smallMissileEnemy"]
+      "level1": ["smallMissileEnemy"]
     }
   },
 
@@ -73,7 +73,7 @@
     "hero1": {
       "mainSprite": "stand1",
       "childSprites": "",
-      "isImmortal": false,
+      "isImmortal": true,
       "minShootDelay": 1515,
       "idleAnimation": "flystill",
       "animations": {
