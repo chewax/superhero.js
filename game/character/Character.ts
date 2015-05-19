@@ -291,7 +291,7 @@ module Superhero {
                 this.sprite.body.drag.y /= 3*this.game.time.slowMotion;
                 this.game.add.tween(this.game.time).to( {slowMotion:1.0} , 1000, Phaser.Easing.Linear.None, true , 0,  0 , false);
 
-            }.bind(this),10000)
+            }.bind(this),8000);
 
         }
 
