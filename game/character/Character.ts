@@ -400,10 +400,15 @@ module Superhero {
             this.rockets.createMultiple(4,'bullets', 'bullet2');
         }
 
-        //renderShield():void{
-        //    this.shieldSprite = this.game.add.sprite(this.sprite.x + 20, this.sprite.y-40, 'enershield');
-        //    this.shieldSprite.scale.setTo(0.2);
-        //}
+        renderShield():void{
+            var shields = ['shield1','shield2','shield3'];
+            var shield = this.game.add.sprite(20,95,'shields',shields[this.shield-1]);
+            this.game.physics.arcade.enable(shield);
+            shield.scale.setTo(2.5,2.5);
+            shield.anchor.setTo(0.5,0.5);
+            shield.rotation += Phaser.Math.degToRad(90);
+            this.sprite.addChild(shield);
+        }
         /**
          * If it is flying, then decrease the fuel, if it is on the ground, slowly increase the fuel
          */
@@ -431,14 +436,9 @@ module Superhero {
 
         }
 
-        //updateShield(){
-        //    if (this.shieldSprite) {
-        //        if (this.shieldSprite.alive) {
-        //            this.shieldSprite.x = this.sprite.x + 20;
-        //            this.shieldSprite.y = this.sprite.y;
-        //        }
-        //    }
-        //}
+        unShield(){
+            this.sprite.removeChildAt(this.shield);
+        }
 
         /**
          * Update method. Here should be all the logic related to the character's game loop
@@ -516,6 +516,7 @@ module Superhero {
             if (this.shield > 0) {
                 this.shield -= 1;
                 this.flickerSprite(0xFF0000);
+                this.unShield();
                 return;
             }
 

@@ -378,7 +378,7 @@ module Superhero {
 
             // SHIELDS
             this.shieldIcons = [];
-            this.renderShieldIcons(3,x,y);
+            this.renderShieldIcons(3,x + 20,y);
             this.killShieldIcon(3);
 
         }

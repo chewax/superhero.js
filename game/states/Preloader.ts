@@ -32,6 +32,7 @@ module Superhero {
             this.game.load.atlasJSONHash('meteors', '/assets/meteors.png', '/assets/meteors.json');
             this.game.load.atlasJSONHash('bullets', '/assets/bullets.png', '/assets/bullets.json');
             this.game.load.atlasJSONHash('steel', '/assets/steel.png', '/assets/steel.json');
+            this.game.load.atlasJSONHash('shields', '/assets/shields.png', '/assets/shields.json');
 
             //Single Images
             this.game.load.image('fuelbar', '/assets/fuel.png');
@@ -45,9 +46,6 @@ module Superhero {
             this.game.load.image('menuBack', '/assets/menuBack.png');
             this.game.load.image('mainMenu', '/assets/mainMenu.png');
             this.game.load.image('menuBackground', '/assets/menuBackground.png');
-
-
-
 
             //Audio
             //this.game.load.audio('theme', '/assets/sounds/demon_destroyer.mp3');
