@@ -528,11 +528,16 @@ module Superhero {
                 if ((<Phaser.Sprite>object).frameName != "blueBeam") {
                     object.kill();
                 }
+                // Rocket fix
+                this.checkRocketCollision(object);
             }
 
-            if (this.comboLevel > 0) this.game.state.states.Level1.ui.infoText.showComboText("Combo Lost!");
-            this.comboLevel = 0;
+            if (this.sprite.key == "hero1") {
+                if (this.comboLevel > 0) this.game.state.states.Level1.ui.infoText.showComboText("Combo Lost!");
+                this.comboLevel = 0;
+            }
 
+            // Shields
             if (this.shield > 0) {
                 this.shield -= 1;
                 this.flickerSprite(0xFF0000);
@@ -618,6 +623,13 @@ module Superhero {
             );
         }
 
+        checkRocketCollision(object: any): void {
+            if(this.shield > 0) {
+                if ((<Phaser.Sprite>object).frameName == "bullet2") {
+                    this.shield = 0;
+                }
+            }
+        }
 
         setRespawnDelay(delay: number): void {
             this.respawnDelay = delay;

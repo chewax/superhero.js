@@ -151,6 +151,10 @@ module Superhero {
             // SFX
             this.playGetHitSound(char.key);
 
+            if(object) {
+                this.checkRocketCollision(object);
+            }
+
             // Smoke emitter
             if (this.shield > 0) {
                 if(!this.smokeEmitter.on) {
