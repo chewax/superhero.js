@@ -161,8 +161,6 @@ module Gamepads {
             this.swipe.left = angle == 180;
             this.swipe.right = angle == 0;
 
-            console.log(this.swipe);
-
             if (this.swipe.up) this.swipeUpCallback();
             if (this.swipe.down) this.swipeDownCallback();
             if (this.swipe.left) this.swipeLeftCallback();

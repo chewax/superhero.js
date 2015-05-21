@@ -34,6 +34,7 @@ module Superhero {
             this.game.load.atlasJSONHash('bullets', '/assets/bullets.png', '/assets/bullets.json');
             this.game.load.atlasJSONHash('steel', '/assets/steel.png', '/assets/steel.json');
             this.game.load.atlasJSONHash('shields', '/assets/shields.png', '/assets/shields.json');
+            this.game.load.atlasJSONHash('pupanim', '/assets/pupanim.png', '/assets/pupanim.json');
 
             //Single Images
             this.game.load.image('fuelbar', '/assets/fuel.png');

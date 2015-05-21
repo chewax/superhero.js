@@ -235,6 +235,7 @@ module Superhero {
          */
         fire (): void {
             //Thou shalt only shoot if there is no shooting in progress
+<<<<<<< HEAD
                 ////Check for shootRate
                 //var elapsedTime = this.game.time.elapsedSince(this.bulletTimer);
                 //if (elapsedTime < this.shootDelay) return;
@@ -242,6 +243,9 @@ module Superhero {
 
                 // TODO: implement fire play anim for every child (maybe a propertyor childs.count and hasFireAnim anim)
                 this.sprite.animations.play('shoot');
+=======
+                    if (!this.canShoot()) return;
+>>>>>>> feature/remove-settings-option
 
                 for (var i = 0; i < this.firePower; i++) {
 
@@ -291,7 +295,6 @@ module Superhero {
                 function(){
                     this.sprite.body.drag.x *= 3*this.game.time.slowMotion;
                     this.sprite.body.drag.y *= 3*this.game.time.slowMotion;
-                    console.log(this.sprite.body.drag);
                 },this);
 
             setTimeout(function(){
@@ -445,7 +448,7 @@ module Superhero {
         }
 
         unShield(){
-            if(this.sprite.key == "hero1") {
+            if (this.sprite.key == 'hero1') {
                 this.sprite.removeChildAt(this.shield);
             }
         }

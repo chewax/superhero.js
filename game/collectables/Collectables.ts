@@ -7,14 +7,24 @@ module Collectables {
         spawnAt ( x:number, y:number ): void;
         collect ( character: Superhero.Character ): void;
         overlapWithChar ( character: Superhero.Character): boolean;
+        loadAnimation (): void;
+        playAnimation (): void;
     }
 
 
     export class BaseCollectable extends Phaser.Sprite implements Collectable {
 
         constructor(game: Phaser.Game, key:string){
-            super(game,100,100,'pups', key);
+            super(game,100,100,'pupanim', key);
             this.initPhysics();
+            this.loadAnimation();
+        }
+
+
+        loadAnimation(): void {}
+
+        playAnimation(): void {
+            this.animations.play('main');
         }
 
         initPhysics(){
@@ -64,6 +74,10 @@ module Collectables {
                 this.game.state.states.Level1.ui.infoText.showCustomText('Fire Power!');
             }
         }
+
+        loadAnimation(): void {
+            this.animations.add('main', ['bullet1', 'bullet2'], 3, true, false);
+        }
     }
 
 
@@ -81,6 +95,10 @@ module Collectables {
             }
         }
 
+        loadAnimation(): void {
+            this.animations.add('main', ['shield1', 'shield2', 'shield3', 'shield4', 'shield5'], 4, true, false);
+        }
+
     }
 
     export class NukeBomb extends BaseCollectable{
@@ -92,6 +110,10 @@ module Collectables {
         collect( character: Superhero.Character ) {
             character.nukes += 1;
             this.game.state.states.Level1.ui.infoText.showCustomText('Nuke Collected!');
+        }
+
+        loadAnimation(): void {
+            this.animations.add('main', ['nuke1', 'nuke2', 'nuke3', 'nuke4', 'nuke5', 'nuke6'], 5, true, false);
         }
 
     }
@@ -107,6 +129,10 @@ module Collectables {
             this.game.state.states.Level1.ui.infoText.showCustomText('Time Warp Collected');
         }
 
+        loadAnimation(): void {
+            this.animations.add('main', ['clock1', 'clock2', 'clock3', 'clock4', 'clock5', 'clock6'], 5, true, false);
+        }
+
     }
 
     export class Diamond extends BaseCollectable{
@@ -118,6 +144,8 @@ module Collectables {
         collect( character: Superhero.Character ) {
             character.coins += 10;
         }
+
+        loadAnimation(): void {}
 
     }
 
@@ -132,6 +160,8 @@ module Collectables {
             this.game.state.states.Level1.ui.infoText.showCustomText('Inmune!');
         }
 
+        loadAnimation(): void {}
+
     }
 
     export class Bomb extends BaseCollectable{
@@ -145,6 +175,11 @@ module Collectables {
             this.game.state.states.Level1.ui.infoText.showCustomText('Rocket Collected!');
         }
 
+        loadAnimation(): void {
+            this.animations.add('main', ['rocket1', 'rocket2'], 6, true, false);
+        }
+
+
     }
 
     export class Lives extends BaseCollectable{
@@ -157,6 +192,11 @@ module Collectables {
             character.lives += 1;
             this.game.state.states.Level1.ui.infoText.showCustomText('1 UP');
         }
+
+        loadAnimation(): void {
+            this.animations.add('main', ['head1', 'head2'], 3, true, false);
+        }
+
 
     }
 
