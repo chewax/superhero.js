@@ -65,7 +65,7 @@
     "patrolTweenSpeed": 1500,
 
     "levels": {
-      "level1": ["smallMissileEnemy"]
+      "level1": ["badie", "twoHandedWeapon", "miniBoss", "tentabot01", "smallMissileEnemy"]
     }
   },
 

@@ -58,6 +58,10 @@ module Superhero {
         allowGravity: boolean = false;
         isTimeWarped: boolean = false;
 
+        onHit: Phaser.Signal;
+        comboLevel: number = 0;
+
+
 
         /**
          * Constructor. Creates the Character
@@ -73,6 +77,7 @@ module Superhero {
             this._state = new Superhero.StateIdle(game, this);
             this.facing = Facing.LEFT;
             this.allowFingerMargin = false;
+            this.onHit = new Phaser.Signal;
             
             this.initSprite(assetKey,x,y);
             this.initPhysics();
@@ -512,16 +517,20 @@ module Superhero {
             this.dieTimer = this.game.time.time;
             if (object) object.kill();
 
+            if (this.comboLevel > 0) this.game.state.states.Level1.ui.infoText.showComboText("Combo Lost!");
+            this.comboLevel = 0;
 
             if (this.shield > 0) {
                 this.shield -= 1;
                 this.flickerSprite(0xFF0000);
                 this.unShield();
+                this.onHit.dispatch();
                 return;
             }
 
             if (this.lives > 1) {
                 this.lives -= 1;
+                this.onHit.dispatch();
                 this.dieReset();
                 return
             }

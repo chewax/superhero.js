@@ -5,6 +5,8 @@
 
 /// <reference path="../../lib/phaser.d.ts"/>
 /// <reference path="../character/Character.ts"/>
+/// <reference path="../text/TextInfo.ts"/>
+
 
 module Superhero {
 
@@ -12,6 +14,11 @@ module Superhero {
 
         game: Phaser.Game;
         player: Superhero.Character;
+
+        // INFO TEXT
+        infoText: TextInfo.InfoTextManager;
+        comboText: Phaser.Text;
+
 
         // TIMER
         timer: Phaser.Timer;
@@ -52,12 +59,16 @@ module Superhero {
         constructor(game: Phaser.Game, player: Superhero.Character) {
             this.game = game;
             this.player = player;
+            this.infoText = new TextInfo.InfoTextManager(this.game);
+            this.game.state.states.Level1.collectableManager.onCollect.removeAll();
+            this.game.state.states.Level1.collectableManager.onCollect.add(this.dispatchPraiseText,this);
+            this.game.state.states.Level1.hero.onHit.removeAll();
+            this.game.state.states.Level1.hero.onHit.add(this.dispatchCriticizeText, this);
 
             this.createTimer();
             this.createScoreBoard();
             this.createPlayerInterface();
             this.createPowerUpInterface();
-
         }
 
         update ():void {
@@ -73,8 +84,23 @@ module Superhero {
                 this.game.input.onDown.add(this.unPause, this);
             }
 
+
+            if (Math.floor(this.player.comboLevel) > 0) {
+                this.comboText.setText("combo X"+Math.floor(this.player.comboLevel+1));
+            } else {
+                this.comboText.setText("");
+            }
+
         }
 
+        dispatchCriticizeText():void{
+            this.infoText.showBadJobText();
+
+        }
+
+        dispatchPraiseText():void {
+            this.infoText.showGoodJobText();
+        }
         
         createTimer():void {
             var puinfo = this.game.add.sprite(this.game.world.centerX + 60, 10, 'puinfo');
@@ -380,6 +406,11 @@ module Superhero {
             this.shieldIcons = [];
             this.renderShieldIcons(3,x + 20,y);
             this.killShieldIcon(3);
+
+
+            var style = { font: "40px saranaigamebold", fill: "#FDCD08", align: "center"};
+            this.comboText = this.game.add.text(this.game.world.centerX, 100, "", style);
+            this.comboText.anchor.set(0.5,0.5);
 
         }
 
