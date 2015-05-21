@@ -195,16 +195,11 @@ module Superhero {
         }
 
         move (speed:{x:number ; y:number}): void {
-            if (this.allowFingerMargin && (this.sprite.x <= this.game.width / 2 && speed.x < 0)) speed.x = 0;
 
-            // TODO: improve
-            if(this.game.time.slowMotion === 5.0) {
-                this.sprite.body.velocity.x = speed.x * 5;
-                if (this.fuel) this.sprite.body.velocity.y = speed.y * 5;
-            } else {
-                this.sprite.body.velocity.x = speed.x;
-                if (this.fuel) this.sprite.body.velocity.y = speed.y;
-            }
+            if (this.allowFingerMargin && (this.sprite.x <= this.game.width / 2 && speed.x < 0)) speed.x = 0;
+            this.sprite.body.velocity.x = speed.x * this.game.time.slowMotion;
+            if (this.fuel) this.sprite.body.velocity.y = speed.y * this.game.time.slowMotion;
+
         }
 
         /**
@@ -264,11 +259,9 @@ module Superhero {
                         bullet.reset(this.sprite.x + (this.facing * 40), this.sprite.y + (10 * i + 1));
                         bullet.checkWorldBounds = true;
                         bullet.outOfBoundsKill = true;
-                        if(this.game.time.slowMotion === 5.0) {
-                            bullet.body.velocity.x = this.bulletVelocity * 5;
-                        } else {
-                            bullet.body.velocity.x = this.bulletVelocity;
-                        }
+
+                        bullet.body.velocity.x = this.bulletVelocity * this.game.time.slowMotion;
+
                         bullet.body.allowGravity = false;
                         bullet.scale.setTo(0.4);
                         //bullet.scale.setTo((<Superhero.Game> this.game).conf.WORLD.sprite_scaling);
@@ -285,6 +278,29 @@ module Superhero {
          */
         resetFireTimer(): void{
             this.bulletTimer = this.game.time.time;
+        }
+
+
+        fireWarp (): void {
+
+            if (this.timeWarps <= 0 || !this.okToShoot()) return;
+
+            //console.log(this.sprite.body.drag.multiply(this));
+            //var slowTween = this.game.add.tween(this.game.time):
+            this.game.add.tween(this.game.time).to( {slowMotion:5.0} , 300, Phaser.Easing.Linear.None, true , 0,  0 , false).onComplete.add(
+                function(){
+                    this.sprite.body.drag.x *= 3*this.game.time.slowMotion;
+                    this.sprite.body.drag.y *= 3*this.game.time.slowMotion;
+                    console.log(this.sprite.body.drag);
+                },this);
+
+            setTimeout(function(){
+                this.sprite.body.drag.x /= 3*this.game.time.slowMotion;
+                this.sprite.body.drag.y /= 3*this.game.time.slowMotion;
+                this.game.add.tween(this.game.time).to( {slowMotion:1.0} , 1000, Phaser.Easing.Linear.None, true , 0,  0 , false);
+
+            }.bind(this),8000);
+
         }
 
         /**
@@ -392,10 +408,15 @@ module Superhero {
             this.rockets.createMultiple(4,'bullets', 'bullet2');
         }
 
-        //renderShield():void{
-        //    this.shieldSprite = this.game.add.sprite(this.sprite.x + 20, this.sprite.y-40, 'enershield');
-        //    this.shieldSprite.scale.setTo(0.2);
-        //}
+        renderShield():void{
+            var shields = ['shield1','shield2','shield3'];
+            var shield = this.game.add.sprite(20,95,'shields',shields[this.shield-1]);
+            this.game.physics.arcade.enable(shield);
+            shield.scale.setTo(2.5,2.5);
+            shield.anchor.setTo(0.5,0.5);
+            shield.rotation += Phaser.Math.degToRad(90);
+            this.sprite.addChild(shield);
+        }
         /**
          * If it is flying, then decrease the fuel, if it is on the ground, slowly increase the fuel
          */
@@ -423,14 +444,9 @@ module Superhero {
 
         }
 
-        //updateShield(){
-        //    if (this.shieldSprite) {
-        //        if (this.shieldSprite.alive) {
-        //            this.shieldSprite.x = this.sprite.x + 20;
-        //            this.shieldSprite.y = this.sprite.y;
-        //        }
-        //    }
-        //}
+        unShield(){
+            this.sprite.removeChildAt(this.shield);
+        }
 
         /**
          * Update method. Here should be all the logic related to the character's game loop
@@ -516,6 +532,7 @@ module Superhero {
             if (this.shield > 0) {
                 this.shield -= 1;
                 this.flickerSprite(0xFF0000);
+                this.unShield();
                 return;
             }
 

@@ -63,8 +63,6 @@ module Superhero {
                 var x = event.x - x1,
                     y = event.y - y1;
 
-                //console.log(Math.floor((y/5)/14) + 1);
-                //console.log(Math.floor((y/5)))
                 // Calculate the choice
                 var choice = Math.floor((y/5)/18) + 1;
                 switch (choice){
@@ -85,7 +83,6 @@ module Superhero {
                         break;
 
                     case 5:
-                        window.close();
                         break;
 
                 }

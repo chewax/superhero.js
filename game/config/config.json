@@ -30,7 +30,7 @@
     }
   },
 
-  "playerIsImmortal": false,
+  "playerIsImmortal": true,
 
   "playerDieOutofBounds": false,
   

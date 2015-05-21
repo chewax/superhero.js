@@ -33,6 +33,7 @@ module Superhero {
             this.game.load.atlasJSONHash('meteors', '/assets/meteors.png', '/assets/meteors.json');
             this.game.load.atlasJSONHash('bullets', '/assets/bullets.png', '/assets/bullets.json');
             this.game.load.atlasJSONHash('steel', '/assets/steel.png', '/assets/steel.json');
+            this.game.load.atlasJSONHash('shields', '/assets/shields.png', '/assets/shields.json');
 
             //Single Images
             this.game.load.image('fuelbar', '/assets/fuel.png');
@@ -50,6 +51,7 @@ module Superhero {
             this.game.load.image('smoke', 'assets/smoke-puff.png');
 
             // Enemies
+
             // Tentacle bot
             this.game.load.atlasJSONHash('tentabot01', 'assets/tentacleBot.png', '/assets/tentacleBot.json');
             //this.game.load.audio('tentacleMissileLaunch', 'assets/missleLaunc1.ogg');
@@ -65,7 +67,6 @@ module Superhero {
             this.game.load.audio('enemyHit', '/assets/sounds/enemyHit.ogg');
 
             Gamepads.GamePad.preloadAssets(this.game, '/assets');
-
         }
     }
 
