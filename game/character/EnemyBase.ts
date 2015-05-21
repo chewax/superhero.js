@@ -110,7 +110,7 @@ module Superhero {
         fire (): void {
             if(this.fireEnabled) {
                 //Thou shalt only shoot if there is no shooting in progress
-                if (this.sprite.animations.currentAnim.name != 'shoot' || this.sprite.animations.currentAnim.isFinished) {
+                if (this.canShoot()) {
 
                     //Check for shootRate
                     var elapsedTime = this.game.time.elapsedSince(this.bulletTimer);

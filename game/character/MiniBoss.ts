@@ -47,38 +47,40 @@ module Superhero {
 
         fireBullet(): void {
 
-            var lastBulletX = this.sprite.x - (this.sprite.width * this.sprite.anchor.x);
-            var beamWidth = 0;
-            for (var i = 0; beamWidth < this.game.width; i++) {
+            if(this.sprite.alive) {
+                var lastBulletX = this.sprite.x - (this.sprite.width * this.sprite.anchor.x);
+                var beamWidth = 0;
+                for (var i = 0; beamWidth < this.game.width; i++) {
 
-                // TODO: maybe load it on a level preloader
-                //Get the first bullet that has gone offscreen
-                var bullet = this.getCustomBullet("blueBeam");
+                    // TODO: maybe load it on a level preloader
+                    //Get the first bullet that has gone offscreen
+                    var bullet = this.getCustomBullet("blueBeam");
 
-                //If there is none (all are still flying) create new one.
-                if (!bullet) {
-                    bullet = this.createNewBullet();
+                    //If there is none (all are still flying) create new one.
+                    if (!bullet) {
+                        bullet = this.createNewBullet();
+                    }
+
+                    bullet.alpha = 1;
+
+                    bullet.anchor.setTo(
+                        1,
+                        0
+                    );
+
+                    bullet.reset(lastBulletX, this.sprite.y);
+                    bullet.checkWorldBounds = true;
+                    bullet.outOfBoundsKill = true;
+                    bullet.body.velocity.x = 0;
+                    lastBulletX = lastBulletX - bullet.width;
+                    this.game.add.tween(bullet).to({alpha: 0}, 600, Phaser.Easing.Bounce.In, true, 0, 0, false).onComplete.add(function (b) {
+                        b.kill();
+                    }, this);
+                    beamWidth += bullet.width;
                 }
-
-                bullet.alpha = 1;
-
-                bullet.anchor.setTo(
-                    1,
-                    0
-                );
-
-                bullet.reset(lastBulletX, this.sprite.y);
-                bullet.checkWorldBounds = true;
-                bullet.outOfBoundsKill = true;
-                bullet.body.velocity.x = 0;
-                lastBulletX = lastBulletX - bullet.width;
-                this.game.add.tween(bullet).to({alpha: 0}, 600, Phaser.Easing.Bounce.In, true, 0, 0, false).onComplete.add(function(b) {
-                    b.kill();
-                }, this);
-                beamWidth += bullet.width;
+                (<Superhero.StateEnemyHostile>this._state).resumePatrol();
+                this.resetFireTimer();
             }
-            (<Superhero.StateEnemyHostile>this._state).resumePatrol();
-            this.resetFireTimer();
         }
 
         getCustomBullet(assetKey: string): Phaser.Sprite{
@@ -100,8 +102,8 @@ module Superhero {
         die (char:Phaser.Sprite, object?:any) {
             if (this.shield < 1) {
                 this.sprite.body.velocity.x = 80;
+                if (this.bullets) this.bullets.forEachAlive(function(b){b.kill()},this);
             }
-
             super.die(char, object);
         }
     }

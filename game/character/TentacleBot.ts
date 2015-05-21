@@ -86,7 +86,6 @@ module Superhero {
                         this.bulletTimer = this.game.time.time;
                         this.missilesTimer.stop();
                         this.missilesTimer.start();
-                        // TODO: reset does not reset the texture of the sprite??
                         this.resetMisslesTexture("withoutFire");
                     }
                     this.sprite.animations.play((<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["idleAnimation"]);
