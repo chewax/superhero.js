@@ -235,7 +235,6 @@ module Superhero {
          */
         fire (): void {
             //Thou shalt only shoot if there is no shooting in progress
-<<<<<<< HEAD
                 ////Check for shootRate
                 //var elapsedTime = this.game.time.elapsedSince(this.bulletTimer);
                 //if (elapsedTime < this.shootDelay) return;
@@ -243,9 +242,6 @@ module Superhero {
 
                 // TODO: implement fire play anim for every child (maybe a propertyor childs.count and hasFireAnim anim)
                 this.sprite.animations.play('shoot');
-=======
-                    if (!this.canShoot()) return;
->>>>>>> feature/remove-settings-option
 
                 for (var i = 0; i < this.firePower; i++) {
 
