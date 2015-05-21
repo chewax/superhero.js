@@ -64,7 +64,7 @@ module Superhero {
                     y = event.y - y1;
 
                 // Calculate the choice
-                var choice = Math.floor((y/5)/18) + 1;
+                var choice = Math.floor((y/4)/23) + 1;
                 switch (choice){
                     case 1:
                         this.game.state.start('Level1', true, false);
@@ -75,14 +75,10 @@ module Superhero {
                         break;
 
                     case 3:
-                        this.game.state.start('Settings', false, false);
-                        break;
-
-                    case 4:
                         this.game.state.start('Ranking', false, false);
                         break;
 
-                    case 5:
+                    case 4:
                         break;
 
                 }

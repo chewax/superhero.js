@@ -113,6 +113,7 @@ module Collectables {
             if (coll.alive) return;
 
             coll.spawnAt(x, y);
+            coll.playAnimation();
         }
 
     }
