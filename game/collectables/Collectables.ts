@@ -6,7 +6,7 @@ module Collectables {
     export interface Collectable extends Phaser.Sprite{
         spawnAt ( x:number, y:number ): void;
         collect ( character: Superhero.Character ): void;
-        overlapWithChar ( character: Superhero.Character): void;
+        overlapWithChar ( character: Superhero.Character): boolean;
     }
 
 
@@ -40,11 +40,14 @@ module Collectables {
 
         }
 
-        overlapWithChar (character: Superhero.Character){
+        overlapWithChar (character: Superhero.Character): boolean {
             if (this.game.physics.arcade.overlap(character.sprite, this)) {
                 this.collect(character);
                 this.kill();
+                return true
             }
+
+            return false;
         }
 
     }
@@ -56,7 +59,10 @@ module Collectables {
         }
 
         collect( character: Superhero.Character ) {
-            if (character.firePower < 5) character.firePower += 1;
+            if (character.firePower < 5) {
+                character.firePower += 1;
+                this.game.state.states.Level1.ui.infoText.showCustomText('Fire Power!');
+            }
         }
     }
 
@@ -68,8 +74,11 @@ module Collectables {
         }
 
         collect( character: Superhero.Character ) {
-            if (character.shield < 3) character.shield += 1;
-            character.renderShield();
+            if (character.shield < 3) {
+                character.shield += 1;
+                character.renderShield();
+                this.game.state.states.Level1.ui.infoText.showCustomText('Shield On!');
+            }
         }
 
     }
@@ -82,6 +91,7 @@ module Collectables {
 
         collect( character: Superhero.Character ) {
             character.nukes += 1;
+            this.game.state.states.Level1.ui.infoText.showCustomText('Nuke Collected!');
         }
 
     }
@@ -94,6 +104,7 @@ module Collectables {
 
         collect( character: Superhero.Character ) {
             character.timeWarps += 1;
+            this.game.state.states.Level1.ui.infoText.showCustomText('Time Warp Collected');
         }
 
     }
@@ -118,6 +129,7 @@ module Collectables {
 
         collect( character: Superhero.Character ) {
             character.immunity = true;
+            this.game.state.states.Level1.ui.infoText.showCustomText('Inmune!');
         }
 
     }
@@ -130,6 +142,7 @@ module Collectables {
 
         collect( character: Superhero.Character ) {
             character.bombs += 1;
+            this.game.state.states.Level1.ui.infoText.showCustomText('Rocket Collected!');
         }
 
     }
@@ -142,6 +155,7 @@ module Collectables {
 
         collect( character: Superhero.Character ) {
             character.lives += 1;
+            this.game.state.states.Level1.ui.infoText.showCustomText('1 UP');
         }
 
     }

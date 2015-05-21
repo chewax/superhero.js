@@ -20,11 +20,13 @@ module Collectables {
 
         game: Phaser.Game;
         collectables: Phaser.Group;
+        onCollect: Phaser.Signal;
 
 
         constructor(game:Phaser.Game){
             this.game = game;
             this.collectables = new Phaser.Group(this.game);
+            this.onCollect = new Phaser.Signal;
         }
 
         addCollectable(ctype:CollectableType){
@@ -76,11 +78,7 @@ module Collectables {
         checkCollectedBy(character: Superhero.Character): void {
             //For every collectable.
             this.collectables.forEach(function(item, character){
-
-                if (item.alive) {
-                    item.overlapWithChar(character);
-                }
-
+                if (item.alive) if (item.overlapWithChar(character)) this.onCollect.dispatch();
             }, this, false, character)
         }
 

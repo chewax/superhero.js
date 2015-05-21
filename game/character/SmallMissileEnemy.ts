@@ -28,10 +28,10 @@ module Superhero {
         /**
          * Update method. Here should be all the logic related to the character's game loop
          */
-        update (): void {
+        update() {
             super.update();
             this.game.physics.arcade.collide(this.game.state.states.Level1.hero.sprite, this.sprite, this.handleHeroCollition, null, this);
-            this.game.state.states.Level1.obstacleManager.diesWith(this.sprite, this.game.state.states.Level1.killWall, this.game.state.states.Level1);
+            this.game.state.states.Level1.obstacleManager.diesWith(this.sprite, this.game.state.states.Level1.killWallEnemy, this.game.state.states.Level1);
         }
 
         handleHeroCollition(object: any, smallMissileEnemy: any): void {

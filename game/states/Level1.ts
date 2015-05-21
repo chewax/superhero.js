@@ -99,14 +99,15 @@ module Superhero {
 
         initCollectables(): void {
             this.collectableManager = new Collectables.CollectableManager(this.game);
+            this.collectableManager.addCollectable(Collectables.CollectableType.IMPROVE_FIRE);
             this.collectableManager.addCollectable(Collectables.CollectableType.IMPROVE_SHIELD);
-            /*this.collectableManager.addCollectable(Collectables.CollectableType.IMPROVE_FIRE);
-            this.collectableManager.addCollectable(Collectables.CollectableType.NUKE_BOMB);*/
-            //this.collectableManager.addCollectable(Collectables.CollectableType.TIME_WARP);
+            this.collectableManager.addCollectable(Collectables.CollectableType.NUKE_BOMB);
+            this.collectableManager.addCollectable(Collectables.CollectableType.TIME_WARP);
             //this.collectableManager.addCollectable(Collectables.CollectableType.DIAMOND);
-            /*this.collectableManager.addCollectable(Collectables.CollectableType.BOMB);
+            this.collectableManager.addCollectable(Collectables.CollectableType.BOMB);
             //this.collectableManager.addCollectable(Collectables.CollectableType.IMMUNITY);
-            this.collectableManager.addCollectable(Collectables.CollectableType.LIVES);*/
+            this.collectableManager.addCollectable(Collectables.CollectableType.LIVES);
+
 
         }
 
@@ -165,7 +166,7 @@ module Superhero {
             enemies.forEach((enmy) => {
                 enmy.diesWithGroup(this.hero.bullets);
                 enmy.diesWithGroup(this.hero.rockets);
-                this.obstacleManager.diesWith(enmy.bullets, this.killWall, this);
+                this.obstacleManager.diesWith(enmy.bullets, this.killWallEnemy, this);
             });
 
             this.collectableManager.checkCollectedBy(this.hero);
@@ -174,7 +175,6 @@ module Superhero {
 
 
         killWall(bullet:Phaser.Sprite, wall:Phaser.Sprite): void {
-
 
             if (bullet.frameName == 'bullet1'){
                 bullet.kill();
@@ -187,6 +187,16 @@ module Superhero {
 
             wall.kill();
 
+            var prevCombo = this.hero.comboLevel;
+            this.hero.comboLevel += 0.1;
+
+            if (Math.floor(this.hero.comboLevel) > Math.floor(prevCombo)) {
+                this.ui.infoText.showComboText(this.hero.comboLevel);
+            }
+
+
+
+
 
             //if (wall.frameName.indexOf("grey") > -1) {
             //    if (bullet.frameName == 'bullet1'){
@@ -196,9 +206,14 @@ module Superhero {
 
             //one out of 20 must drop something
             this.collectableManager.spawnCollectable(wall.position.x, wall.position.y);
-
             this.obstacleManager.particleBurst(wall);
             this.ui.scoreUp(50);
+        }
+
+
+        killWallEnemy(bullet:Phaser.Sprite, wall:Phaser.Sprite): void {
+            wall.kill();
+            this.obstacleManager.particleBurst(wall);
         }
 
         render() {
