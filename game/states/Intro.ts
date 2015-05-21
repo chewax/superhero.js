@@ -32,7 +32,7 @@ module Superhero {
         obstacleManager: Obstacles.ObstacleManager;
         enemyManager: Superhero.EnemyManager;
         collectableManager: Collectables.CollectableManager;
-        levelID: string = "level1";
+        levelID: string = "Intro";
 
         preload () {
 
@@ -118,7 +118,6 @@ module Superhero {
             this.collectableManager.addCollectable(Collectables.CollectableType.BOMB);
             //this.collectableManager.addCollectable(Collectables.CollectableType.IMMUNITY);
             this.collectableManager.addCollectable(Collectables.CollectableType.LIVES);
-
         }
 
 
@@ -136,9 +135,10 @@ module Superhero {
         }
 
         setActors(): void {
-            this.hero = new Hero(this.game);
+            this.hero = new Hero(this.game, "herowalking");
             this.hero.sprite.body.gravity.y = 1500;
             this.hero.sprite.body.drag = 0;
+            this.hero.sprite.body.height -= 15;
             this.hero.setIdleCallback(this.hero.run);
 
             // Set gamepad callbacks

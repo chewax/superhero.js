@@ -57,44 +57,46 @@ module Superhero {
         fire (): void {
 
             if(this.sprite.alive) {
-                if (
-                    (this.sprite.animations.currentAnim.name != 'shootRightWhenDown' ||
-                    this.sprite.animations.currentAnim.name != 'shootRightWhenUp' ||
-                    this.sprite.animations.currentAnim.name != 'shootLeft' ||
-                    this.sprite.animations.currentAnim.isFinished) &&
-                    this.sprite.animations.currentAnim.name != 'takehit') {
+                if(this.fireEnabled) {
+                    if (
+                        (this.sprite.animations.currentAnim.name != 'shootRightWhenDown' ||
+                        this.sprite.animations.currentAnim.name != 'shootRightWhenUp' ||
+                        this.sprite.animations.currentAnim.name != 'shootLeft' ||
+                        this.sprite.animations.currentAnim.isFinished) &&
+                        this.sprite.animations.currentAnim.name != 'takehit') {
 
-                    //Check for shootRate
-                    var elapsedTime = this.game.time.elapsedSince(this.bulletTimer);
-                    if (elapsedTime < this.shootDelay) return;
+                        //Check for shootRate
+                        var elapsedTime = this.game.time.elapsedSince(this.bulletTimer);
+                        if (elapsedTime < this.shootDelay) return;
 
-                    if (this.lastFireLeft) {
-                        // fire right hand
-                        this.lastFireLeft = false;
-                        if (this.spawnPoint == spawnEnemyPosition.TOP) {
-                            // shoot down
-                            this.sprite.animations.play('shootRightWhenUp');
-                            setTimeout(function(){
-                                this.fireBullet("downProjectile", BulletDirection.DOWN);
-                            }.bind(this), 250);
+                        if (this.lastFireLeft) {
+                            // fire right hand
+                            this.lastFireLeft = false;
+                            if (this.spawnPoint == spawnEnemyPosition.TOP) {
+                                // shoot down
+                                this.sprite.animations.play('shootRightWhenUp');
+                                setTimeout(function () {
+                                    this.fireBullet("downProjectile", BulletDirection.DOWN);
+                                }.bind(this), 250);
+                            } else {
+                                this.sprite.animations.play('shootRightWhenDown');
+                                setTimeout(function () {
+                                    this.fireBullet("upperProjectile", BulletDirection.UP);
+                                }.bind(this), 250);
+                            }
                         } else {
-                            this.sprite.animations.play('shootRightWhenDown');
-                            setTimeout(function(){
-                                this.fireBullet("upperProjectile", BulletDirection.UP);
+                            // fire left hand
+                            this.lastFireLeft = true;
+                            this.sprite.animations.play('shootLeft');
+                            setTimeout(function () {
+                                this.fireBullet("mainProjectile", BulletDirection.STRAIGHT);
                             }.bind(this), 250);
                         }
-                    } else {
-                        // fire left hand
-                        this.lastFireLeft = true;
-                        this.sprite.animations.play('shootLeft');
-                        setTimeout(function(){
-                            this.fireBullet("mainProjectile", BulletDirection.STRAIGHT);
-                        }.bind(this), 250);
+                        //Reset the timer
+                        this.bulletTimer = this.game.time.time;
+                        // TODO: fix idle anim
+                        //this.sprite.animations.play((<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["idleAnimation"]);
                     }
-                    //Reset the timer
-                    this.bulletTimer = this.game.time.time;
-                    // TODO: fix idle anim
-                    //this.sprite.animations.play((<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["idleAnimation"]);
                 }
             }
         }
@@ -137,6 +139,31 @@ module Superhero {
          * @param {any}           object An instance of the collided object
          */
         die (char:Phaser.Sprite, object?:any) {
+            // TODO: DRY
+            if((<Superhero.Game> this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["isImmortal"]){
+                return;
+            }
+
+            var elapsedTime = this.game.time.elapsedSince(this.dieTimer);
+            if (elapsedTime < this.respawnDelay) return;
+            this.dieTimer = this.game.time.time;
+
+            // SFX
+            this.playGetHitSound(char.key);
+
+            // Smoke emitter
+            if (this.shield > 0) {
+                if(!this.smokeEmitter.on) {
+                    this.startSmokeEmitter();
+                }
+                this.shield -= 1;
+                this.flickerSprite(0xFF0000);
+                return;
+            }
+            if(this.smokeEmitter.on) {
+                this.stopSmokeEmitter();
+            }
+
             this.sprite.body.checkWorldBounds = true;
             this.sprite.body.outOfBoundsKill = true;
             this.sprite.body.angularVelocity = this.game.rnd.integerInRange(-400, -300);

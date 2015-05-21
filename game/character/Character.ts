@@ -25,6 +25,8 @@ module Superhero {
         shieldSprite: Phaser.Sprite;
         bullets: Phaser.Group;
         rockets: Phaser.Group;
+        hitSound: Phaser.Sound;
+        soundEnabled: boolean = true;
 
         shadow: Phaser.Sprite;
         fuel: number;
@@ -79,6 +81,7 @@ module Superhero {
             this.addAnimations();
             this.initBullets();
             this.startChar();
+            this.initAudio();
         }
         /**
          * Starts the character default behaviour
@@ -96,7 +99,12 @@ module Superhero {
 
         }
 
-
+        /**
+         * Initialize instance audio
+         */
+        initAudio(): void {
+            this.hitSound = this.game.add.audio('enemyHit', 0.5, false);
+        }
 
         /**
          * Initializes the character sprite
@@ -494,8 +502,16 @@ module Superhero {
             var elapsedTime = this.game.time.elapsedSince(this.dieTimer);
             if (elapsedTime < this.respawnDelay) return;
             this.dieTimer = this.game.time.time;
-            if (object) object.kill();
 
+            // SFX
+            this.playGetHitSound(char.key);
+
+            // Ugly workaround
+            if(object) {
+                if ((<Phaser.Sprite>object).frameName != "blueBeam") {
+                    object.kill();
+                }
+            }
 
             if (this.shield > 0) {
                 this.shield -= 1;
@@ -588,5 +604,13 @@ module Superhero {
             this.idleCallback = listener.bind(listenerContext);
         }
 
+        playGetHitSound(assetKey: string): void {
+            // TODO: implement different types of hit
+            if(this.soundEnabled) {
+                if (assetKey != "hero1") {
+                    this.hitSound.play();
+                }
+            }
+        }
     }
 }

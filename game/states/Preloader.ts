@@ -27,6 +27,7 @@ module Superhero {
 
             //Spritesheets
             this.game.load.atlasJSONHash('hero1', '/assets/hero1.png', '/assets/hero1.json');
+            this.game.load.atlasJSONHash('herowalking', '/assets/hero1Walking.png', '/assets/hero1.json');
             this.game.load.atlasJSONHash('badie', '/assets/hero3.png', '/assets/hero3.json');
             this.game.load.atlasJSONHash('pups', '/assets/pups.png', '/assets/pups.json');
             this.game.load.atlasJSONHash('meteors', '/assets/meteors.png', '/assets/meteors.json');
@@ -45,26 +46,23 @@ module Superhero {
             this.game.load.image('menuBack', '/assets/menuBack.png');
             this.game.load.image('mainMenu', '/assets/mainMenu.png');
             this.game.load.image('menuBackground', '/assets/menuBackground.png');
+            // Smoke
+            this.game.load.image('smoke', 'assets/smoke-puff.png');
 
-
-
-
-            //Audio
-            //this.game.load.audio('theme', '/assets/sounds/demon_destroyer.mp3');
-            this.game.load.audio('theme', '/assets/sounds/demon_destroyer.ogg');
-
+            // Enemies
             // Tentacle bot
             this.game.load.atlasJSONHash('tentabot01', 'assets/tentacleBot.png', '/assets/tentacleBot.json');
             //this.game.load.audio('tentacleMissileLaunch', 'assets/missleLaunc1.ogg');
-
             // Two handed weapon enemy
             this.game.load.atlasJSONHash('twoHandedWeapon', 'assets/twoHandedWeapon.png', '/assets/twoHandedWeapon.json');
-
             // Mini Boss
             this.game.load.atlasJSONHash('miniBoss', 'assets/miniBoss.png', '/assets/miniBoss.json');
-
             // SmallMissileEnemy
             this.game.load.atlasJSONHash('smallMissileEnemy', 'assets/smallMissileEnemy.png', '/assets/smallMissileEnemy.json');
+
+            //Audio
+            this.game.load.audio('theme', '/assets/sounds/demon_destroyer.ogg');
+            this.game.load.audio('enemyHit', '/assets/sounds/enemyHit.ogg');
 
             Gamepads.GamePad.preloadAssets(this.game, '/assets');
 

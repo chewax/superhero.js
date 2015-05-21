@@ -17,6 +17,10 @@ module Superhero {
         spawnPoint?: spawnEnemyPosition;
         deadSince?: number;
         respawnDelay?: number;
+        fireEnabled?: boolean;
+        shields?: number;
+        soundEnabled?: boolean;
+        dropsSmoke?: boolean;
     }
 
     /**
@@ -42,6 +46,7 @@ module Superhero {
 
         killAll(){
             for (var i = 0; i < this.enemiesAlive.length; i++){
+                this.enemiesAlive[i].shield = 0;
                 this.enemiesAlive[i].die(this.enemiesAlive[i].sprite);
             }
         }
@@ -91,7 +96,12 @@ module Superhero {
                 firePower: this.getFirePower(assetsKey),
                 shootDelay: this.getShootDelay(assetsKey),
                 defaultState: enemyDefaultState,
-                spawnPoint: enemySpawnPoint
+                spawnPoint: enemySpawnPoint,
+                fireEnabled: true,
+                shields : (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[assetsKey]["shields"],
+                respawnDelay: 1000,
+                soundEnabled: true,
+                dropsSmoke: (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[assetsKey]["dropsSmoke"]
             };
 
             // TODO: implement
@@ -115,9 +125,6 @@ module Superhero {
                     this.enemiesAlive.push(spawnEnemy);
                 }
             }
-
-            // TODO: implement timer when dead to 0 again so it doesn't appear again
-
         }
 
         private getFirstEnemyDead(key:string): Superhero.EnemyBase {
@@ -275,7 +282,9 @@ module Superhero {
                 shootDelay: (<Superhero.Game>this.game).conf.ENEMIES.shootDelay,
                 defaultState: EnemyState.STEADY,
                 spawnPoint: this.getRandomEnemySpawnPosition(false),
-                deadSince: this.game.time.time
+                deadSince: this.game.time.time,
+                soundEnabled: false,
+                dropsSmoke: false
             };
 
             return newEnemy;
@@ -294,8 +303,18 @@ module Superhero {
          * Check if the new enemy can be spawned
          */
         private tryToSpawnEnemy() {
-            if(this.totalEnemiesAlive() < 2) {
-                this.spawnRandomEnemy();
+            if(this.currentLevel == "level1") {
+                if(this.totalEnemiesAlive() < 2) {
+                    this.spawnRandomEnemy();
+                }
+            } else {
+                if(this.totalEnemiesAlive() < 2) {
+                    if(this.totalEnemiesAlive() < 1) {
+                        this.spawnCustomEnemy("miniBoss");
+                    } else {
+                        this.spawnCustomEnemy("twoHandedWeapon");
+                    }
+                }
             }
         }
 
@@ -312,94 +331,41 @@ module Superhero {
          * If there are not any properties random+json default values are loaded
          *
          */
-        /*public spawnCustomEnemy(enemy?: IEnemy, qty: number = 1): void {
+        public spawnCustomEnemy(assetsKey: string): void {
 
-             // The new enemy instance
-             var newEnemy;
-             // The type of the enemy to be spawned
-             var newEnemyType;
-             // Assets key
-             var assetsKey;
-             // Quantity of enemies to spawn
-             var spawnQty = qty;
-             // total enemies already spawned
-             var enemiesSpawned = 0;
+            var enemyDefaultState = EnemyState.STEADY;
+            var enemySpawnPoint = spawnEnemyPosition.TOP;
 
-             //newEnemy = new Superhero.EnemyBase(this.game, enemy);
+            var newEnemy: IEnemy = {
+                assetsKey: assetsKey,
+                facing: Superhero.Facing.LEFT,
+                bulletVelocity: this.getBulletSpeed(),
+                spawnLocation: this.getSpawnCoordinates(enemyDefaultState, enemySpawnPoint),
+                firePower: this.getFirePower(assetsKey),
+                shootDelay: this.getShootDelay(assetsKey),
+                defaultState: enemyDefaultState,
+                spawnPoint: enemySpawnPoint,
+                fireEnabled: false,
+                shields: (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[assetsKey]["shields"],
+                respawnDelay: 1000,
+                soundEnabled: true,
+                dropsSmoke: (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[assetsKey]["dropsSmoke"]
+            };
 
-             if(enemy.spawnQuantity) {
-             spawnQty = enemy.spawnQuantity;
-             }
 
-             while(enemiesSpawned < qty) {
-
-             if(!enemy) {
-             newEnemyType = this.game.rnd.integerInRange(0, 2);
-             }
-
-             // If everything is null create all random
-             if (!enemy.enemyType) {
-
-             newEnemyType = GerRandomEnemyType;
-             } else {
-             newEnemyType = enemy.enemyType;
-             }
-             if (!enemy.assetsKey) {
-             var assetKey = this.GetDefaultAssetForEnemyFromJSON(enemy.enemyType, "assetKey");
-             }
-
-             // Check for enemies already on the stage
-             // TODO: create a greater method to check all of these rules to validate if it can spawn the new enemy passing the new enemy type
-             if (this.enemyCanBeSpawned(newEnemyType)) {
-             // TODO: check if it's better to have a single class per enemy type or just get the values from the json, etc
-
-             //spawn any
-             if (enemy.enemyType == EnemyType.EASY) {
-             newEnemy = this.easyEnemiesOnStage.getFirstDead();
-             if(newEnemy) {
-             newEnemy.reset(enemy.spawnLocation);
-             newEnemy.revive();
-             }
-             } else if (enemy.enemyType == EnemyType.MEDIUM) {
-
-             } else if (enemy.enemyType == EnemyType.HARD){
-
-             }
-
-             // TODO: check for properties that may need to be get before creating the new instance (beign called on the constructor e.g. facing amd bulletvelocity
-             if (enemy.bulletVelocity) {
-             newEnemy.bulletVelocity = enemy.bulletVelocity;
-             } else {
-             //newEnemy.bulletVelocity = this.GetDefaultValueFromEnemyJson(enemy.enemyType, "bulletVelocity")
-             }
-
-             // TODO: implement fire type
-             if (enemy.fireType) {
-             newEnemy.fireType = enemy.fireType;
-             } else {
-             //newEnemy.fireType = this.GetDefaultValueFromEnemyJson(enemy.enemyType, "fireType")
-             }
-             if(enemy.firePower) {
-             newEnemy.firePower = enemy.firePower;
-             } else {
-             newEnemy.firePower = this.GetDefaultValueFromEnemyJson(
-             }
-
-             if (enemy.facing) {
-             newEnemy.facing = enemy.facing;
-             } else {
-             //newEnemy.facing = this.GetDefaultValueFromEnemyJson(enemy.enemyType, "facing")
-             }
-
-             if (enemy.spawnLocation) {
-             // TODO: check for x and y instead to the whole object
-             newEnemy.spawnLocation = enemy.spawnLocation;
-             } else {
-             //newEnemy.spawnLocation = this.GetDefaultValueFromEnemyJson(enemy.enemyType, "spawnLocation")
-             }
-             enemiesSpawned++;
-             }
-             }
-         }*/
+            var spawnEnemy = this.getFirstEnemyDead(newEnemy.assetsKey);
+            if (spawnEnemy) {
+                // Fix x position
+                newEnemy.spawnLocation.x = this.game.width - newEnemy.spawnLocation.x;
+                if(assetsKey == "twoHandedWeapon") {
+                    newEnemy.spawnLocation.y = this.game.height - 250;
+                }
+                if(!spawnEnemy.sprite.alive) {
+                    spawnEnemy.sprite.reset(newEnemy.spawnLocation.x, newEnemy.spawnLocation.y);
+                    spawnEnemy.setCustomEnemyProperties(newEnemy);
+                    this.enemiesAlive.push(spawnEnemy);
+                }
+            }
+         }
     }
 }

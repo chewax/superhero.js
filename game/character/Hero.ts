@@ -6,8 +6,14 @@
 module Superhero {
     export class Hero extends Character {
 
-        constructor (game:Phaser.Game) {
-            super(game,'hero1',game.world.centerX - 200,game.world.centerY);
+        constructor (game:Phaser.Game, spriteKey?: string) {
+            var sptK;
+            if(spriteKey){
+                sptK = spriteKey
+            } else {
+                sptK = "hero1";
+            }
+            super(game, sptK, game.world.centerX - 200,game.world.centerY);
             this.facing = Facing.RIGHT;
             //this.firePower = 10;
             this.shootDelay = 500;

@@ -14,6 +14,7 @@
 /// <reference path="../obstacles/ObstacleManager.ts"/>
 /// <reference path="../collectables/Collectables.ts"/>
 /// <reference path="../collectables/CollectableManager.ts"/>
+/// <reference path="../../lib/EPSY.d.ts"/>
 
 
 module Superhero {
@@ -46,8 +47,6 @@ module Superhero {
             this.startMusic();
             this.setEnemyManager();
             this.startUI();
-
-            this.debug = new Debug(this.game);
         }
 
         startUI(){
@@ -55,6 +54,7 @@ module Superhero {
         }
 
         update () {
+
             //Collisions
             this.checkForCollisions();
 
@@ -100,14 +100,14 @@ module Superhero {
 
         initCollectables(): void {
             this.collectableManager = new Collectables.CollectableManager(this.game);
-            //this.collectableManager.addCollectable(Collectables.CollectableType.IMPROVE_FIRE);
-            //this.collectableManager.addCollectable(Collectables.CollectableType.IMPROVE_SHIELD);
-            this.collectableManager.addCollectable(Collectables.CollectableType.NUKE_BOMB);
-            //this.collectableManager.addCollectable(Collectables.CollectableType.TIME_WARP);
+            /*this.collectableManager.addCollectable(Collectables.CollectableType.IMPROVE_FIRE);
+            this.collectableManager.addCollectable(Collectables.CollectableType.IMPROVE_SHIELD);
+            this.collectableManager.addCollectable(Collectables.CollectableType.NUKE_BOMB);*/
+            this.collectableManager.addCollectable(Collectables.CollectableType.TIME_WARP);
             //this.collectableManager.addCollectable(Collectables.CollectableType.DIAMOND);
-            //this.collectableManager.addCollectable(Collectables.CollectableType.BOMB);
+            /*this.collectableManager.addCollectable(Collectables.CollectableType.BOMB);
             //this.collectableManager.addCollectable(Collectables.CollectableType.IMMUNITY);
-            //this.collectableManager.addCollectable(Collectables.CollectableType.LIVES);
+            this.collectableManager.addCollectable(Collectables.CollectableType.LIVES);*/
 
         }
 

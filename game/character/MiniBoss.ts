@@ -27,18 +27,20 @@ module Superhero {
         fire (): void {
 
             if(this.sprite.alive) {
-                if (this.sprite.animations.currentAnim.name != 'shoot' || this.sprite.animations.currentAnim.isFinished) {
+                if (this.fireEnabled) {
+                    if (this.sprite.animations.currentAnim.name != 'shoot' || this.sprite.animations.currentAnim.isFinished) {
 
-                    //Check for shootRate
-                    var elapsedTime = this.game.time.elapsedSince(this.bulletTimer);
-                    if (elapsedTime < this.shootDelay) return;
-                    (<Superhero.StateEnemyHostile>this._state).pausePatrol();
+                        //Check for shootRate
+                        var elapsedTime = this.game.time.elapsedSince(this.bulletTimer);
+                        if (elapsedTime < this.shootDelay) return;
+                        (<Superhero.StateEnemyHostile>this._state).pausePatrol();
 
-                    this.sprite.animations.play('shoot',(<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["shootAnimationFrames"]);
-                    // Stop tween and play new animation
-                    setTimeout(function(){
-                        this.fireBullet();
-                    }.bind(this), 1000);
+                        this.sprite.animations.play('shoot', (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["shootAnimationFrames"]);
+                        // Stop tween and play new animation
+                        setTimeout(function () {
+                            this.fireBullet();
+                        }.bind(this), 1000);
+                    }
                 }
             }
         }
@@ -51,20 +53,11 @@ module Superhero {
 
                 // TODO: maybe load it on a level preloader
                 //Get the first bullet that has gone offscreen
-                var bullet;
-                if(i == 0) {
-                    bullet = this.getCustomBullet("blueBeamLongBegin");
-                } else {
-                    bullet = this.getCustomBullet("blueBeamLong");
-                }
+                var bullet = this.getCustomBullet("blueBeam");
 
                 //If there is none (all are still flying) create new one.
                 if (!bullet) {
-                    if(i == 0) {
-                        bullet = this.createNewBullet("miniBoss", "blueBeamLongBegin");
-                    } else {
-                        bullet = this.createNewBullet();
-                    }
+                    bullet = this.createNewBullet();
                 }
 
                 bullet.alpha = 1;
@@ -105,7 +98,10 @@ module Superhero {
          * @param {any}           object An instance of the collided object
          */
         die (char:Phaser.Sprite, object?:any) {
-            this.sprite.body.velocity.x = 80;
+            if (this.shield < 1) {
+                this.sprite.body.velocity.x = 80;
+            }
+
             super.die(char, object);
         }
     }
