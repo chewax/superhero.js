@@ -69,6 +69,10 @@ module Superhero {
                     );
 
                     bullet.reset(lastBulletX, this.sprite.y);
+
+                    // Fire sound
+                    this.playFireSound();
+
                     bullet.checkWorldBounds = true;
                     bullet.outOfBoundsKill = true;
                     bullet.body.velocity.x = 0;

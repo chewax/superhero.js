@@ -126,12 +126,10 @@ module Superhero {
             (<Superhero.Game> this.game).gamepad = new Gamepads.GamePad(this.game, Gamepads.GamepadType.GESTURE_BUTTON, Gamepads.ButtonPadType.FOUR_FAN);
             (<Superhero.Game> this.game).gamepad.touchInput.touchType = Gamepads.TouchInputType.TOUCH;
             (<Superhero.Game> this.game).gamepad.buttonPad.button1.type = Gamepads.ButtonType.SINGLE_THEN_TURBO;
+            // Diable buttons
             (<Superhero.Game> this.game).gamepad.buttonPad.button2.type = Gamepads.ButtonType.SINGLE;
-            (<Superhero.Game> this.game).gamepad.buttonPad.button2.enableCooldown(30);
             (<Superhero.Game> this.game).gamepad.buttonPad.button3.type = Gamepads.ButtonType.SINGLE;
-            (<Superhero.Game> this.game).gamepad.buttonPad.button3.enableCooldown(10);
             (<Superhero.Game> this.game).gamepad.buttonPad.button4.type = Gamepads.ButtonType.SINGLE_THEN_TURBO;
-
         }
 
         setActors(): void {
@@ -222,7 +220,7 @@ module Superhero {
             this.collectableManager.spawnCollectable(wall.position.x, wall.position.y);
 
             this.obstacleManager.particleBurst(wall);
-            this.ui.scoreUp(50);
+            //this.ui.scoreUp(50);
         }
 
         shutdown() {

@@ -65,47 +65,12 @@
     "patrolTweenSpeed": 1500,
 
     "levels": {
-      "level1": ["badie", "twoHandedWeapon", "miniBoss", "tentabot01", "smallMissileEnemy"],
+      "level1": ["twoHandedWeapon", "miniBoss"],
       "Intro": ["twoHandedWeapon", "miniBoss"]
     }
   },
 
   "charactersCollection": {
-    "herowalking":{
-      "mainSprite": "walk1",
-      "childSprites": "",
-      "isImmortal": false,
-      "shields": 0,
-      "minShootDelay": 1515,
-      "idleAnimation": "run",
-      "respawnDelay": 5000,
-      "animations": {
-        "flystill": {"frames" :["stand1", "stand2"], "frameRate": 8,"loop": true, "useNumericIndex": false},
-        "shoot": {"frames" :["shoot1","shoot2", "shoot3", "shoot4"], "frameRate": 10, "loop": false, "useNumericIndex": false},
-        "flywalk": {"frames" :["walk1","walk2"], "frameRate": 6, "loop": true, "useNumericIndex": false},
-        "fly": {"frames" :["fly1","fly2"], "frameRate": 8, "loop": true, "useNumericIndex": false},
-        "takehit": {"frames" :["hit1","hit2", "hit3", "hit4"], "frameRate": 4, "loop": false, "useNumericIndex": false},
-        "stop": {"frames" :["hit1"], "frameRate": 3, "loop": false, "useNumericIndex": false},
-        "run": {"frames" :["walk1","stand1", "walk2"], "frameRate": 6, "loop": true, "useNumericIndex": false}
-      },
-      "anchor": {
-        "x": 0.5,
-        "y": 0
-      },
-      "scale": 0.3,
-      "diesOutOfBounds": false,
-      "firePower": 1,
-      "bullets": {
-        "qty": 4,
-        "key": "bullets",
-        "frame":"bullet1",
-        "anchor": {
-          "x": 0.5,
-          "y": 1
-        }
-      }
-
-    },
 
     "hero1": {
       "mainSprite": "stand1",
@@ -143,6 +108,42 @@
       }
 
     },
+    "herowalking":{
+      "mainSprite": "walk1",
+      "childSprites": "",
+      "isImmortal": false,
+      "shields": 0,
+      "minShootDelay": 1515,
+      "idleAnimation": "run",
+      "respawnDelay": 5000,
+      "animations": {
+        "flystill": {"frames" :["stand1", "stand2"], "frameRate": 8,"loop": true, "useNumericIndex": false},
+        "shoot": {"frames" :["shoot1","shoot2", "shoot3", "shoot4"], "frameRate": 10, "loop": false, "useNumericIndex": false},
+        "flywalk": {"frames" :["walk1","walk2"], "frameRate": 6, "loop": true, "useNumericIndex": false},
+        "fly": {"frames" :["fly1","fly2"], "frameRate": 8, "loop": true, "useNumericIndex": false},
+        "takehit": {"frames" :["hit1","hit2", "hit3", "hit4"], "frameRate": 4, "loop": false, "useNumericIndex": false},
+        "stop": {"frames" :["hit1"], "frameRate": 3, "loop": false, "useNumericIndex": false},
+        "run": {"frames" :["walk1","stand1", "walk2"], "frameRate": 6, "loop": true, "useNumericIndex": false}
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0
+      },
+      "scale": 0.3,
+      "diesOutOfBounds": false,
+      "firePower": 1,
+      "bullets": {
+        "qty": 4,
+        "key": "bullets",
+        "frame":"bullet1",
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        }
+      }
+
+    },
+
 
     "badie": {
       "mainSprite": "stand1",
@@ -254,7 +255,9 @@
           "x": 0.5,
           "y": 1
         }
-      }
+      },
+      "fireSound": "twoHandedFire",
+      "fireVolume": 0.2
     },
 
     "miniBoss": {
@@ -288,7 +291,9 @@
           "x": 0.5,
           "y": 1
         }
-      }
+      },
+      "fireSound": "miniBossFire",
+      "fireVolume": 0.5
     },
     "smallMissileEnemy": {
       "mainSprite": "idle1",

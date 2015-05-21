@@ -295,16 +295,9 @@ module Obstacles {
         killAll(){
             this.group.forEach(function(s){
                 s.kill();
-                var prevCombo = this.game.state.states.Level1.hero.comboLevel;
-                this.game.state.states.Level1.hero.comboLevel += 0.1;
-                this.game.state.states.Level1.ui.scoreUp(50 * Math.floor(this.game.state.states.Level1.hero.comboLevel+1));
-                if (Math.floor(this.game.state.states.Level1.hero.comboLevel) > Math.floor(prevCombo)) {
-                    this.game.state.states.Level1.ui.infoText.showComboText(this.game.state.states.Level1.hero.comboLevel);
-                }
-
+                this.game.state.states.Level1.hero.updateCombo(0.1);
             },this);
         }
-
     }
 
 

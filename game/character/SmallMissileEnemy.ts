@@ -43,7 +43,6 @@ module Superhero {
          */
         fire (): void {
             if(this.sprite.alive) {
-                // this.engage();
                 if (this.sprite.animations.currentAnim.name != 'shoot' || this.sprite.animations.currentAnim.isFinished) {
 
                     //Check for shootRate

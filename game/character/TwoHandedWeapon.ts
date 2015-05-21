@@ -107,6 +107,8 @@ module Superhero {
             if (!bullet) {
                 bullet = this.createNewBullet("twoHandedWeapon", bulletKey);
             }
+            // Fire sound
+            this.playFireSound();
             bullet.reset(this.sprite.x + (this.facing * 40), this.sprite.y + 15);
             if(bulletDirection != BulletDirection.STRAIGHT) {
                 if (bulletDirection == BulletDirection.DOWN) {
@@ -149,7 +151,11 @@ module Superhero {
             this.dieTimer = this.game.time.time;
 
             // SFX
-            this.playGetHitSound(char.key);
+            this.playGetHitSound();
+
+            if(object) {
+                this.checkRocketCollision(object);
+            }
 
             // Smoke emitter
             if (this.shield > 0) {
@@ -163,6 +169,9 @@ module Superhero {
             if(this.smokeEmitter.on) {
                 this.stopSmokeEmitter();
             }
+
+            // Update combo using enemy sields
+            this.updateComboByEnemy();
 
             this.sprite.body.checkWorldBounds = true;
             this.sprite.body.outOfBoundsKill = true;

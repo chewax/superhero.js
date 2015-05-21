@@ -26,6 +26,7 @@ module Superhero {
         bullets: Phaser.Group;
         rockets: Phaser.Group;
         hitSound: Phaser.Sound;
+        fireSound: Phaser.Sound;
         soundEnabled: boolean = true;
 
         shadow: Phaser.Sprite;
@@ -58,7 +59,6 @@ module Superhero {
         bulletVelocity: number = 1000;
         floor: number;
         allowGravity: boolean = false;
-        isTimeWarped: boolean = false;
 
         onHit: Phaser.Signal;
         comboLevel: number = 0;
@@ -101,14 +101,18 @@ module Superhero {
             this.warpCoolDown = this.game.time.time;
             this.sprite.play((<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["idleAnimation"])
             this.setIdleCallback(this.flyStill);
-
         }
 
         /**
          * Initialize instance audio
          */
         initAudio(): void {
-            this.hitSound = this.game.add.audio('enemyHit', 0.5, false);
+            this.hitSound = this.game.add.audio("enemyHit", 0.5, false);
+            this.fireSound = this.game.add.audio(
+                (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["fireSound"],
+                (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["fireVolume"],
+                false
+            )
         }
 
         /**
@@ -521,18 +525,23 @@ module Superhero {
             this.dieTimer = this.game.time.time;
 
             // SFX
-            this.playGetHitSound(char.key);
+            this.playGetHitSound();
 
             // Ugly workaround
             if(object) {
                 if ((<Phaser.Sprite>object).frameName != "blueBeam") {
                     object.kill();
                 }
+                // Rocket fix
+                this.checkRocketCollision(object);
             }
 
-            if (this.comboLevel > 0) this.game.state.states.Level1.ui.infoText.showComboText("Combo Lost!");
-            this.comboLevel = 0;
+            if (this.sprite.key == "hero1") {
+                if (this.comboLevel > 0) this.game.state.states.Level1.ui.infoText.showComboText("Combo Lost!");
+                this.comboLevel = 0;
+            }
 
+            // Shields
             if (this.shield > 0) {
                 this.shield -= 1;
                 this.flickerSprite(0xFF0000);
@@ -552,6 +561,9 @@ module Superhero {
             char.alive = false;
             this.deadSince = this.game.time.time;
 
+            // Update combo using enemy sields
+            this.updateComboByEnemy();
+
             if (this.bullets) this.bullets.forEachAlive(function(b){b.kill()},this);
             if (this.rockets) this.rockets.forEachAlive(function(r){r.kill()},this);
 
@@ -562,6 +574,17 @@ module Superhero {
             this.sprite.reset(100,this.game.world.centerY);
             var flickerRepeats =  Math.floor(this.respawnDelay / 550);
             Utils.interval(this.flickerSprite.bind(this), 400, flickerRepeats);
+        }
+
+        updateComboByEnemy(){
+            if(sh.state.getCurrentState().key != "Intro") {
+                if (this.sprite.key != "smallMissileEnemy" && this.sprite.key != "hero1") {
+                    var charShields = (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["shields"];
+                    if (charShields == 0) charShields = 1;
+                    this.game.state.states.Level1.hero.updateCombo(charShields / 10);
+                    this.game.state.states.Level1.ui.scoreUp(charShields * 50);
+                }
+            }
         }
 
         flickerSprite(color:number=0xFF0000):void {
@@ -604,6 +627,13 @@ module Superhero {
             );
         }
 
+        checkRocketCollision(object: any): void {
+            if(this.shield > 0) {
+                if ((<Phaser.Sprite>object).frameName == "bullet2") {
+                    this.shield = 0;
+                }
+            }
+        }
 
         setRespawnDelay(delay: number): void {
             this.respawnDelay = delay;
@@ -628,13 +658,17 @@ module Superhero {
             this.idleCallback = listener.bind(listenerContext);
         }
 
-        playGetHitSound(assetKey: string): void {
+        playGetHitSound(): void {
             // TODO: implement different types of hit
             if(this.soundEnabled) {
-                if (assetKey != "hero1") {
+                if (this.sprite.key != "hero1") {
                     this.hitSound.play();
                 }
             }
+        }
+
+        playFireSound(){
+            this.fireSound.play();
         }
     }
 }

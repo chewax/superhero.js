@@ -34,5 +34,13 @@ module Superhero {
             }
 
         }
+        updateCombo(amount: number) : void {
+            var prevCombo = this.comboLevel;
+            this.comboLevel += amount;
+            this.game.state.states.Level1.ui.scoreUp(50);
+            if (Math.floor(this.comboLevel) > Math.floor(prevCombo)) {
+                this.game.state.states.Level1.ui.infoText.showComboText(this.comboLevel);
+            }
+        }
     }
 }
