@@ -194,7 +194,7 @@ module Collectables {
         }
 
         loadAnimation(): void {
-            this.animations.add('main', ['head1', 'head2'], 3, true, false);
+            this.animations.add('main', ['head1', 'head2', 'head3', 'head4', 'head5'], 6, true, false);
         }
 
 
