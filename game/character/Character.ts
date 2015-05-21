@@ -58,7 +58,6 @@ module Superhero {
         bulletVelocity: number = 1000;
         floor: number;
         allowGravity: boolean = false;
-        isTimeWarped: boolean = false;
 
         onHit: Phaser.Signal;
         comboLevel: number = 0;
@@ -573,11 +572,13 @@ module Superhero {
         }
 
         updateComboByEnemy(){
-            if (this.sprite.key != "smallMissileEnemy" && this.sprite.key != "hero1") {
-                var charShields = (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["shields"];
-                if (charShields == 0) charShields = 1;
-                this.game.state.states.Level1.hero.updateCombo(charShields / 10);
-                this.game.state.states.Level1.ui.scoreUp(charShields * 50);
+            if(sh.state.getCurrentState().key != "Intro") {
+                if (this.sprite.key != "smallMissileEnemy" && this.sprite.key != "hero1") {
+                    var charShields = (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["shields"];
+                    if (charShields == 0) charShields = 1;
+                    this.game.state.states.Level1.hero.updateCombo(charShields / 10);
+                    this.game.state.states.Level1.ui.scoreUp(charShields * 50);
+                }
             }
         }
 
