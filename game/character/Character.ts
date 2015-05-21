@@ -552,6 +552,9 @@ module Superhero {
             char.alive = false;
             this.deadSince = this.game.time.time;
 
+            // Update combo using enemy sields
+            this.updateComboByEnemy();
+
             if (this.bullets) this.bullets.forEachAlive(function(b){b.kill()},this);
             if (this.rockets) this.rockets.forEachAlive(function(r){r.kill()},this);
 
@@ -562,6 +565,17 @@ module Superhero {
             this.sprite.reset(100,this.game.world.centerY);
             var flickerRepeats =  Math.floor(this.respawnDelay / 550);
             Utils.interval(this.flickerSprite.bind(this), 400, flickerRepeats);
+        }
+
+        updateComboByEnemy(){
+            if (this.sprite.key != "smallMissileEnemy" && this.sprite.key != "hero1") {
+                console.log("Combo level before kill: " + this.game.state.states.Level1.hero.comboLevel);
+                var charShields = (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["shields"];
+                if (charShields == 0) charShields = 1;
+                this.game.state.states.Level1.hero.updateCombo(charShields / 10);
+                this.game.state.states.Level1.ui.scoreUp(charShields * 50);
+                console.log("Combo level AFTER kill: " +this.game.state.states.Level1.hero.comboLevel);
+            }
         }
 
         flickerSprite(color:number=0xFF0000):void {

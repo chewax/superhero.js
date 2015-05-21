@@ -201,7 +201,7 @@ module Superhero {
         }
 
         scoreUp (amount:number): void {
-            this.scoreCount += amount;
+            this.scoreCount += amount * Math.floor(this.player.comboLevel + 1);
             this.scoreText.setText(this.scoreCount.toString());
         }
 

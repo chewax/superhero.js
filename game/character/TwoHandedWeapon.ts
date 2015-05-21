@@ -164,6 +164,9 @@ module Superhero {
                 this.stopSmokeEmitter();
             }
 
+            // Update combo using enemy sields
+            this.updateComboByEnemy();
+
             this.sprite.body.checkWorldBounds = true;
             this.sprite.body.outOfBoundsKill = true;
             this.sprite.body.angularVelocity = this.game.rnd.integerInRange(-400, -300);
