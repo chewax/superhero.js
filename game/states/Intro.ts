@@ -27,7 +27,7 @@ module Superhero {
 
 
         debug: Superhero.Debug;
-        ui: Superhero.UI;
+        //ui: Superhero.UI;
         theme: Phaser.Sound;
         obstacleManager: Obstacles.ObstacleManager;
         enemyManager: Superhero.EnemyManager;
@@ -60,7 +60,7 @@ module Superhero {
             this.hero.update();
 
             this.enemyManager.update();
-            this.ui.update();
+            //this.ui.update();
             //this.debug.update();
 
             //Obstacles
@@ -110,14 +110,14 @@ module Superhero {
 
         initCollectables(): void {
             this.collectableManager = new Collectables.CollectableManager(this.game);
-            this.collectableManager.addCollectable(Collectables.CollectableType.IMPROVE_FIRE);
+            /*this.collectableManager.addCollectable(Collectables.CollectableType.IMPROVE_FIRE);
             this.collectableManager.addCollectable(Collectables.CollectableType.IMPROVE_SHIELD);
             this.collectableManager.addCollectable(Collectables.CollectableType.NUKE_BOMB);
             //this.collectableManager.addCollectable(Collectables.CollectableType.TIME_WARP);
             //this.collectableManager.addCollectable(Collectables.CollectableType.DIAMOND);
             this.collectableManager.addCollectable(Collectables.CollectableType.BOMB);
             //this.collectableManager.addCollectable(Collectables.CollectableType.IMMUNITY);
-            this.collectableManager.addCollectable(Collectables.CollectableType.LIVES);
+            this.collectableManager.addCollectable(Collectables.CollectableType.LIVES);*/
         }
 
 
@@ -159,7 +159,7 @@ module Superhero {
             this.hero._state = new Superhero.StateRun(this.game,this.hero);
             this.hero._state.enterState();
 
-            this.ui = new Superhero.UI(this.game, this.hero);
+            //this.ui = new Superhero.UI(this.game, this.hero);
         }
 
 
