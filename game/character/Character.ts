@@ -26,6 +26,7 @@ module Superhero {
         bullets: Phaser.Group;
         rockets: Phaser.Group;
         hitSound: Phaser.Sound;
+        fireSound: Phaser.Sound;
         soundEnabled: boolean = true;
 
         shadow: Phaser.Sprite;
@@ -100,14 +101,18 @@ module Superhero {
             this.warpCoolDown = this.game.time.time;
             this.sprite.play((<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["idleAnimation"])
             this.setIdleCallback(this.flyStill);
-
         }
 
         /**
          * Initialize instance audio
          */
         initAudio(): void {
-            this.hitSound = this.game.add.audio('enemyHit', 0.5, false);
+            this.hitSound = this.game.add.audio("enemyHit", 0.5, false);
+            this.fireSound = this.game.add.audio(
+                (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["fireSound"],
+                (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["fireVolume"],
+                false
+            )
         }
 
         /**
@@ -520,7 +525,7 @@ module Superhero {
             this.dieTimer = this.game.time.time;
 
             // SFX
-            this.playGetHitSound(char.key);
+            this.playGetHitSound();
 
             // Ugly workaround
             if(object) {
@@ -653,13 +658,17 @@ module Superhero {
             this.idleCallback = listener.bind(listenerContext);
         }
 
-        playGetHitSound(assetKey: string): void {
+        playGetHitSound(): void {
             // TODO: implement different types of hit
             if(this.soundEnabled) {
-                if (assetKey != "hero1") {
+                if (this.sprite.key != "hero1") {
                     this.hitSound.play();
                 }
             }
+        }
+
+        playFireSound(){
+            this.fireSound.play();
         }
     }
 }

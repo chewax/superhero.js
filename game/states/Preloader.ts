@@ -67,6 +67,12 @@ module Superhero {
             this.game.load.audio('theme', '/assets/sounds/demon_destroyer.ogg');
             this.game.load.audio('enemyHit', '/assets/sounds/enemyHit.ogg');
 
+            // Mini Boss
+            this.game.load.audio('miniBossFire', '/assets/sounds/miniBoss/blast.ogg');
+
+            // Two handed weapon enemy
+            this.game.load.audio('twoHandedFire', '/assets/sounds/twoHandedEnemy/twoHandedfire.ogg');
+
             Gamepads.GamePad.preloadAssets(this.game, '/assets');
         }
     }

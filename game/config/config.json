@@ -65,7 +65,7 @@
     "patrolTweenSpeed": 1500,
 
     "levels": {
-      "level1": ["badie", "twoHandedWeapon", "miniBoss", "tentabot01", "smallMissileEnemy"],
+      "level1": ["twoHandedWeapon", "miniBoss"],
       "Intro": ["twoHandedWeapon", "miniBoss"]
     }
   },
@@ -255,7 +255,9 @@
           "x": 0.5,
           "y": 1
         }
-      }
+      },
+      "fireSound": "twoHandedFire",
+      "fireVolume": 0.2
     },
 
     "miniBoss": {
@@ -289,7 +291,9 @@
           "x": 0.5,
           "y": 1
         }
-      }
+      },
+      "fireSound": "miniBossFire",
+      "fireVolume": 0.5
     },
     "smallMissileEnemy": {
       "mainSprite": "idle1",
