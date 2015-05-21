@@ -574,12 +574,10 @@ module Superhero {
 
         updateComboByEnemy(){
             if (this.sprite.key != "smallMissileEnemy" && this.sprite.key != "hero1") {
-                console.log("Combo level before kill: " + this.game.state.states.Level1.hero.comboLevel);
                 var charShields = (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["shields"];
                 if (charShields == 0) charShields = 1;
                 this.game.state.states.Level1.hero.updateCombo(charShields / 10);
                 this.game.state.states.Level1.ui.scoreUp(charShields * 50);
-                console.log("Combo level AFTER kill: " +this.game.state.states.Level1.hero.comboLevel);
             }
         }
 
