@@ -133,6 +133,9 @@ module Superhero {
                             (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["bullets"]["anchor"]["y"]
                         );
 
+                        // Fire sfx
+                        this.playFireSound();
+
                         bullet.reset(this.sprite.x + (this.facing * 40), this.sprite.y + (10 * i + 1));
                         bullet.angle = 180;
                         bullet.checkWorldBounds = true;

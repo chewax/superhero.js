@@ -31,9 +31,11 @@ module Superhero {
         enemies: Superhero.EnemyBase[];
         enemiesTimer: Phaser.Timer;
         multiplier: number = 0;
-        enemiesOnTheStage = 0;
         currentLevel: string;
         enemiesAlive: Superhero.EnemyBase[];
+        enemiesForThisLevel: string[];
+        enemiesAvailableToRespawn: string[];
+        enemiesAvailableToRespawnTimer: Phaser.Timer;
 
         constructor (game:Phaser.Game, levelID: string) {
             this.game = game;
@@ -154,8 +156,10 @@ module Superhero {
         }
 
         private getRandomEnemyAsset(): string {
-            var newEnemyAsset = this.game.rnd.integerInRange(0, (<Superhero.Game>this.game).conf.ENEMIES.levels[this.currentLevel].length - 1);
-            return (<Superhero.Game>this.game).conf.ENEMIES.levels[this.currentLevel][newEnemyAsset];
+            //var newEnemyAsset = this.game.rnd.integerInRange(0, this.enemiesForThisLevel.length - 1);
+            var newEnemyAsset = this.game.rnd.integerInRange(0, this.enemiesAvailableToRespawn.length - 1);
+
+            return this.enemiesAvailableToRespawn[newEnemyAsset];
         }
 
         private getFirePower(assetKey: string): number {
@@ -224,8 +228,20 @@ module Superhero {
          */
         public createLevelEnemies(): void {
             // TODO: improve performance or implement level preloader
-            (<Superhero.Game>this.game).conf.ENEMIES.levels[this.currentLevel].forEach((enemyAssetKey) => {
+            this.enemiesForThisLevel = (<Superhero.Game>this.game).conf.ENEMIES.levels[this.currentLevel];
+            // Initialize first enemy available to respawn
+            this.enemiesAvailableToRespawn = [];
+            // Create enemies available to respawn timer
+            this.enemiesAvailableToRespawnTimer = this.game.time.create(true);
+            this.enemiesForThisLevel.forEach((enemyAssetKey) => {
                 var newEnemy = this.getInitDefaultEnemyProperties(enemyAssetKey);
+                // Timer for enemies to be available
+                this.enemiesAvailableToRespawnTimer.add(
+                    (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[enemyAssetKey]["availableSince"],
+                    this.appendEnemyAvailalbeToRespawn,
+                    this,
+                    enemyAssetKey
+                )
                 // create the new enemy twice
                 for (var i = 0; i < 2; i++){
                     var spawnedNewEnemy = this.spawnEnemy(newEnemy);
@@ -247,6 +263,11 @@ module Superhero {
                     this.enemies.push(spawnedNewEnemy);
                 }
             });
+            this.enemiesAvailableToRespawnTimer.start();
+        }
+
+        appendEnemyAvailalbeToRespawn(assetKey: string): void {
+            this.enemiesAvailableToRespawn.push(assetKey);
         }
 
         private spawnEnemy(newEnemy: IEnemy): any {

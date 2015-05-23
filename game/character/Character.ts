@@ -107,7 +107,13 @@ module Superhero {
          * Initialize instance audio
          */
         initAudio(): void {
-            this.hitSound = this.game.add.audio("enemyHit", 0.5, false);
+
+            this.hitSound = this.game.add.audio(
+                (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["hitSound"],
+                (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["hitSoundVolume"],
+                false
+            );
+
             this.fireSound = this.game.add.audio(
                 (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["fireSound"],
                 (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["fireVolume"],
@@ -261,6 +267,9 @@ module Superhero {
                         (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["bullets"]["anchor"]["x"],
                         (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["bullets"]["anchor"]["y"]
                     );
+
+                    // Fire sfx
+                    this.playFireSound();
 
                     bullet.reset(this.sprite.x + (this.facing * 40), this.sprite.y + (10 * i + 1));
                     bullet.checkWorldBounds = true;
@@ -659,16 +668,15 @@ module Superhero {
         }
 
         playGetHitSound(): void {
-            // TODO: implement different types of hit
             if(this.soundEnabled) {
-                if (this.sprite.key != "hero1") {
-                    this.hitSound.play();
-                }
+                this.hitSound.play();
             }
         }
 
         playFireSound(){
-            this.fireSound.play();
+            if(this.soundEnabled) {
+                this.fireSound.play();
+            }
         }
     }
 }

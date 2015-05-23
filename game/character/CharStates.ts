@@ -204,6 +204,10 @@ module Superhero {
         }
 
         public engage(){
+            (<Superhero.SmallMissileEnemy>this.hero).sirenSound.loop = false;
+            if(!(<Superhero.SmallMissileEnemy>this.hero).missileSound.isPlaying) {
+                (<Superhero.SmallMissileEnemy>this.hero).missileSound.play();
+            }
             this.stopPatrol();
             this.hero.sprite.alpha = 1;
             this.hero.sprite.body.enable = true;
@@ -213,6 +217,9 @@ module Superhero {
         }
 
         public startWarning(): void {
+            (<Superhero.SmallMissileEnemy>this.hero).sirenSound.loop = true;
+            (<Superhero.SmallMissileEnemy>this.hero).warningSound.play();
+            (<Superhero.SmallMissileEnemy>this.hero).sirenSound.play();
             this.hero.sprite.animations.play("flystill");
             this.hero.sprite.body.enable = false;
             this.hero.sprite.alpha = 0;
