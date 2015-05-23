@@ -23,6 +23,7 @@ module Obstacles {
         obstacleEmitter: Phaser.Particles.Arcade.Emitter;
         obstacles: Obstacles.Obstacle[];
         multiplier: number = 0; //Each 20 secs + 0.1
+        particlesSound: Phaser.Sound[];
 
 
         //Use this array to specify which of the obstacles we want to spawn.
@@ -37,6 +38,10 @@ module Obstacles {
             this.obstacles = [];
             this.enabledObstacles = [];
             this.setObstaclesEmitter();
+            this.particlesSound = [];
+            for(var i = 1; i < 6; i++) {
+                this.particlesSound.push(this.game.add.audio("obstacle" + i, 1, false));
+            }
         }
 
         update (): void {
@@ -119,11 +124,19 @@ module Obstacles {
             this.obstacleEmitter.x = pointer.x;
             this.obstacleEmitter.y = pointer.y;
 
+            // Particles Sfx
+            this.playPartitceSound();
+
             //  The first parameter sets the effect to "explode" which means all particles are emitted at once
             //  The second gives each particle a lifespan
             //  The third is ignored when using burst/explode mode
             //  The final parameter  is how many particles will be emitted in this single burst
             this.obstacleEmitter.start(true, 2000, null, 4);
+        }
+
+        playPartitceSound() {
+            var particleSoundVal = this.game.rnd.integerInRange(0,4);
+            this.particlesSound[particleSoundVal].play();
         }
     }
 }

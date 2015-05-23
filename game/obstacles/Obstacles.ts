@@ -27,7 +27,6 @@ module Obstacles {
 		collidesWith(object:any):void{ }
         diesWith(object:any, callback?: Function, listenerContext?: any){}
         speedUp(baseSpeed:number, multiplier:number): void {}
-        overlapsWith(object: any, callback?: Function, listenerContext?: any){}
         killAll():void {}
 	}
 	// TODO: maybe we can have an specific ts file for each obstacle type

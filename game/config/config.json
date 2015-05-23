@@ -34,7 +34,7 @@
 
   "playerDieOutofBounds": false,
   
-  "isMusicEnabled": false,
+  "isMusicEnabled": true,
 
 
   "enemies": {
@@ -65,7 +65,7 @@
     "patrolTweenSpeed": 1500,
 
     "levels": {
-      "level1": ["twoHandedWeapon", "miniBoss"],
+      "level1": ["badie", "smallMissileEnemy", "twoHandedWeapon", "miniBoss", "tentabot01"],
       "Intro": ["twoHandedWeapon", "miniBoss"]
     }
   },
@@ -105,8 +105,11 @@
           "x": 0.5,
           "y": 1
         }
-      }
-
+      },
+      "fireSound": "heroFire",
+      "fireVolume": 0.5,
+      "hitSound": "enemyHit",
+      "hitSoundVolume": 1
     },
     "herowalking":{
       "mainSprite": "walk1",
@@ -140,8 +143,11 @@
           "x": 0.5,
           "y": 1
         }
-      }
-
+      },
+      "hitSound": "enemyHit",
+      "hitSoundVolume": 1,
+      "fireSound": "heroFire",
+      "fireVolume": 0.5
     },
 
 
@@ -179,7 +185,12 @@
           "x": 0.5,
           "y": 1
         }
-      }
+      },
+      "hitSound": "enemyHit",
+      "hitSoundVolume": 1,
+      "fireSound": "badieFire",
+      "fireVolume": 0.5,
+      "availableSince": 1
     },
 
     "tentabot01": {
@@ -219,7 +230,10 @@
         {"x": -68, "y": 25},
         {"x": -29, "y": 140},
         {"x": -98, "y": 100}
-      ]
+      ],
+      "hitSound": "enemyHit",
+      "hitSoundVolume": 1,
+      "availableSince": 120000
     },
 
     "twoHandedWeapon": {
@@ -257,7 +271,10 @@
         }
       },
       "fireSound": "twoHandedFire",
-      "fireVolume": 0.2
+      "fireVolume": 1,
+      "hitSound": "enemyHit",
+      "hitSoundVolume": 1,
+      "availableSince": 90000
     },
 
     "miniBoss": {
@@ -293,7 +310,10 @@
         }
       },
       "fireSound": "miniBossFire",
-      "fireVolume": 0.5
+      "fireVolume": 0.5,
+      "hitSound": "enemyHit",
+      "hitSoundVolume": 1,
+      "availableSince": 190000
     },
     "smallMissileEnemy": {
       "mainSprite": "idle1",
@@ -325,7 +345,12 @@
           "x": 0.5,
           "y": 1
         }
-      }
+      },
+      "fireSound": "smallMissileFire",
+      "fireVolume": 0.5,
+      "hitSound": "enemyHit",
+      "hitSoundVolume": 1,
+      "availableSince": 45000
     }
   }
 }

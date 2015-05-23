@@ -35,6 +35,8 @@ module Superhero {
             this.game.load.atlasJSONHash('steel', '/assets/steel.png', '/assets/steel.json');
             this.game.load.atlasJSONHash('shields', '/assets/shields.png', '/assets/shields.json');
             this.game.load.atlasJSONHash('pupanim', '/assets/pupanim.png', '/assets/pupanim.json');
+            // Intro scene
+            this.game.load.atlasJSONHash('introScene', '/assets/introScene.png', '/assets/introScene.json');
 
             //Single Images
             this.game.load.image('fuelbar', '/assets/fuel.png');
@@ -48,10 +50,11 @@ module Superhero {
             this.game.load.image('menuBack', '/assets/menuBack.png');
             this.game.load.image('mainMenu', '/assets/mainMenu.png');
             this.game.load.image('menuBackground', '/assets/menuBackground.png');
+
             // Smoke
             this.game.load.image('smoke', 'assets/smoke-puff.png');
 
-            // Enemies
+            /** Enemies **/
 
             // Tentacle bot
             this.game.load.atlasJSONHash('tentabot01', 'assets/tentacleBot.png', '/assets/tentacleBot.json');
@@ -63,15 +66,33 @@ module Superhero {
             // SmallMissileEnemy
             this.game.load.atlasJSONHash('smallMissileEnemy', 'assets/smallMissileEnemy.png', '/assets/smallMissileEnemy.json');
 
-            //Audio
+            /** Audio **/
             this.game.load.audio('theme', '/assets/sounds/demon_destroyer.ogg');
             this.game.load.audio('enemyHit', '/assets/sounds/enemyHit.ogg');
+
+            // Hero
+            this.game.load.audio('heroFire', '/assets/sounds/hero/heroFire.ogg');
 
             // Mini Boss
             this.game.load.audio('miniBossFire', '/assets/sounds/miniBoss/blast.ogg');
 
             // Two handed weapon enemy
             this.game.load.audio('twoHandedFire', '/assets/sounds/twoHandedEnemy/twoHandedfire.ogg');
+
+            // Badie
+            this.game.load.audio('badieFire', '/assets/sounds/badie/badieFire.ogg');
+
+            // Small missile enemy
+            this.game.load.audio('smallMissileWarningSound', '/assets/sounds/smallMissileEnemy/warning.ogg');
+            this.game.load.audio('smallMissileSiren', '/assets/sounds/smallMissileEnemy/siren.ogg');
+            this.game.load.audio('smallMissileMissile', '/assets/sounds/smallMissileEnemy/missile.ogg');
+
+            // Particles
+            this.game.load.audio("obstacle1", '/assets/sounds/obstacles/obetacle1.ogg');
+            this.game.load.audio("obstacle2", '/assets/sounds/obstacles/obetacle2.ogg');
+            this.game.load.audio("obstacle3", '/assets/sounds/obstacles/obetacle3.ogg');
+            this.game.load.audio("obstacle4", '/assets/sounds/obstacles/obetacle4.ogg');
+            this.game.load.audio("obstacle5", '/assets/sounds/obstacles/obetacle5.ogg');
 
             Gamepads.GamePad.preloadAssets(this.game, '/assets');
         }

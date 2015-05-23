@@ -33,6 +33,9 @@ module Superhero {
         enemyManager: Superhero.EnemyManager;
         collectableManager: Collectables.CollectableManager;
         levelID: string = "Intro";
+        enemyFace: Phaser.Sprite;
+        heroFace: Phaser.Sprite;
+        boots: Phaser.Sprite;
 
         preload () {
 
@@ -48,6 +51,7 @@ module Superhero {
             this.setActors();
             //this.startMusic();
             this.setEnemyManager();
+            this.setIntroScene();
 
             this.debug = new Debug(this.game);
         }
@@ -95,6 +99,7 @@ module Superhero {
             this.paralax5.body.immovable = true;
             this.paralax5.physicsType =  Phaser.SPRITE;
 
+            //this.game.world.bringToTop(this.heroFace);
             //Setup Obstacle
             this.obstacleManager = new Obstacles.ObstacleManager(this.game, 800);
             //this.obstacleManager.addObstacleToPool(Obstacles.ObstacleType.WALL);
@@ -160,6 +165,27 @@ module Superhero {
             //this.ui = new Superhero.UI(this.game, this.hero);
         }
 
+        setIntroScene() {
+            // Set up scene
+            // Hero
+            this.heroFace = this.game.add.sprite(100, 300, "introScene", "hero1");
+            this.heroFace.anchor.setTo(0.5, 0);
+            this.heroFace.scale.setTo(0.5);
+            this.heroFace.animations.add("introScene",["hero1", "hero2", "hero3", "hero4", "hero3", "hero2"], 60, true, false);
+            this.heroFace.animations.play("introScene", 10, true, false);
+            // Enemy
+            this.enemyFace = this.game.add.sprite(this.game.world.width - 270, 70, "introScene", "enemy1");
+            this.enemyFace.anchor.setTo(0.5, 0);
+            this.enemyFace.scale.setTo(0.5);
+            this.enemyFace.animations.add("introScene",["enemy1", "enemy2", "enemy3", "enemy4", "enemy3", "enemy2"], 60, true, false);
+            this.enemyFace.animations.play("introScene", 4, true, false);
+            // Boots
+            this.boots= this.game.add.sprite(this.game.world.width - 350, this.game.world.height - 85, "introScene", "boots1");
+            this.boots.anchor.setTo(0.5, 0);
+            this.boots.scale.setTo(0.7);
+            this.boots.animations.add("introScene",["boots1", "boots2", "boots3", "boots2"], 60, true, false);
+            this.boots.animations.play("introScene", 10, true, false);
+        }
 
         startMusic () :void{
             this.theme = this.game.add.audio('theme', 1, true);
@@ -218,7 +244,6 @@ module Superhero {
 
             //one out of 20 must drop something
             this.collectableManager.spawnCollectable(wall.position.x, wall.position.y);
-
             this.obstacleManager.particleBurst(wall);
             //this.ui.scoreUp(50);
         }
