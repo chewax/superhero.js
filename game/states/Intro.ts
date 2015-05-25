@@ -36,7 +36,10 @@ module Superhero {
         enemyFace: Phaser.Sprite;
         heroFace: Phaser.Sprite;
         boots: Phaser.Sprite;
-
+        heroText: Phaser.Text;
+        enemyText: Phaser.Text;
+        heroTextBoxGraphic: Phaser.Graphics;
+        enemyTextBoxGraphic: Phaser.Graphics;
         preload () {
 
         }
@@ -165,14 +168,44 @@ module Superhero {
             //this.ui = new Superhero.UI(this.game, this.hero);
         }
 
-        setIntroScene() {
+        setIntroScene(): void {
+            setTimeout(function(){
+                this.spawnMiniBoss();
+            }.bind(this),8000);
+        }
+
+        spawnMiniBoss(): void {
+            console.log("Called spawn Mini Boss")
+            if(this.enemyManager.totalEnemiesAlive() < 2) {
+                this.enemyManager.spawnCustomEnemy("miniBoss");
+                this.paralax1.stopScroll();
+                this.paralax2.stopScroll();
+                this.paralax4.stopScroll();
+                this.paralax5.stopScroll();
+                this.hero.sprite.animations.paused = true;
+                setTimeout(function(){
+                    this.displayTextScene1();
+                }.bind(this),1000);
+            }
+        }
+
+        spawnTwoHandedEnemy(): void {
+            if(this.enemyManager.totalEnemiesAlive() < 2) {
+                this.enemyManager.spawnCustomEnemy("twoHandedWeapon");
+            }
+        }
+
+        displayTextScene1() {
             // Set up scene
-            // Hero
-            this.heroFace = this.game.add.sprite(100, 300, "introScene", "hero1");
-            this.heroFace.anchor.setTo(0.5, 0);
-            this.heroFace.scale.setTo(0.5);
-            this.heroFace.animations.add("introScene",["hero1", "hero2", "hero3", "hero4", "hero3", "hero2"], 60, true, false);
-            this.heroFace.animations.play("introScene", 10, true, false);
+
+            // Text boxes
+            // Enemy
+            this.enemyTextBoxGraphic = this.game.add.graphics(0, 0);
+            this.enemyTextBoxGraphic.lineStyle(2, 0x0000FF, 1);
+            this.enemyTextBoxGraphic.beginFill(0x000000, 0.8);
+            this.enemyTextBoxGraphic.drawRect(100, 10, this.game.world.width - 300, 200);
+            this.enemyTextBoxGraphic.endFill();
+
             // Enemy
             this.enemyFace = this.game.add.sprite(this.game.world.width - 270, 70, "introScene", "enemy1");
             this.enemyFace.anchor.setTo(0.5, 0);
@@ -180,11 +213,84 @@ module Superhero {
             this.enemyFace.animations.add("introScene",["enemy1", "enemy2", "enemy3", "enemy4", "enemy3", "enemy2"], 60, true, false);
             this.enemyFace.animations.play("introScene", 4, true, false);
             // Boots
-            this.boots= this.game.add.sprite(this.game.world.width - 350, this.game.world.height - 85, "introScene", "boots1");
-            this.boots.anchor.setTo(0.5, 0);
-            this.boots.scale.setTo(0.7);
-            this.boots.animations.add("introScene",["boots1", "boots2", "boots3", "boots2"], 60, true, false);
-            this.boots.animations.play("introScene", 10, true, false);
+            //this.boots= this.game.add.sprite(this.game.world.width - 350, this.game.world.height - 85, "introScene", "boots1");
+            //this.boots.anchor.setTo(0.5, 0);
+            //this.boots.scale.setTo(0.7);
+            //this.boots.animations.add("introScene",["boots1", "boots2", "boots3", "boots2"], 60, true, false);
+            //this.boots.animations.play("introScene", 10, true, false);
+
+            var style = { font: "30px saranaigamebold", fill: "#ffffff", align: 'left', wordWrap: true, wordWrapWidth: 650 };
+            this.enemyText = this.game.add.text(410, 100, "You shall not pass :P", style);
+
+            setTimeout(function(){
+                this.displayTextScene2();
+            }.bind(this),5000);
+        }
+
+
+        displayTextScene2(): void {
+            // Hero
+            this.heroTextBoxGraphic = this.game.add.graphics(0, 0);
+            this.heroTextBoxGraphic.lineStyle(2, 0x0000FF, 1);
+            this.heroTextBoxGraphic.beginFill(0x000000, 0.8);
+            this.heroTextBoxGraphic.drawRect(40, 250, this.game.world.width - 300, 200);
+            this.heroTextBoxGraphic.endFill();
+            // Face
+            this.heroFace = this.game.add.sprite(100, 300, "introScene", "hero1");
+            this.heroFace.anchor.setTo(0.5, 0);
+            this.heroFace.scale.setTo(0.5);
+            this.heroFace.animations.add("introScene",["hero1", "hero2", "hero3", "hero4", "hero3", "hero2"], 60, true, false);
+            this.heroFace.animations.play("introScene", 10, true, false);
+            var style = { font: "30px saranaigamebold", fill: "#ffffff", align: 'left', wordWrap: true, wordWrapWidth: 650 };
+            this.enemyText.setText("");
+            this.heroText = this.game.add.text(220, 330, "Watch and see :O", style);
+            setTimeout(function(){
+                this.displayTextScene3();
+            }.bind(this),5000);
+        }
+
+        displayTextScene3(): void {
+            this.heroText.setText("");
+            this.enemyText.x = 220;
+            this.enemyText.setText("Why don't you talk with my friend here...");
+            setTimeout(function(){
+                this.displayTextScene4();
+            }.bind(this),5000);
+        }
+
+        displayTextScene4(): void {
+            this.heroText.setText("");
+            this.enemyText.setText("I'm pretty sure that you'll solve the issue...Bye");
+            this.spawnTwoHandedEnemy();
+            setTimeout(function(){
+                this.displayTextScene5();
+            }.bind(this),5000);
+        }
+
+        displayTextScene5(): void {
+            this.enemyManager.enemiesAlive[0].shield = 0;
+            this.enemyManager.enemiesAlive[0].die(this.enemyManager.enemiesAlive[0].sprite);
+            //this.enemyManager.enemiesAlive[0].sprite.kill();
+            this.enemyText.destroy();
+            this.heroText.setText("So, you seem to be a nice guy...");
+            this.enemyTextBoxGraphic.destroy();
+            this.enemyFace.kill();
+            setTimeout(function(){
+                this.displayTextScene6();
+            }.bind(this),5000);
+        }
+
+        displayTextScene6(): void {
+            this.heroText.destroy();
+            this.heroTextBoxGraphic.destroy();
+            this.heroFace.kill();
+            this.hero.sprite.animations.paused = false;
+            this.enemyManager.enemiesAlive[0].fireEnabled = true;
+            (<Superhero.StateEnemyHostile>this.enemyManager.enemiesAlive[0]._state).patrol(spawnEnemyPosition.DOWN);
+            this.paralax1.autoScroll(-10,0);
+            this.paralax2.autoScroll(-30,0);
+            this.paralax4.autoScroll(-200,0);
+            this.paralax5.autoScroll(-200,0);
         }
 
         startMusic () :void{
