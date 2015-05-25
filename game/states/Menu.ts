@@ -46,6 +46,7 @@ module Superhero {
 
             this.hero.animations.play('fly');
             this.game.input.onDown.add(this.parseMenu, this);
+            this.game.physics.arcade.enable(this.hero);
 
 
             this.menu = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'mainMenu');
@@ -77,6 +78,7 @@ module Superhero {
                     case 1:
                         this.startSound.play();
                         this.theme.fadeOut(2000);
+                        this.hero.body.acceleration.x = 600;
 
                         setTimeout(function(){
                             this.theme.destroy();
