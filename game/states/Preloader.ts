@@ -7,11 +7,16 @@ module Superhero {
     export class Preloader extends Phaser.State {
 
         preloadBar: Phaser.Sprite;
+        loadHolder: Phaser.Sprite;
 
         preload () {
 
-            this.preloadBar = this.add.sprite(this.world.centerX,this.world.centerY,'loadbar');
-            this.preloadBar.anchor.setTo(0.5);
+            this.loadHolder = this.add.sprite(this.world.centerX,this.world.centerY,'loadHolder');
+            var offsetX = (this.loadHolder.width/2) - 33;
+            var offsetY = 23;
+            this.preloadBar = this.add.sprite(this.world.centerX - offsetX,this.world.centerY + offsetY,'loadingBar');
+            this.preloadBar.anchor.setTo(0,0.5);
+            this.loadHolder.anchor.setTo(0.5);
 
             this.load.setPreloadSprite(this.preloadBar);
             this.loadAssets();
@@ -66,6 +71,29 @@ module Superhero {
             //Audio
             this.game.load.audio('theme', '/assets/sounds/demon_destroyer.ogg');
             this.game.load.audio('enemyHit', '/assets/sounds/enemyHit.ogg');
+
+            // Hero
+            this.game.load.audio('heroFire', '/assets/sounds/hero/fire.ogg');
+            this.game.load.audio('heroFireWarp', '/assets/sounds/hero/fireWarp.ogg');
+            this.game.load.audio('heroWarpEnd', '/assets/sounds/hero/warpEnd.ogg');
+            this.game.load.audio('heroFireRocket', '/assets/sounds/hero/fireRocket.ogg');
+            this.game.load.audio('heroFireNuke', '/assets/sounds/hero/fireNuke.ogg');
+            this.game.load.audio('heroWarpMeanwhile','/assets/sounds/hero/duringWarp.ogg');
+            this.game.load.audio('heroGetHit','/assets/sounds/hero/getHit.ogg');
+
+
+            //PowerUps
+            this.game.load.audio('shieldCollect', '/assets/sounds/pups/shield.ogg');
+            this.game.load.audio('pup1', '/assets/sounds/pups/extraLife.ogg');
+            this.game.load.audio('pup2', '/assets/sounds/pups/timeWarp.ogg');
+            this.game.load.audio('pup3', '/assets/sounds/pups/rocket.ogg');
+            this.game.load.audio('pup4', '/assets/sounds/pups/nuke.ogg');
+            this.game.load.audio('pup5', '/assets/sounds/pups/diamond.ogg');
+            this.game.load.audio('pup6', '/assets/sounds/pups/goodJob.ogg');
+            this.game.load.audio('pup7', '/assets/sounds/pups/congratulations.ogg');
+            this.game.load.audio('pup8', '/assets/sounds/pups/greatWork.ogg');
+            this.game.load.audio('pup9', '/assets/sounds/pups/alright.ogg');
+
 
             // Mini Boss
             this.game.load.audio('miniBossFire', '/assets/sounds/miniBoss/blast.ogg');

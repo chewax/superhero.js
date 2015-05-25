@@ -34,7 +34,7 @@
 
   "playerDieOutofBounds": false,
   
-  "isMusicEnabled": false,
+  "isMusicEnabled": true,
 
 
   "enemies": {
@@ -65,7 +65,7 @@
     "patrolTweenSpeed": 1500,
 
     "levels": {
-      "level1": ["twoHandedWeapon", "miniBoss"],
+      "level1": ["smallMissileEnemy"],
       "Intro": ["twoHandedWeapon", "miniBoss"]
     }
   },
@@ -105,7 +105,9 @@
           "x": 0.5,
           "y": 1
         }
-      }
+      },
+      "fireSound": "heroFire",
+      "fireVolume": 0.1
 
     },
     "herowalking":{

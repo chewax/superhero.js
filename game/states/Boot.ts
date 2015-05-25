@@ -5,7 +5,8 @@ module Superhero {
 
     export class Boot extends Phaser.State {
         preload () {
-            this.load.image('loadbar','../../assets/preloader-bar.png');
+            this.load.image('loadHolder','../../assets/loading.png');
+            this.load.image('loadingBar','../../assets/loadingBar.png');
         }
         create () {
 
