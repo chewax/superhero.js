@@ -81,7 +81,7 @@ module Superhero {
                 localStorage.setItem('superhero.conf', JSON.stringify((<Superhero.Game> this.game).conf));
             } else {
                 (<Superhero.Game> this.game).conf.ISMUSICENABLED = true;
-                this.theme.play()
+                this.theme.play();
                 this.musicOnOff.frame = 0;
                 localStorage.setItem('superhero.conf', JSON.stringify((<Superhero.Game> this.game).conf));
             }
@@ -104,7 +104,7 @@ module Superhero {
                 var choice = Math.floor((y/4)/23) + 1;
                 switch (choice){
                     case 1:
-                        this.startSound.play();
+                        if((<Superhero.Game> this.game).conf.ISMUSICENABLED) this.startSound.play();
                         this.theme.fadeOut(2000);
                         this.hero.body.acceleration.x = 600;
 
