@@ -31,16 +31,10 @@ module Collectables {
         loadAnimation(): void {}
 
         loadSound(): void{
-            this.soundList = ['pup1', 'pup2', 'pup3' ,'pup4' ,'pup5' ,'pup6' ,'pup7' ,'pup8'];
-            var rnd = this.game.rnd.integerInRange(0, this.soundList.length-1);
-            this.collectSound = this.game.add.sound(this.soundList[rnd], 0.5);
         }
 
         playSound(): void {
             this.collectSound.play();
-
-            // After play, reset the sound
-            this.loadSound();
         }
 
         playAnimation(): void {
@@ -100,6 +94,10 @@ module Collectables {
             this.animations.add('main', ['bullet1', 'bullet2'], 3, true, false);
         }
 
+        loadSound(): void{
+            this.collectSound = this.game.add.audio('bulletCollect');
+        }
+
     }
 
 
@@ -131,7 +129,6 @@ module Collectables {
             this.collectSound.play();
         }
 
-
     }
 
     export class NukeBomb extends BaseCollectable{
@@ -151,6 +148,9 @@ module Collectables {
         }
 
 
+        loadSound(): void{
+            this.collectSound = this.game.add.audio('nukeCollect');
+        }
     }
 
     export class TimeWarp extends BaseCollectable{
@@ -167,6 +167,10 @@ module Collectables {
 
         loadAnimation(): void {
             this.animations.add('main', ['clock1', 'clock2', 'clock3', 'clock4', 'clock5', 'clock6'], 5, true, false);
+        }
+
+        loadSound(): void{
+            this.collectSound = this.game.add.audio('timeWarpCollect');
         }
 
     }
@@ -221,6 +225,10 @@ module Collectables {
         }
 
 
+        loadSound(): void{
+            this.collectSound = this.game.add.audio('rocketCollect');
+        }
+
 
     }
 
@@ -238,6 +246,10 @@ module Collectables {
 
         loadAnimation(): void {
             this.animations.add('main', ['head1', 'head2', 'head3', 'head4', 'head5'], 6, true, false);
+        }
+
+        loadSound(): void{
+            this.collectSound = this.game.add.audio('extraLifeCollect');
         }
 
     }
