@@ -107,7 +107,7 @@
         }
       },
       "fireSound": "heroFire",
-      "fireVolume": 0.5,
+      "fireVolume": 0.1,
       "hitSound": "enemyHit",
       "hitSoundVolume": 1
     },

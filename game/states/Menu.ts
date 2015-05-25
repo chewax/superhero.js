@@ -12,8 +12,11 @@ module Superhero {
         paralax2: Phaser.TileSprite;
         background: Phaser.TileSprite;
         hero: Phaser.Sprite;
+        theme: Phaser.Sound;
+        startSound: Phaser.Sound;
 
         preload () {
+
 
         }
 
@@ -43,10 +46,16 @@ module Superhero {
 
             this.hero.animations.play('fly');
             this.game.input.onDown.add(this.parseMenu, this);
+            this.game.physics.arcade.enable(this.hero);
 
 
             this.menu = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'mainMenu');
             this.menu.anchor.setTo(0.5, 0.5);
+
+            this.theme = this.game.add.audio('menuTheme', 0.5);
+            this.theme.loop = true;
+            this.startSound = this.game.add.audio('menuStart',1);
+            this.theme.play();
 
         }
 
@@ -67,10 +76,19 @@ module Superhero {
                 var choice = Math.floor((y/4)/23) + 1;
                 switch (choice){
                     case 1:
-                        this.game.state.start('Level1', true, false);
+                        this.startSound.play();
+                        this.theme.fadeOut(2000);
+                        this.hero.body.acceleration.x = 600;
+
+                        setTimeout(function(){
+                            this.theme.destroy();
+                            this.game.state.start('Level1', true, false);
+                        }.bind(this), 2000);
+
                         break;
 
                     case 2:
+                        this.theme.destroy();
                         this.game.state.start('Intro', true, false);
                         break;
 

@@ -32,7 +32,7 @@ module Superhero {
         shadow: Phaser.Sprite;
         fuel: number;
         maxFuel: number;
-        shootDelay: number = 1000;
+        shootDelay: number = 200;
         allowFingerMargin: boolean = true;
 
         // Power Ups
@@ -280,6 +280,7 @@ module Superhero {
                     bullet.body.allowGravity = false;
                     bullet.scale.setTo(0.4);
                     //bullet.scale.setTo((<Superhero.Game> this.game).conf.WORLD.sprite_scaling);
+                    this.playFireSound();
                 }
 
                 //Reset the timer
@@ -294,90 +295,6 @@ module Superhero {
         }
 
 
-        fireWarp (): void {
-
-            if (this.timeWarps <= 0 || !this.okToShoot()) return;
-
-            //console.log(this.sprite.body.drag.multiply(this));
-            //var slowTween = this.game.add.tween(this.game.time):
-            this.game.add.tween(this.game.time).to( {slowMotion:5.0} , 300, Phaser.Easing.Linear.None, true , 0,  0 , false).onComplete.add(
-                function(){
-                    this.sprite.body.drag.x *= 3*this.game.time.slowMotion;
-                    this.sprite.body.drag.y *= 3*this.game.time.slowMotion;
-                },this);
-
-            setTimeout(function(){
-                this.sprite.body.drag.x /= 3*this.game.time.slowMotion;
-                this.sprite.body.drag.y /= 3*this.game.time.slowMotion;
-                this.game.add.tween(this.game.time).to( {slowMotion:1.0} , 1000, Phaser.Easing.Linear.None, true , 0,  0 , false);
-
-            }.bind(this),8000);
-
-        }
-
-        /**
-         * Wraps the fire logic. Check if there is a "dead" bullet. If so, reset
-         * its position and sendit fo fly
-         */
-        fireRocket (): void {
-
-            if (this.bombs <= 0 || !this.canShoot()) return;
-
-            this.sprite.animations.play('shoot');
-
-            //Get the first bullet that has gone offscreen
-            var rocket = this.rockets.getFirstDead();
-            //If there is none (all are still flying) create new one.
-            if (!rocket) rocket = this.rockets.create(-10, -10, 'bullets', 'bullet2');
-
-            rocket.anchor.setTo(0.5, 1);
-            rocket.reset(this.sprite.x + (this.facing * 40), this.sprite.y + this.sprite.height/2);
-            rocket.checkWorldBounds = true;
-            rocket.outOfBoundsKill = true;
-            rocket.body.velocity.x = this.bulletVelocity;
-            rocket.body.allowGravity = false;
-            rocket.scale.setTo(0.6);
-            //rocket.scale.setTo((<Superhero.Game> this.game).conf.WORLD.sprite_scaling);
-
-            //Reset the timer
-            this.bulletTimer = this.game.time.time;
-            this.bombs -= 1;
-        }
-
-
-
-        /**
-         * Wraps the fire logic. Check if there is a "dead" bullet. If so, reset
-         * its position and sendit fo fly
-         */
-        fireNuke (): void {
-
-            if (this.nukes <= 0 || !this.okToShoot()) return;
-            //var coolDown = this.game.time.elapsedSecondsSince(this.nukeCoolDown);
-            //if (coolDown < 30) return;
-            //this.nukeCoolDown = this.game.time.time;
-
-            var graphics = this.game.add.graphics(0,0);
-
-            graphics.lineStyle(0);
-            graphics.beginFill(0xFFFFFF, 1);
-            var rect = graphics.drawRect(0,0,this.game.width, this.game.height);
-
-            var nukeTween = this.game.add.tween(rect);
-            nukeTween.to({alpha:0},1500);
-
-            nukeTween.onComplete.add(function(){
-                graphics.destroy();
-            },this);
-
-            nukeTween.start();
-            this.game.state.states.Level1.obstacleManager.killAll();
-            this.game.state.states.Level1.enemyManager.killAll();
-
-            //Reset the timer
-            this.bulletTimer = this.game.time.time;
-            this.nukes -= 1;
-        }
 
         /**
          * Adds the animations to the character
@@ -420,15 +337,6 @@ module Superhero {
             this.rockets.createMultiple(4,'bullets', 'bullet2');
         }
 
-        renderShield():void{
-            var shields = ['shield1','shield2','shield3'];
-            var shield = this.game.add.sprite(20,95,'shields',shields[this.shield-1]);
-            this.game.physics.arcade.enable(shield);
-            shield.scale.setTo(2.5,2.5);
-            shield.anchor.setTo(0.5,0.5);
-            shield.rotation += Phaser.Math.degToRad(90);
-            this.sprite.addChild(shield);
-        }
         /**
          * If it is flying, then decrease the fuel, if it is on the ground, slowly increase the fuel
          */
@@ -526,17 +434,18 @@ module Superhero {
 
             // TODO: implement lives and different animations for enemies
             if((<Superhero.Game> this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["isImmortal"]){
-                return;
+                return false;
             }
 
             var elapsedTime = this.game.time.elapsedSince(this.dieTimer);
-            if (elapsedTime < this.respawnDelay) return;
+            if (elapsedTime < this.respawnDelay) return false;
             this.dieTimer = this.game.time.time;
 
             // SFX
             this.playGetHitSound();
 
             // Ugly workaround
+            // lol!
             if(object) {
                 if ((<Phaser.Sprite>object).frameName != "blueBeam") {
                     object.kill();
@@ -556,14 +465,16 @@ module Superhero {
                 this.flickerSprite(0xFF0000);
                 this.unShield();
                 this.onHit.dispatch();
-                return;
+                window.navigator.vibrate(100);
+                return false;
             }
 
             if (this.lives > 1) {
                 this.lives -= 1;
                 this.onHit.dispatch();
                 this.dieReset();
-                return
+                window.navigator.vibrate([300,300,300,300]);
+                return false;
             }
 
             this.lives -= 1;
@@ -577,6 +488,7 @@ module Superhero {
             if (this.rockets) this.rockets.forEachAlive(function(r){r.kill()},this);
 
             char.animations.play('takehit',4,false,true);
+            return true;
         }
 
         dieReset():void {
@@ -654,6 +566,16 @@ module Superhero {
                 return true;
             }
             return false;
+        }
+
+        renderShield():void{
+            var shields = ['shield1','shield2','shield3'];
+            var shield = this.game.add.sprite(20,95,'shields',shields[this.shield-1]);
+            this.game.physics.arcade.enable(shield);
+            shield.scale.setTo(2.5,2.5);
+            shield.anchor.setTo(0.5,0.5);
+            shield.rotation += Phaser.Math.degToRad(90);
+            this.sprite.addChild(shield);
         }
 
         /**

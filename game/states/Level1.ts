@@ -143,7 +143,8 @@ module Superhero {
 
         startMusic () :void{
             if((<Superhero.Game> this.game).conf.ISMUSICENABLED) {
-                this.theme = this.game.add.audio('theme', 1, true);
+                if (this.theme) this.theme.destroy();
+                this.theme = this.game.add.audio('theme', 0.2, true);
                 this.theme.play();
             }
         }

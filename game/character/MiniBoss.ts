@@ -108,7 +108,7 @@ module Superhero {
                 this.sprite.body.velocity.x = 80;
                 if (this.bullets) this.bullets.forEachAlive(function(b){b.kill()},this);
             }
-            super.die(char, object);
+            return super.die(char, object);
         }
     }
 }
