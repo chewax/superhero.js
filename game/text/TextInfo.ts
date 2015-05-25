@@ -121,8 +121,13 @@ module TextInfo {
                 }
             }
 
+            var soundChoices = ['goodJob', 'congratulations', 'greatWork'];
+            var sound = this.game.add.audio(soundChoices[this.game.rnd.integerInRange(0,2)],0.8,false);
+            sound.play();
+
+
             var txt = this.game.add.text(this.game.world.centerX, this.game.world.centerY, frase, style);
-            var newx = txt.x - this.xDirection * (200 * this.game.rnd.integerInRange(1,2));;
+            var newx = txt.x - this.xDirection * (200 * this.game.rnd.integerInRange(1,2));
             var newy = txt.y - 100;
 
 

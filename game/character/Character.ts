@@ -498,6 +498,7 @@ module Superhero {
             this.sprite.reset(100,this.game.world.centerY);
             var flickerRepeats =  Math.floor(this.respawnDelay / 550);
             Utils.interval(this.flickerSprite.bind(this), 400, flickerRepeats);
+            this.firePower = 1;
         }
 
         updateComboByEnemy(){
