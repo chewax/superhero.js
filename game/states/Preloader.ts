@@ -108,6 +108,9 @@ module Superhero {
             // Two handed weapon enemy
             this.game.load.audio('twoHandedFire', '/assets/sounds/twoHandedEnemy/twoHandedfire.ogg');
 
+            // Tentacle bot
+            this.game.load.audio('tentaBotFire', '/assets/sounds/tentacleBot/fire.ogg');
+
             // Badie
             this.game.load.audio('badieFire', '/assets/sounds/badie/badieFire.ogg');
 

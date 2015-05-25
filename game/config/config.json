@@ -190,7 +190,7 @@
       "hitSoundVolume": 1,
       "fireSound": "badieFire",
       "fireVolume": 0.5,
-      "availableSince": 1
+      "availableSince": 120000
     },
 
     "tentabot01": {
@@ -231,9 +231,11 @@
         {"x": -29, "y": 140},
         {"x": -98, "y": 100}
       ],
+      "fireSound": "tentaBotFire",
+      "fireVolume": 1,
       "hitSound": "enemyHit",
       "hitSoundVolume": 1,
-      "availableSince": 120000
+      "availableSince": 1
     },
 
     "twoHandedWeapon": {
