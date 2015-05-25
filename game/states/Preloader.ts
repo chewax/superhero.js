@@ -24,7 +24,6 @@ module Superhero {
         }
 
         create () {
-
             this.game.state.start('Menu', true, false);
         }
 
@@ -72,6 +71,9 @@ module Superhero {
             this.game.load.audio('theme', '/assets/sounds/demon_destroyer.ogg');
             this.game.load.audio('enemyHit', '/assets/sounds/enemyHit.ogg');
 
+            // Menu
+            this.game.load.audio('menuTheme', '/assets/sounds/menu.ogg');
+
             // Hero
             this.game.load.audio('heroFire', '/assets/sounds/hero/fire.ogg');
             this.game.load.audio('heroFireWarp', '/assets/sounds/hero/fireWarp.ogg');
@@ -92,7 +94,8 @@ module Superhero {
             this.game.load.audio('pup6', '/assets/sounds/pups/goodJob.ogg');
             this.game.load.audio('pup7', '/assets/sounds/pups/congratulations.ogg');
             this.game.load.audio('pup8', '/assets/sounds/pups/greatWork.ogg');
-            this.game.load.audio('pup9', '/assets/sounds/pups/alright.ogg');
+
+            this.game.load.audio('menuStart', '/assets/sounds/pups/alright.ogg');
 
 
             // Mini Boss

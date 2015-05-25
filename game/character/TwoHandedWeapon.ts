@@ -140,7 +140,7 @@ module Superhero {
          * @param {Phaser.Sprite} char   An instance of the character
          * @param {any}           object An instance of the collided object
          */
-        die (char:Phaser.Sprite, object?:any) {
+        die (char:Phaser.Sprite, object?:any): boolean {
             // TODO: DRY
             if((<Superhero.Game> this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["isImmortal"]){
                 return;
@@ -164,7 +164,7 @@ module Superhero {
                 }
                 this.shield -= 1;
                 this.flickerSprite(0xFF0000);
-                return;
+                return false;
             }
             if(this.smokeEmitter.on) {
                 this.stopSmokeEmitter();
@@ -179,6 +179,7 @@ module Superhero {
             if (this.bullets) this.bullets.forEachAlive(function(b){b.kill()},this);
             this.game.physics.arcade.accelerationFromRotation(this.sprite.rotation, this.game.rnd.integerInRange(-300,-400), this.sprite.body.acceleration);
             this.deadSince = this.game.time.time;
+            return true;
         }
     }
 }

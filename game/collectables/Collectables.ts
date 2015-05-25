@@ -31,7 +31,7 @@ module Collectables {
         loadAnimation(): void {}
 
         loadSound(): void{
-            this.soundList = ['pup1', 'pup2', 'pup3' ,'pup4' ,'pup5' ,'pup6' ,'pup7' ,'pup8' ,'pup9'];
+            this.soundList = ['pup1', 'pup2', 'pup3' ,'pup4' ,'pup5' ,'pup6' ,'pup7' ,'pup8'];
             var rnd = this.game.rnd.integerInRange(0, this.soundList.length-1);
             this.collectSound = this.game.add.sound(this.soundList[rnd], 0.5);
         }

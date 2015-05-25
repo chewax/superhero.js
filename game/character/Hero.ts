@@ -150,11 +150,13 @@ module Superhero {
             this.fireNukeSound.play();
         }
 
-        die (char:Phaser.Sprite, object?:any) {
+        die (char:Phaser.Sprite, object?:any):boolean {
             var dead = super.die(char, object);
             if (!dead) {
                 this.takeHitSound.play();
             }
+
+            return dead;
         }
 
 

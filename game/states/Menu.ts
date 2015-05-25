@@ -12,8 +12,10 @@ module Superhero {
         paralax2: Phaser.TileSprite;
         background: Phaser.TileSprite;
         hero: Phaser.Sprite;
+        theme: Phaser.Sound;
 
         preload () {
+
 
         }
 
@@ -48,6 +50,9 @@ module Superhero {
             this.menu = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'mainMenu');
             this.menu.anchor.setTo(0.5, 0.5);
 
+            this.theme = this.game.add.audio('menuTheme', 0.5);
+            this.theme.play();
+
         }
 
         parseMenu(event){
@@ -67,10 +72,12 @@ module Superhero {
                 var choice = Math.floor((y/4)/23) + 1;
                 switch (choice){
                     case 1:
+                        this.theme.destroy();
                         this.game.state.start('Level1', true, false);
                         break;
 
                     case 2:
+                        this.theme.destroy();
                         this.game.state.start('Intro', true, false);
                         break;
 
