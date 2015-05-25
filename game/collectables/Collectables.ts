@@ -6,6 +6,7 @@ module Collectables {
 
     export interface Collectable extends Phaser.Sprite{
         collectSound: Phaser.Sound;
+        fxEnabled: boolean;
 
         spawnAt ( x:number, y:number ): void;
         collect ( character: Superhero.Character ): void;
@@ -20,6 +21,7 @@ module Collectables {
     export class BaseCollectable extends Phaser.Sprite implements Collectable {
         soundList: string[];
         collectSound: Phaser.Sound;
+        fxEnabled: boolean;
 
         constructor(game: Phaser.Game, key:string){
             super(game,100,100,'pupanim', key);
@@ -34,7 +36,8 @@ module Collectables {
         }
 
         playSound(): void {
-            this.collectSound.play();
+            this.fxEnabled = (<Superhero.Game> this.game).conf.ISMUSICENABLED;
+            if (this.fxEnabled) this.collectSound.play();
         }
 
         playAnimation(): void {
@@ -123,10 +126,6 @@ module Collectables {
 
         loadSound(): void{
             this.collectSound = this.game.add.sound('shieldCollect', 0.5);
-        }
-
-        playSound(): void {
-            this.collectSound.play();
         }
 
     }

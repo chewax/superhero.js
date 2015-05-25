@@ -1,11 +1,11 @@
 {
-  "world": {
+  "WORLD": {
     "width": 1200,
     "height": 550,
     "sprite_scaling": 0.3
   },
 
-  "physics": {
+  "PHYSICS": {
     "global": {
       "gravity": {
         "x": 0,
@@ -30,14 +30,14 @@
     }
   },
 
-  "playerIsImmortal": true,
+  "PLAYERISIMMORTAL": true,
 
-  "playerDieOutofBounds": false,
+  "PLAYERDIEOUTOFBOUNDS": false,
   
-  "isMusicEnabled": true,
+  "ISMUSICENABLED": true,
 
 
-  "enemies": {
+  "ENEMIES": {
     "multiplier": 0.1,
     "respawnLapse": 5000,
     "shootDelay": 5000,
@@ -70,7 +70,7 @@
     }
   },
 
-  "charactersCollection": {
+  "CHARACTERSCOLLECTION": {
 
     "hero1": {
       "mainSprite": "stand1",
@@ -190,7 +190,7 @@
       "hitSoundVolume": 1,
       "fireSound": "badieFire",
       "fireVolume": 0.5,
-      "availableSince": 120000
+      "availableSince": 1
     },
 
     "tentabot01": {
@@ -235,7 +235,7 @@
       "fireVolume": 1,
       "hitSound": "enemyHit",
       "hitSoundVolume": 1,
-      "availableSince": 1
+      "availableSince": 120000
     },
 
     "twoHandedWeapon": {

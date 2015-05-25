@@ -24,6 +24,7 @@ module Obstacles {
         obstacles: Obstacles.Obstacle[];
         multiplier: number = 0; //Each 20 secs + 0.1
         particlesSound: Phaser.Sound[];
+        fxEnabled: boolean;
 
 
         //Use this array to specify which of the obstacles we want to spawn.
@@ -35,6 +36,7 @@ module Obstacles {
             this.obstacleTimer = this.game.time.time;
             this.multiplierTimer = this.game.time.time;
             this.gameSpeed = -80;
+            this.fxEnabled = (<Superhero.Game> this.game).conf.ISMUSICENABLED;
             this.obstacles = [];
             this.enabledObstacles = [];
             this.setObstaclesEmitter();
@@ -125,7 +127,8 @@ module Obstacles {
             this.obstacleEmitter.y = pointer.y;
 
             // Particles Sfx
-            this.playPartitceSound();
+            this.fxEnabled = (<Superhero.Game> this.game).conf.ISMUSICENABLED;
+            if (this.fxEnabled) this.playPartitceSound();
 
             //  The first parameter sets the effect to "explode" which means all particles are emitted at once
             //  The second gives each particle a lifespan

@@ -59,7 +59,7 @@ module Superhero {
     export class Config {
 
         WORLD: IWorldConfig;
-        PHYISICS: IPhysicsConfig;
+        PHYSICS: IPhysicsConfig;
         PLAYERDIEOUTOFBOUNDS: boolean;
         ISMUSICENABLED: boolean;
         PLAYERISIMMORTAL: boolean;
@@ -69,16 +69,23 @@ module Superhero {
         constructor () {
             // Parse JSON values from game config file path
             var remoteValues = this.getRemote();
-            this.WORLD = JSON.parse(remoteValues).world;
-            this.PHYISICS = JSON.parse(remoteValues).physics;
-            this.PLAYERDIEOUTOFBOUNDS = JSON.parse(remoteValues).playerDieOutofBounds;
-            this.ENEMIES = JSON.parse(remoteValues).enemies;
-            this.PLAYERISIMMORTAL = JSON.parse(remoteValues).playerIsImmortal;
-            this.ISMUSICENABLED = JSON.parse(remoteValues).isMusicEnabled;
-            this.CHARACTERSCOLLECTION =JSON.parse(remoteValues).charactersCollection;
+
+            this.WORLD = JSON.parse(remoteValues).WORLD;
+            this.PHYSICS = JSON.parse(remoteValues).PHYSICS;
+            this.PLAYERDIEOUTOFBOUNDS = JSON.parse(remoteValues).PLAYERDIEOUTOFBOUNDS;
+            this.ENEMIES = JSON.parse(remoteValues).ENEMIES;
+            this.PLAYERISIMMORTAL = JSON.parse(remoteValues).PLAYERISIMMORTAL;
+            this.ISMUSICENABLED = JSON.parse(remoteValues).ISMUSICENABLED;
+            this.CHARACTERSCOLLECTION =JSON.parse(remoteValues).CHARACTERSCOLLECTION;
         }
 
         private getRemote(): string {
+
+            var conf = localStorage.getItem('superhero.conf');
+            if (conf) {
+                return conf;
+            }
+
             return $.ajax({
                 type: "GET",
                 url: "game/config/config.json",

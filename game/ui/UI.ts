@@ -173,7 +173,7 @@ module Superhero {
                     case 3:
                         this.game.paused = false;
                         this.game.input.onDown.remove(this.unPause,this);
-                        this.game.state.states.Level1.theme.destroy();
+                        if (this.game.state.states.Level1.theme) this.game.state.states.Level1.theme.stop();
                         this.game.state.start('Menu');
                         break;
 
