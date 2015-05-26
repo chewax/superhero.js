@@ -14,6 +14,9 @@ module Superhero {
         hero: Phaser.Sprite;
         theme: Phaser.Sound;
         startSound: Phaser.Sound;
+        musicOnOff: Phaser.Sprite;
+        musicOnOffText: Phaser.Text;
+
 
         preload () {
 
@@ -52,11 +55,36 @@ module Superhero {
             this.menu = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'mainMenu');
             this.menu.anchor.setTo(0.5, 0.5);
 
+            var musicOnOffsetX = this.world.width - this.world.width/5;
+            var musicOnOffsetY = this.world.height - 100;
+
+            var onOffFrame = ((<Superhero.Game> this.game).conf.ISMUSICENABLED? 'on' : 'off');
+
+            var style = { font: "25px saranaigamebold", fill: "#66C8FF", align: "center"};
+            this.musicOnOffText = this.game.add.text(musicOnOffsetX - 100, musicOnOffsetY + 15,"SOUND", style);
+
+            this.musicOnOff = this.game.add.sprite(musicOnOffsetX,musicOnOffsetY, 'onoff', onOffFrame);
+            this.musicOnOff.inputEnabled = true;
+            this.musicOnOff.events.onInputDown.add(this.switchMusic, this);
+
             this.theme = this.game.add.audio('menuTheme', 0.5);
             this.theme.loop = true;
             this.startSound = this.game.add.audio('menuStart',1);
-            this.theme.play();
+            if((<Superhero.Game> this.game).conf.ISMUSICENABLED) this.theme.play();
+        }
 
+        switchMusic(){
+            if((<Superhero.Game> this.game).conf.ISMUSICENABLED) {
+                (<Superhero.Game> this.game).conf.ISMUSICENABLED = false;
+                this.theme.stop();
+                this.musicOnOff.frame = 1;
+                localStorage.setItem('superhero.conf', JSON.stringify((<Superhero.Game> this.game).conf));
+            } else {
+                (<Superhero.Game> this.game).conf.ISMUSICENABLED = true;
+                this.theme.play();
+                this.musicOnOff.frame = 0;
+                localStorage.setItem('superhero.conf', JSON.stringify((<Superhero.Game> this.game).conf));
+            }
         }
 
         parseMenu(event){
@@ -76,7 +104,7 @@ module Superhero {
                 var choice = Math.floor((y/4)/23) + 1;
                 switch (choice){
                     case 1:
-                        this.startSound.play();
+                        if((<Superhero.Game> this.game).conf.ISMUSICENABLED) this.startSound.play();
                         this.theme.fadeOut(2000);
                         this.hero.body.acceleration.x = 600;
 

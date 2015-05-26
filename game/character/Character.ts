@@ -29,6 +29,7 @@ module Superhero {
         fireSound: Phaser.Sound;
         dieSound: Phaser.Sound;
         soundEnabled: boolean = true;
+        fxEnabled: boolean = true;
 
         shadow: Phaser.Sprite;
         fuel: number;
@@ -81,6 +82,8 @@ module Superhero {
             this.facing = Facing.LEFT;
             this.allowFingerMargin = false;
             this.onHit = new Phaser.Signal;
+            this.soundEnabled = (<Superhero.Game> this.game).conf.ISMUSICENABLED;
+            this.fxEnabled = (<Superhero.Game> this.game).conf.ISMUSICENABLED;
             
             this.initSprite(assetKey,x,y);
             this.initPhysics();
@@ -149,9 +152,9 @@ module Superhero {
             this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
             this.sprite.body.collideWorldBounds = true;
 
-            this.sprite.body.gravity.y = (<Superhero.Game> this.game).conf.PHYISICS.player.gravity.y;
-            this.sprite.body.drag.x = (<Superhero.Game> this.game).conf.PHYISICS.player.drag;
-            this.sprite.body.drag.y = (<Superhero.Game> this.game).conf.PHYISICS.player.drag;
+            this.sprite.body.gravity.y = (<Superhero.Game> this.game).conf.PHYSICS.player.gravity.y;
+            this.sprite.body.drag.x = (<Superhero.Game> this.game).conf.PHYSICS.player.drag;
+            this.sprite.body.drag.y = (<Superhero.Game> this.game).conf.PHYSICS.player.drag;
         }
         /**
          * Wraps the left movement logic
@@ -495,6 +498,7 @@ module Superhero {
             this.sprite.reset(100,this.game.world.centerY);
             var flickerRepeats =  Math.floor(this.respawnDelay / 550);
             Utils.interval(this.flickerSprite.bind(this), 400, flickerRepeats);
+            this.firePower = 1;
         }
 
         updateComboByEnemy(){
@@ -590,12 +594,14 @@ module Superhero {
         }
 
         playGetHitSound(): void {
+            this.soundEnabled = (<Superhero.Game> this.game).conf.ISMUSICENABLED;
             if(this.soundEnabled) {
                 this.hitSound.play();
             }
         }
 
         playFireSound(){
+            this.soundEnabled = (<Superhero.Game> this.game).conf.ISMUSICENABLED;
             if(this.soundEnabled) {
                 this.fireSound.play();
             }

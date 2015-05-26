@@ -39,6 +39,8 @@ module Superhero {
             this.game.load.atlasJSONHash('steel', '/assets/steel.png', '/assets/steel.json');
             this.game.load.atlasJSONHash('shields', '/assets/shields.png', '/assets/shields.json');
             this.game.load.atlasJSONHash('pupanim', '/assets/pupanim.png', '/assets/pupanim.json');
+            this.game.load.atlasJSONHash('onoff', '/assets/onoff.png', '/assets/onoff.json');
+
             // Intro scene
             this.game.load.atlasJSONHash('introScene', '/assets/introScene.png', '/assets/introScene.json');
 
@@ -88,16 +90,18 @@ module Superhero {
             this.game.load.audio('heroGetHit','/assets/sounds/hero/getHit.ogg');
 
 
-            //PowerUps
+            // PowerUps
             this.game.load.audio('shieldCollect', '/assets/sounds/pups/shield.ogg');
-            this.game.load.audio('pup1', '/assets/sounds/pups/extraLife.ogg');
-            this.game.load.audio('pup2', '/assets/sounds/pups/timeWarp.ogg');
-            this.game.load.audio('pup3', '/assets/sounds/pups/rocket.ogg');
-            this.game.load.audio('pup4', '/assets/sounds/pups/nuke.ogg');
-            this.game.load.audio('pup5', '/assets/sounds/pups/diamond.ogg');
-            this.game.load.audio('pup6', '/assets/sounds/pups/goodJob.ogg');
-            this.game.load.audio('pup7', '/assets/sounds/pups/congratulations.ogg');
-            this.game.load.audio('pup8', '/assets/sounds/pups/greatWork.ogg');
+            this.game.load.audio('extraLifeCollect', '/assets/sounds/pups/extraLife.ogg');
+            this.game.load.audio('timeWarpCollect', '/assets/sounds/pups/timeWarp.ogg');
+            this.game.load.audio('rocketCollect', '/assets/sounds/pups/rocket.ogg');
+            this.game.load.audio('nukeCollect', '/assets/sounds/pups/nuke.ogg');
+            this.game.load.audio('bulletCollect', '/assets/sounds/pups/bullet.ogg');
+
+            // Cheers
+            this.game.load.audio('goodJob', '/assets/sounds/pups/goodJob.ogg');
+            this.game.load.audio('congratulations', '/assets/sounds/pups/congratulations.ogg');
+            this.game.load.audio('greatWork', '/assets/sounds/pups/greatWork.ogg');
 
             this.game.load.audio('menuStart', '/assets/sounds/pups/alright.ogg');
 
@@ -107,6 +111,9 @@ module Superhero {
             // Two handed weapon enemy
             this.game.load.audio('twoHandedFire', '/assets/sounds/twoHandedEnemy/twoHandedfire.ogg');
             this.game.load.audio('twoHandedDie', '/assets/sounds/twoHandedEnemy/die.ogg');
+
+            // Tentacle bot
+            this.game.load.audio('tentaBotFire', '/assets/sounds/tentacleBot/fire.ogg');
 
             // Badie
             this.game.load.audio('badieFire', '/assets/sounds/badie/badieFire.ogg');

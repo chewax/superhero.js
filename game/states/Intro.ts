@@ -25,6 +25,9 @@ module Superhero {
         paralax4: Phaser.TileSprite;
         paralax5: Phaser.TileSprite;
 
+        musicEnabled: boolean;
+        fxEnabled: boolean;
+
 
         debug: Superhero.Debug;
         ui: Superhero.UI;
@@ -47,6 +50,10 @@ module Superhero {
         }
 
         create () {
+
+            this.fxEnabled = (<Superhero.Game> this.game).conf.ISMUSICENABLED;
+            this.musicEnabled = (<Superhero.Game> this.game).conf.ISMUSICENABLED;
+
             //Setup Physics Engine
             this.configurePhysics();
 
@@ -82,7 +89,7 @@ module Superhero {
 
         configurePhysics():void {
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
-            this.game.physics.arcade.gravity.y = (<Superhero.Game> this.game).conf.PHYISICS.global.gravity.y;
+            this.game.physics.arcade.gravity.y = (<Superhero.Game> this.game).conf.PHYSICS.global.gravity.y;
         }
 
 
@@ -307,6 +314,8 @@ module Superhero {
                 this.theme = this.game.add.audio('introTheme', 0.3, true);
                 this.theme.play();
             }
+            /*this.theme = this.game.add.audio('theme', 1, true);
+            if (this.musicEnabled) this.theme.play();*/
         }
 
         checkForCollisions(): void {

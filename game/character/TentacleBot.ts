@@ -79,6 +79,7 @@ module Superhero {
                             );
                         }
                         this.missilesLaunched = true;
+                        this.playFireSound();
                     }
                 } else {
                     if (this.missilesTimer.seconds > 5) {

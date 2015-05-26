@@ -52,6 +52,8 @@ module Superhero {
         warpButton:Gamepads.Button;
         bombButton:Gamepads.Button;
         heroStick:Gamepads.Joystick;
+        fxEnabled: boolean;
+        musicEnabled: boolean;
 
 
         gamepad:Gamepads.GamePad;
@@ -72,6 +74,9 @@ module Superhero {
             this.warpButton = this.gamepad.buttonPad.button3;
             this.bombButton = this.gamepad.buttonPad.button4;
             this.heroStick = this.gamepad.stick1;
+
+            this.fxEnabled = (<Superhero.Game> this.game).conf.ISMUSICENABLED;
+            this.musicEnabled = (<Superhero.Game> this.game).conf.ISMUSICENABLED;
         }
 
         public update():CharState {
@@ -230,7 +235,7 @@ module Superhero {
         public engage(){
             (<Superhero.SmallMissileEnemy>this.hero).sirenSound.loop = false;
             if(!(<Superhero.SmallMissileEnemy>this.hero).missileSound.isPlaying) {
-                (<Superhero.SmallMissileEnemy>this.hero).missileSound.play();
+                if (this.fxEnabled) (<Superhero.SmallMissileEnemy>this.hero).missileSound.play();
             }
             this.stopPatrol();
             this.hero.sprite.alpha = 1;
@@ -242,8 +247,8 @@ module Superhero {
 
         public startWarning(): void {
             (<Superhero.SmallMissileEnemy>this.hero).sirenSound.loop = true;
-            (<Superhero.SmallMissileEnemy>this.hero).warningSound.play();
-            (<Superhero.SmallMissileEnemy>this.hero).sirenSound.play();
+            if (this.fxEnabled) (<Superhero.SmallMissileEnemy>this.hero).warningSound.play();
+            if (this.fxEnabled) (<Superhero.SmallMissileEnemy>this.hero).sirenSound.play();
             this.hero.sprite.animations.play("flystill");
             this.hero.sprite.body.enable = false;
             this.hero.sprite.alpha = 0;

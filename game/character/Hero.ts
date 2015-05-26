@@ -72,12 +72,12 @@ module Superhero {
             }, this);
 
             this.game.time.events.add(6000, function() {
-                this.warpEnd.play();
+                if (this.fxEnabled) this.warpEnd.play();
             }, this);
 
             this.timeWarps -= 1;
 
-            this.fireWarpSound.play();
+            if (this.fxEnabled) this.fireWarpSound.play();
 
         }
 
@@ -109,7 +109,7 @@ module Superhero {
             this.bulletTimer = this.game.time.time;
             this.bombs -= 1;
 
-            this.fireRocketSound.play();
+            if (this.fxEnabled) this.fireRocketSound.play();
         }
 
 
@@ -146,13 +146,14 @@ module Superhero {
             this.bulletTimer = this.game.time.time;
             this.nukes -= 1;
 
-            this.fireNukeSound.play();
+            if (this.fxEnabled) this.fireNukeSound.play();
         }
 
         die (char:Phaser.Sprite, object?:any):boolean {
             var dead = super.die(char, object);
             if (!dead) {
-                this.takeHitSound.play();
+                this.fxEnabled = (<Superhero.Game> this.game).conf.ISMUSICENABLED;
+                if (this.fxEnabled) this.takeHitSound.play();
             }
 
             return dead;

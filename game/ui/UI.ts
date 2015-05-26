@@ -177,6 +177,8 @@ module Superhero {
                         this.game.input.onDown.remove(this.unPause,this);
                         //this.game.state.states.Level1.theme.destroy();
                         this.game.sound.stopAll();
+                        //if (this.game.state.states.Level1.theme) this.game.state.states.Level1.theme.stop();
+
                         this.game.state.start('Menu');
                         break;
 

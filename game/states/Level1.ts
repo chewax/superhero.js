@@ -74,7 +74,7 @@ module Superhero {
 
         configurePhysics():void {
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
-            this.game.physics.arcade.gravity.y = (<Superhero.Game> this.game).conf.PHYISICS.global.gravity.y;
+            this.game.physics.arcade.gravity.y = (<Superhero.Game> this.game).conf.PHYSICS.global.gravity.y;
         }
 
 
