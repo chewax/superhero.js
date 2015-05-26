@@ -93,9 +93,12 @@ module Superhero {
 
         public update():CharState {
             if (this.hero.sprite.alive) {
-
-                if (this.heroStick.receivingInput()) {
-                    return new StateFly(this.game, this.hero);
+                if(this.heroStick) {
+                    if (this.heroStick.receivingInput()) {
+                        return new StateFly(this.game, this.hero);
+                    }
+                } else {
+                    return new StateIntroFly(this.game, this.hero);
                 }
             }
             //If nothing was commanded remain on the same state
@@ -122,7 +125,6 @@ module Superhero {
                     this.hero.move(this.heroStick.speed);
                 }
 
-
                 this.hero.sprite.play('flystill');
 
                 if (this.heroStick.cursors.right) {
@@ -132,6 +134,28 @@ module Superhero {
                 if (!this.heroStick.receivingInput()) {
                     return new StateIdle(this.game, this.hero);
                 }
+            }
+            return this;
+        }
+
+        public enterState() {
+        }
+
+        public exitState() {
+        }
+    }
+
+    ///**
+    // * STATE_FLY Class
+    // */
+    export class StateIntroFly extends BaseState {
+
+        public update():CharState {
+
+            if (this.hero.sprite.alive) {
+                this.hero.sprite.play('flystill');
+                this.hero.sprite.body.velocity.y = - 70;
+                this.hero.sprite.body.velocity.x = 210;
             }
             return this;
         }
@@ -268,10 +292,14 @@ module Superhero {
      * STATE_RUN Class
      */
     export class StateRun extends BaseState {
+        isMoving: boolean = true;
 
         public update():CharState {
             if (this.hero.sprite.animations.currentAnim.isFinished){
                 this.hero.sprite.animations.play('run');
+                if(!this.isMoving) {
+                    this.hero.sprite.animations.paused = true;
+                }
             }
             //If nothing was commanded remain on the same state
             return this;

@@ -37,9 +37,9 @@ module Superhero {
 
                         this.sprite.animations.play('shoot', (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["shootAnimationFrames"]);
                         // Stop tween and play new animation
-                        setTimeout(function () {
+                        this.game.time.events.add(1000, function() {
                             this.fireBullet();
-                        }.bind(this), 1000);
+                        }, this);
                     }
                 }
             }

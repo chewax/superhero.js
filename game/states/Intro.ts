@@ -21,13 +21,13 @@ module Superhero {
 
         paralax1: Phaser.TileSprite;
         paralax2: Phaser.TileSprite;
-        paralax3: Phaser.TileSprite;
+        //paralax3: Phaser.TileSprite;
         paralax4: Phaser.TileSprite;
         paralax5: Phaser.TileSprite;
 
 
         debug: Superhero.Debug;
-        //ui: Superhero.UI;
+        ui: Superhero.UI;
         theme: Phaser.Sound;
         obstacleManager: Obstacles.ObstacleManager;
         enemyManager: Superhero.EnemyManager;
@@ -40,6 +40,8 @@ module Superhero {
         enemyText: Phaser.Text;
         heroTextBoxGraphic: Phaser.Graphics;
         enemyTextBoxGraphic: Phaser.Graphics;
+        bootsCollected: boolean = false;
+
         preload () {
 
         }
@@ -51,8 +53,8 @@ module Superhero {
             //Configure Base Stage Options
             this.setBaseStage();
             this.configureInput();
-            this.setActors();
-            //this.startMusic();
+            this.setActors("herowalking");
+            this.startMusic();
             this.setEnemyManager();
             this.setIntroScene();
 
@@ -67,7 +69,7 @@ module Superhero {
             this.hero.update();
 
             this.enemyManager.update();
-            //this.ui.update();
+            this.ui.update();
             //this.debug.update();
 
             //Obstacles
@@ -102,11 +104,8 @@ module Superhero {
             this.paralax5.body.immovable = true;
             this.paralax5.physicsType =  Phaser.SPRITE;
 
-            //this.game.world.bringToTop(this.heroFace);
             //Setup Obstacle
             this.obstacleManager = new Obstacles.ObstacleManager(this.game, 800);
-            //this.obstacleManager.addObstacleToPool(Obstacles.ObstacleType.WALL);
-            //this.obstacleManager.addObstacleToPool(Obstacles.ObstacleType.METEORITE_SHOWER);
 
             this.initCollectables();
         }
@@ -118,14 +117,6 @@ module Superhero {
 
         initCollectables(): void {
             this.collectableManager = new Collectables.CollectableManager(this.game);
-            /*this.collectableManager.addCollectable(Collectables.CollectableType.IMPROVE_FIRE);
-            this.collectableManager.addCollectable(Collectables.CollectableType.IMPROVE_SHIELD);
-            this.collectableManager.addCollectable(Collectables.CollectableType.NUKE_BOMB);
-            //this.collectableManager.addCollectable(Collectables.CollectableType.TIME_WARP);
-            //this.collectableManager.addCollectable(Collectables.CollectableType.DIAMOND);
-            this.collectableManager.addCollectable(Collectables.CollectableType.BOMB);
-            //this.collectableManager.addCollectable(Collectables.CollectableType.IMMUNITY);
-            this.collectableManager.addCollectable(Collectables.CollectableType.LIVES);*/
         }
 
 
@@ -134,14 +125,14 @@ module Superhero {
             (<Superhero.Game> this.game).gamepad = new Gamepads.GamePad(this.game, Gamepads.GamepadType.GESTURE_BUTTON, Gamepads.ButtonPadType.FOUR_FAN);
             (<Superhero.Game> this.game).gamepad.touchInput.touchType = Gamepads.TouchInputType.TOUCH;
             (<Superhero.Game> this.game).gamepad.buttonPad.button1.type = Gamepads.ButtonType.SINGLE_THEN_TURBO;
-            // Diable buttons
+            // Disable buttons
             (<Superhero.Game> this.game).gamepad.buttonPad.button2.type = Gamepads.ButtonType.SINGLE;
             (<Superhero.Game> this.game).gamepad.buttonPad.button3.type = Gamepads.ButtonType.SINGLE;
             (<Superhero.Game> this.game).gamepad.buttonPad.button4.type = Gamepads.ButtonType.SINGLE_THEN_TURBO;
         }
 
-        setActors(): void {
-            this.hero = new Hero(this.game, "herowalking");
+        setActors(assetKey: string = "hero1"): void {
+            this.hero = new Hero(this.game, assetKey);
             this.hero.sprite.body.gravity.y = 1500;
             this.hero.sprite.body.drag = 0;
             this.hero.sprite.body.height -= 15;
@@ -153,29 +144,23 @@ module Superhero {
             (<Superhero.Game> this.game).gamepad.buttonPad.button1.setOnPressedCallback(this.hero.fire, this.hero);
 
             // BUTTON2
-            (<Superhero.Game> this.game).gamepad.buttonPad.button2.setOnPressedCallback(this.hero.fireNuke, this.hero);
-            (<Superhero.Game> this.game).gamepad.buttonPad.button2.customCanTriggerCallback = (function():boolean {return this.hero.nukes>0}).bind(this);
-            //
-            //// BUTTON 3
-            (<Superhero.Game> this.game).gamepad.buttonPad.button3.customCanTriggerCallback = (function():boolean {return this.hero.timeWarps>0}).bind(this);
-            //
-            //// BUTTON 4
-            (<Superhero.Game> this.game).gamepad.buttonPad.button4.setOnPressedCallback(this.hero.fireRocket, this.hero);
+            (<Superhero.Game> this.game).gamepad.buttonPad.button2.sprite.alpha = 0.3;
+            // BUTTON 3
+            (<Superhero.Game> this.game).gamepad.buttonPad.button3.sprite.alpha = 0.3;
+            // BUTTON 4
+            (<Superhero.Game> this.game).gamepad.buttonPad.button4.sprite.alpha = 0.3;
 
             this.hero._state = new Superhero.StateRun(this.game,this.hero);
             this.hero._state.enterState();
 
-            //this.ui = new Superhero.UI(this.game, this.hero);
+            this.ui = new Superhero.UI(this.game, this.hero);
         }
 
         setIntroScene(): void {
-            setTimeout(function(){
-                this.spawnMiniBoss();
-            }.bind(this),8000);
+            this.game.time.events.add(Phaser.Timer.SECOND * 8, this.spawnMiniBoss, this);
         }
 
         spawnMiniBoss(): void {
-            console.log("Called spawn Mini Boss")
             if(this.enemyManager.totalEnemiesAlive() < 2) {
                 this.enemyManager.spawnCustomEnemy("miniBoss");
                 this.paralax1.stopScroll();
@@ -183,9 +168,9 @@ module Superhero {
                 this.paralax4.stopScroll();
                 this.paralax5.stopScroll();
                 this.hero.sprite.animations.paused = true;
-                setTimeout(function(){
-                    this.displayTextScene1();
-                }.bind(this),1000);
+                (<Superhero.StateRun>this.hero._state).isMoving = false;
+                this.hero.sprite.animations.play("stopWalking");
+                this.game.time.events.add(Phaser.Timer.SECOND * 1, this.displayTextScene1, this);
             }
         }
 
@@ -212,19 +197,11 @@ module Superhero {
             this.enemyFace.scale.setTo(0.5);
             this.enemyFace.animations.add("introScene",["enemy1", "enemy2", "enemy3", "enemy4", "enemy3", "enemy2"], 60, true, false);
             this.enemyFace.animations.play("introScene", 4, true, false);
-            // Boots
-            //this.boots= this.game.add.sprite(this.game.world.width - 350, this.game.world.height - 85, "introScene", "boots1");
-            //this.boots.anchor.setTo(0.5, 0);
-            //this.boots.scale.setTo(0.7);
-            //this.boots.animations.add("introScene",["boots1", "boots2", "boots3", "boots2"], 60, true, false);
-            //this.boots.animations.play("introScene", 10, true, false);
 
             var style = { font: "30px saranaigamebold", fill: "#ffffff", align: 'left', wordWrap: true, wordWrapWidth: 650 };
             this.enemyText = this.game.add.text(410, 100, "You shall not pass :P", style);
 
-            setTimeout(function(){
-                this.displayTextScene2();
-            }.bind(this),5000);
+            this.game.time.events.add(Phaser.Timer.SECOND * 5, this.displayTextScene2, this);
         }
 
 
@@ -243,59 +220,93 @@ module Superhero {
             this.heroFace.animations.play("introScene", 10, true, false);
             var style = { font: "30px saranaigamebold", fill: "#ffffff", align: 'left', wordWrap: true, wordWrapWidth: 650 };
             this.enemyText.setText("");
-            this.heroText = this.game.add.text(220, 330, "Watch and see :O", style);
-            setTimeout(function(){
-                this.displayTextScene3();
-            }.bind(this),5000);
+            this.heroText = this.game.add.text(220, 330, "Watch and see", style);
+            this.game.time.events.add(Phaser.Timer.SECOND * 5, this.displayTextScene3, this);
         }
 
         displayTextScene3(): void {
             this.heroText.setText("");
             this.enemyText.x = 220;
             this.enemyText.setText("Why don't you talk with my friend here...");
-            setTimeout(function(){
-                this.displayTextScene4();
-            }.bind(this),5000);
+            this.game.time.events.add(Phaser.Timer.SECOND * 5, this.displayTextScene4, this);
         }
 
         displayTextScene4(): void {
             this.heroText.setText("");
             this.enemyText.setText("I'm pretty sure that you'll solve the issue...Bye");
             this.spawnTwoHandedEnemy();
-            setTimeout(function(){
-                this.displayTextScene5();
-            }.bind(this),5000);
+            this.enemyManager.enemiesAlive[1].shield = 20;
+            this.game.time.events.add(Phaser.Timer.SECOND * 5, this.displayTextScene5, this);
         }
 
         displayTextScene5(): void {
             this.enemyManager.enemiesAlive[0].shield = 0;
             this.enemyManager.enemiesAlive[0].die(this.enemyManager.enemiesAlive[0].sprite);
-            //this.enemyManager.enemiesAlive[0].sprite.kill();
             this.enemyText.destroy();
             this.heroText.setText("So, you seem to be a nice guy...");
             this.enemyTextBoxGraphic.destroy();
             this.enemyFace.kill();
-            setTimeout(function(){
-                this.displayTextScene6();
-            }.bind(this),5000);
+            this.game.time.events.add(Phaser.Timer.SECOND * 5, this.displayTextScene6, this);
         }
 
         displayTextScene6(): void {
             this.heroText.destroy();
             this.heroTextBoxGraphic.destroy();
             this.heroFace.kill();
+            (<Superhero.StateRun>this.hero._state).isMoving = true;
             this.hero.sprite.animations.paused = false;
             this.enemyManager.enemiesAlive[0].fireEnabled = true;
             (<Superhero.StateEnemyHostile>this.enemyManager.enemiesAlive[0]._state).patrol(spawnEnemyPosition.DOWN);
+            this.enemyManager.enemiesAlive[0].shield = 3;
+            this.enemyManager.enemiesAlive[0].sprite.events.onKilled.add(function(s) {
+                this.generateBoots();
+            }, this);
+
+            this.hero.sprite.play((<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.hero.sprite.key]["idleAnimation"])
             this.paralax1.autoScroll(-10,0);
             this.paralax2.autoScroll(-30,0);
             this.paralax4.autoScroll(-200,0);
             this.paralax5.autoScroll(-200,0);
         }
 
+        generateBoots(): void {
+            // Boots
+            this.bootsCollected = false;
+            this.boots = this.game.add.sprite(this.game.world.width, this.game.world.height - 85, "introScene", "boots1");
+            this.boots.anchor.setTo(0.5, 0);
+            this.boots.scale.setTo(0.7);
+            this.boots.animations.add("introScene",["boots1", "boots2", "boots3", "boots2"], 60, true, false);
+            this.boots.animations.add("introCollected",["noBoots"], 6, true, false);
+            this.boots.animations.play("introScene", 10, true, false);
+            this.game.physics.arcade.enable(this.boots);
+            this.boots.body.enable = true;
+            this.boots.body.velocity.x = -200;
+            (<Superhero.Game> this.game).gamepad.touchInput.inputDisable();
+            (<Superhero.Game> this.game).gamepad.buttonPad.button1.sprite.inputEnabled = false;
+            this.world.bringToTop(this.hero.sprite);
+        }
+
+        collectBoots(): void {
+            this.bootsCollected = true;
+            this.boots.animations.play("introCollected");
+            var actualCoor = {x: this.hero.sprite.x, y: this.hero.sprite.y};
+            this.hero.sprite.x = -200;
+            this.hero.sprite.y = -200;
+            this.hero.sprite.body.enable = false;
+            this.setActors();
+            this.hero.sprite.x = actualCoor.x;
+            this.hero.sprite.y = actualCoor.y;
+            this.hero._state = new Superhero.StateIntroFly(this.game,this.hero);
+            this.hero._state.enterState();
+            this.hero.sprite.body.collideWorldBounds = false;
+        }
+
         startMusic () :void{
-            this.theme = this.game.add.audio('theme', 1, true);
-            this.theme.play();
+            if((<Superhero.Game> this.game).conf.ISMUSICENABLED) {
+                if (this.theme) this.theme.destroy();
+                this.theme = this.game.add.audio('introTheme', 0.3, true);
+                this.theme.play();
+            }
         }
 
         checkForCollisions(): void {
@@ -324,6 +335,9 @@ module Superhero {
 
             this.collectableManager.checkCollectedBy(this.hero);
 
+            if(this.boots && !this.bootsCollected) {
+                this.game.physics.arcade.overlap(this.hero.sprite, this.boots, this.collectBoots, null, this);
+            }
         }
 
 
@@ -357,6 +371,5 @@ module Superhero {
         shutdown() {
             this.game.world.removeAll();
         }
-
     }
 }

@@ -373,10 +373,6 @@ module Superhero {
                 newEnemy.spawnLocation.x = this.game.width - newEnemy.spawnLocation.x;
                 if(assetsKey == "twoHandedWeapon") {
                     newEnemy.spawnLocation.y = this.game.height - 250;
-                    spawnEnemy.sprite.events.onKilled.add(function(s) {
-                        console.log("Two handed killed")
-                    }, this);
-
                 }
                 if(!spawnEnemy.sprite.alive) {
                     spawnEnemy.sprite.reset(newEnemy.spawnLocation.x, newEnemy.spawnLocation.y);

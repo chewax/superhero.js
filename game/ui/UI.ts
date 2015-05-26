@@ -60,10 +60,12 @@ module Superhero {
             this.game = game;
             this.player = player;
             this.infoText = new TextInfo.InfoTextManager(this.game);
-            this.game.state.states.Level1.collectableManager.onCollect.removeAll();
-            this.game.state.states.Level1.collectableManager.onCollect.add(this.dispatchPraiseText,this);
-            this.game.state.states.Level1.hero.onHit.removeAll();
-            this.game.state.states.Level1.hero.onHit.add(this.dispatchCriticizeText, this);
+            if(this.game.state.getCurrentState().key == "level1") {
+                this.game.state.states.Level1.collectableManager.onCollect.removeAll();
+                this.game.state.states.Level1.collectableManager.onCollect.add(this.dispatchPraiseText, this);
+                this.game.state.states.Level1.hero.onHit.removeAll();
+                this.game.state.states.Level1.hero.onHit.add(this.dispatchCriticizeText, this);
+            }
 
             this.createTimer();
             this.createScoreBoard();
@@ -173,7 +175,8 @@ module Superhero {
                     case 3:
                         this.game.paused = false;
                         this.game.input.onDown.remove(this.unPause,this);
-                        this.game.state.states.Level1.theme.destroy();
+                        //this.game.state.states.Level1.theme.destroy();
+                        this.game.sound.stopAll();
                         this.game.state.start('Menu');
                         break;
 

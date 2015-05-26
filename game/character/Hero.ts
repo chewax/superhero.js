@@ -64,17 +64,16 @@ module Superhero {
 
             this.game.add.tween(this.game.state.states.Level1.theme).to({volume:0.05}, 300, Phaser.Easing.Linear.None, true , 0,  0 , false);
 
-            setTimeout(function(){
+            this.game.time.events.add(8000, function() {
                 this.sprite.body.drag.x /= 3*this.game.time.slowMotion;
                 this.sprite.body.drag.y /= 3*this.game.time.slowMotion;
                 this.game.add.tween(this.game.time).to( {slowMotion:1.0} , 1000, Phaser.Easing.Linear.None, true , 0,  0 , false);
                 this.game.add.tween(this.game.state.states.Level1.theme).to({volume:0.2}, 1000, Phaser.Easing.Linear.None, true , 0,  0 , false);
+            }, this);
 
-            }.bind(this),8000);
-
-            setTimeout(function () {
+            this.game.time.events.add(6000, function() {
                 this.warpEnd.play();
-            }.bind(this),6000);
+            }, this);
 
             this.timeWarps -= 1;
 

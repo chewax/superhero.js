@@ -72,6 +72,7 @@ module Superhero {
 
             /** Audio **/
             this.game.load.audio('theme', '/assets/sounds/demon_destroyer.ogg');
+            this.game.load.audio('introTheme', '/assets/sounds/intro/introTheme.ogg');
             this.game.load.audio('enemyHit', '/assets/sounds/enemyHit.ogg');
 
             // Menu
@@ -105,6 +106,7 @@ module Superhero {
 
             // Two handed weapon enemy
             this.game.load.audio('twoHandedFire', '/assets/sounds/twoHandedEnemy/twoHandedfire.ogg');
+            this.game.load.audio('twoHandedDie', '/assets/sounds/twoHandedEnemy/die.ogg');
 
             // Badie
             this.game.load.audio('badieFire', '/assets/sounds/badie/badieFire.ogg');

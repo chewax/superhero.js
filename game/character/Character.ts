@@ -27,6 +27,7 @@ module Superhero {
         rockets: Phaser.Group;
         hitSound: Phaser.Sound;
         fireSound: Phaser.Sound;
+        dieSound: Phaser.Sound;
         soundEnabled: boolean = true;
 
         shadow: Phaser.Sprite;
@@ -250,7 +251,6 @@ module Superhero {
                 //if (elapsedTime < this.shootDelay) return;
                 if (!this.canShoot()) return;
 
-                // TODO: implement fire play anim for every child (maybe a propertyor childs.count and hasFireAnim anim)
                 this.sprite.animations.play('shoot');
 
                 for (var i = 0; i < this.firePower; i++) {
@@ -510,9 +510,9 @@ module Superhero {
 
         flickerSprite(color:number=0xFF0000):void {
             this.sprite.tint = color;
-            setTimeout(function(){
+            this.game.time.events.add(150, function() {
                 this.sprite.tint = 0xFFFFFF;
-            }.bind(this), 150);
+            }, this);
         }
 
         /**

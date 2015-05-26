@@ -17,10 +17,17 @@ module Superhero {
     export class TwoHandedEnemy extends Superhero.EnemyBase {
         lastFireLeft: boolean;
 
+
         constructor(game: Phaser.Game, enemyChar: Superhero.IEnemy) {
             super(game, enemyChar);
             this.addAnimations();
             this.initBullets();
+
+            this.dieSound = this.game.add.audio(
+                "twoHandedDie",
+                0.2,
+                false
+            );
         }
 
         initBullets(): void {
@@ -75,14 +82,14 @@ module Superhero {
                             if (this.spawnPoint == spawnEnemyPosition.TOP) {
                                 // shoot down
                                 this.sprite.animations.play('shootRightWhenUp');
-                                setTimeout(function () {
+                                this.game.time.events.add(250, function() {
                                     this.fireBullet("downProjectile", BulletDirection.DOWN);
-                                }.bind(this), 250);
+                                }, this);
                             } else {
                                 this.sprite.animations.play('shootRightWhenDown');
-                                setTimeout(function () {
+                                this.game.time.events.add(250, function() {
                                     this.fireBullet("upperProjectile", BulletDirection.UP);
-                                }.bind(this), 250);
+                                }, this);
                             }
                         } else {
                             // fire left hand
@@ -175,6 +182,7 @@ module Superhero {
 
             this.sprite.body.checkWorldBounds = true;
             this.sprite.body.outOfBoundsKill = true;
+            this.dieSound.play();
             this.sprite.body.angularVelocity = this.game.rnd.integerInRange(-400, -300);
             if (this.bullets) this.bullets.forEachAlive(function(b){b.kill()},this);
             this.game.physics.arcade.accelerationFromRotation(this.sprite.rotation, this.game.rnd.integerInRange(-300,-400), this.sprite.body.acceleration);

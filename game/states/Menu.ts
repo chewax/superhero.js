@@ -80,10 +80,10 @@ module Superhero {
                         this.theme.fadeOut(2000);
                         this.hero.body.acceleration.x = 600;
 
-                        setTimeout(function(){
+                        this.game.time.events.add(2000, function() {
                             this.theme.destroy();
                             this.game.state.start('Level1', true, false);
-                        }.bind(this), 2000);
+                        }, this);
 
                         break;
 
