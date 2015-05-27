@@ -353,12 +353,15 @@
       "hitSound": "enemyHit",
       "hitSoundVolume": 1,
       "availableSince": 45000
-    },
-
-    "POWERUPS": {
-      "nukes": 0,
-      "timeWarps": 0,
-      "rockets": 0
     }
-  }
+  },
+
+  "POWERUPS": {
+    "nukes": 0,
+    "timeWarps": 0,
+    "rockets": 0
+  },
+
+  "SCOREBOARD": [],
+  "TOPSCORE": 0
 }

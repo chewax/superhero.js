@@ -157,5 +157,22 @@ module TextInfo {
             this.xDirection *= -1;
         }
 
+
+        showNewRecordText(frase:string = "NEW RECORD!"){
+
+            var style = { font: "50px saranaigamebold", fill: "#27E5E8", align: "center"};
+            var txt = this.game.add.text(this.game.world.centerX, this.game.world.centerY, frase, style);
+
+            var newx = txt.x - this.xDirection * (200 * this.game.rnd.integerInRange(1,2));
+            var newy = txt.y - 100;
+
+            var tween = this.game.add.tween(txt).to({x:newx, y:newy},1000, Phaser.Easing.Default, true, 0, 0, false).onComplete.add(
+                function(){
+                    txt.destroy();
+                },this);
+
+            this.xDirection *= -1;
+        }
+
     }
 }
