@@ -230,7 +230,7 @@ module Superhero {
 
         showControlsInfo(){
             var style = { font: "15px saranaigamebold", fill: "#FDCD08", align: "center"};
-            this.controlsText = this.game.add.text(30, this.world.height - 30, "SPACE : Fire    Z : Nuke Bomb    X : Time Warp    C : Launch Rocket", style);
+            this.controlsText = this.game.add.text(30, this.world.height - 30, "MOVEMENT : Cursors or Mouse    SPACE : Fire    Z : Nuke Bomb    X : Time Warp    C : Launch Rocket", style);
         }
 
     }
