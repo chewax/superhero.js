@@ -53,6 +53,7 @@ module Superhero {
         // BUTTONS
         pauseButton: Phaser.Sprite;
         menu: Phaser.Sprite;
+        menuDisabled: Phaser.Sprite;
 
         scoreCount: number = 0;
         scoreText: Phaser.Text;
@@ -84,6 +85,7 @@ module Superhero {
             this.updateCooldowns();
 
             if (!this.player.sprite.alive) {
+
                 this.popUpMenu();
             }
 
@@ -104,7 +106,9 @@ module Superhero {
 
         popUpMenu(){
 
-            this.menu.reset(this.game.world.centerX, this.game.world.centerY);
+            if (this.player.sprite.alive) this.menu.reset(this.game.world.centerX, this.game.world.centerY);
+            else this.menuDisabled.reset(this.game.world.centerX, this.game.world.centerY);
+
             this.game.world.bringToTop(this.menu);
 
             if (!this.recordSaved) (<Superhero.Game> this.game).conf.save();
@@ -141,7 +145,12 @@ module Superhero {
             this.menu.anchor.setTo(0.5,0.5);
             this.menu.inputEnabled = true;
 
+            this.menuDisabled = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'menuBackDisabled');
+            this.menuDisabled.anchor.setTo(0.5,0.5);
+            this.menuDisabled.inputEnabled = true;
+
             this.menu.kill();
+            this.menuDisabled.kill();
 
             this.timer = this.game.time.create(false);
             this.pauseButton.events.onInputDown.add(this.popUpMenu, this);
@@ -196,6 +205,7 @@ module Superhero {
                         break;
 
                     default:
+                        if (!this.player.sprite.alive) return;
                         this.timer.resume();
                         this.game.paused = false;
                         this.menu.kill();
@@ -206,6 +216,7 @@ module Superhero {
                 }
 
             } else{
+                if (!this.player.sprite.alive) return;
                 // Remove the menu and the label
                 this.menu.kill();
                 this.game.input.onDown.remove(this.unPause,this);
@@ -264,7 +275,6 @@ module Superhero {
         }
 
         updateTime(){
-            console.log('tick');
             var minutes = Math.floor(this.timer.seconds / 60);
             var seconds = Math.floor(this.timer.seconds - (minutes * 60));
             this.timerText.setText(minutes.toString() + ":" + ( "0" + seconds.toString()).slice(-2) );

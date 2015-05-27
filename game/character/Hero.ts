@@ -155,7 +155,6 @@ module Superhero {
                 this.fxEnabled = (<Superhero.Game> this.game).conf.ISMUSICENABLED;
                 if (this.fxEnabled) this.takeHitSound.play();
             }
-
             return dead;
         }
 

@@ -55,6 +55,7 @@ module Superhero {
             this.game.load.image('puinfo', '/assets/PUInfo.png');
             this.game.load.image('pauseBtn', '/assets/pauseBtn.png');
             this.game.load.image('menuBack', '/assets/menuBack.png');
+            this.game.load.image('menuBackDisabled', '/assets/menuBack2.png');
             this.game.load.image('mainMenu', '/assets/mainMenu.png');
             this.game.load.image('ranking', '/assets/ranking.png');
             this.game.load.image('menuBackground', '/assets/menuBackground.png');
