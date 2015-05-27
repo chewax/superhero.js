@@ -56,6 +56,17 @@ module Superhero {
         "enemiesCollection": any
     }
 
+    interface IPowerUps {
+        nukes: number;
+        timeWarps: number;
+        rockets: number;
+    }
+
+    interface IRanking {
+        date: number;
+        score: number;
+    }
+
     export class Config {
 
         WORLD: IWorldConfig;
@@ -66,6 +77,9 @@ module Superhero {
         ENEMIES: IEnemiesConfig;
         CHARACTERSCOLLECTION: any;
         FIRSTTIMEPLAYING: boolean;
+        POWERUPS: IPowerUps;
+        TOPSCORE: number;
+        SCOREBOARD: IRanking[];
 
         constructor () {
             // Parse JSON values from game config file path
@@ -79,6 +93,26 @@ module Superhero {
             this.ISMUSICENABLED = JSON.parse(remoteValues).ISMUSICENABLED;
             this.CHARACTERSCOLLECTION =JSON.parse(remoteValues).CHARACTERSCOLLECTION;
             this.FIRSTTIMEPLAYING = JSON.parse(remoteValues).FIRSTTIMEPLAYING;
+            this.POWERUPS = JSON.parse(remoteValues).POWERUPS;
+            this.SCOREBOARD = JSON.parse(remoteValues).SCOREBOARD;
+            this.TOPSCORE = JSON.parse(remoteValues).TOPSCORE;
+        }
+
+        save(){
+
+            if (sh.state.current == 'Level1') {
+                this.POWERUPS.nukes = sh.state.states.Level1.hero.nukes;
+                this.POWERUPS.rockets = sh.state.states.Level1.hero.bombs;
+                this.POWERUPS.timeWarps = sh.state.states.Level1.hero.timeWarps;
+
+                if (!sh.state.states.Level1.hero.sprite.alive) {
+                    var score = {date:Date.now(), score:sh.state.states.Level1.ui.scoreCount};
+                    if (score.score > this.TOPSCORE) this.TOPSCORE = score.score;
+                    this.SCOREBOARD.push(score);
+                }
+            }
+
+            localStorage.setItem('superhero.conf', JSON.stringify(this));
         }
 
         private getRemote(): string {

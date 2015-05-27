@@ -18,6 +18,7 @@ module Superhero {
         // INFO TEXT
         infoText: TextInfo.InfoTextManager;
         comboText: Phaser.Text;
+        recordText: Phaser.Text;
 
 
         // TIMER
@@ -52,15 +53,18 @@ module Superhero {
         // BUTTONS
         pauseButton: Phaser.Sprite;
         menu: Phaser.Sprite;
+        menuDisabled: Phaser.Sprite;
 
         scoreCount: number = 0;
         scoreText: Phaser.Text;
+        brokeRecord: boolean = false;
+        recordSaved: boolean = false;
 
         constructor(game: Phaser.Game, player: Superhero.Character) {
             this.game = game;
             this.player = player;
             this.infoText = new TextInfo.InfoTextManager(this.game);
-            if(this.game.state.getCurrentState().key == "level1") {
+            if(this.game.state.current == "level1") {
                 this.game.state.states.Level1.collectableManager.onCollect.removeAll();
                 this.game.state.states.Level1.collectableManager.onCollect.add(this.dispatchPraiseText, this);
                 this.game.state.states.Level1.hero.onHit.removeAll();
@@ -81,9 +85,8 @@ module Superhero {
             this.updateCooldowns();
 
             if (!this.player.sprite.alive) {
-                this.menu.reset(this.game.world.centerX, this.game.world.centerY);
-                this.timer.stop();
-                this.game.input.onDown.add(this.unPause, this);
+
+                this.popUpMenu();
             }
 
 
@@ -93,6 +96,29 @@ module Superhero {
                 this.comboText.setText("");
             }
 
+            if (this.scoreCount > (<Superhero.Game> this.game).conf.TOPSCORE && !this.brokeRecord ) {
+                this.brokeRecord = true;
+                this.infoText.showNewRecordText();
+            }
+
+
+        }
+
+        popUpMenu(){
+
+            if (this.player.sprite.alive) this.menu.reset(this.game.world.centerX, this.game.world.centerY);
+            else this.menuDisabled.reset(this.game.world.centerX, this.game.world.centerY);
+
+            this.game.world.bringToTop(this.menu);
+
+            if (!this.recordSaved) (<Superhero.Game> this.game).conf.save();
+
+            this.recordSaved = true;
+
+            this.timer.pause();
+            this.game.paused = true;
+            this.game.sound.pauseAll();
+            this.game.input.onDown.add(this.unPause, this);
         }
 
         dispatchCriticizeText():void{
@@ -108,12 +134,7 @@ module Superhero {
             var puinfo = this.game.add.sprite(this.game.world.centerX + 60, 10, 'puinfo');
             puinfo.scale.setTo(-0.5,0.5);
             puinfo.inputEnabled = true;
-
-            puinfo.events.onInputDown.add(function(){
-                this.menu.reset(this.game.world.centerX, this.game.world.centerY);
-                this.game.input.onDown.add(this.unPause, this);
-                this.game.paused = true;
-            }, this);
+            puinfo.events.onInputDown.add(this.popUpMenu, this);
 
             this.pauseButton = this.game.add.sprite(this.game.world.centerX + 15, 25, 'pauseBtn');
             this.pauseButton.inputEnabled = true;
@@ -124,30 +145,30 @@ module Superhero {
             this.menu.anchor.setTo(0.5,0.5);
             this.menu.inputEnabled = true;
 
+            this.menuDisabled = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'menuBackDisabled');
+            this.menuDisabled.anchor.setTo(0.5,0.5);
+            this.menuDisabled.inputEnabled = true;
+
             this.menu.kill();
-
-
-            this.pauseButton.events.onInputDown.add(function(){
-                this.menu.reset(this.game.world.centerX, this.game.world.centerY);
-                this.game.input.onDown.add(this.unPause, this);
-                this.game.paused = true;
-            }, this);
+            this.menuDisabled.kill();
 
             this.timer = this.game.time.create(false);
+            this.pauseButton.events.onInputDown.add(this.popUpMenu, this);
+
 
             var style = { font: "25px saranaigamebold", fill: "#FFFFFF", align: "center" };
             this.timerText = this.game.add.text(this.game.world.centerX - 60, 40, "0:00", style);
             this.timerText.anchor.set(0, 0.5);
             this.timer.loop(Phaser.Timer.SECOND, this.updateTime, this);
             this.timer.start();
-
-
         }
 
         unPause(event){
             // Calculate the corners of the menu
             var x1 = this.game.world.centerX - this.menu.width/2, x2 = this.game.world.centerX + this.menu.width/2,
                 y1 = this.game.world.centerY - this.menu.height/2, y2 = this.game.world.centerY + this.menu.height/2;
+
+            this.game.sound.resumeAll();
 
             // Check if the click was inside the menu
             if(event.x > x1 && event.x < x2 && event.y > y1 && event.y < y2 ){
@@ -161,42 +182,47 @@ module Superhero {
                 var choice = Math.floor(((y/4)-28)/22) + 1;
                 switch (choice){
                     case 1:
+                        if (!this.player.sprite.alive) break;
                         this.menu.kill();
+                        this.timer.resume();
                         this.game.input.onDown.remove(this.unPause,this);
                         this.game.paused = false;
                         break;
 
                     case 2:
+                        this.timer.resume();
                         this.game.paused = false;
                         this.game.input.onDown.remove(this.unPause,this);
                         this.game.state.restart(true,false);
                         break;
 
                     case 3:
+                        this.timer.resume();
                         this.game.paused = false;
                         this.game.input.onDown.remove(this.unPause,this);
-                        //this.game.state.states.Level1.theme.destroy();
                         this.game.sound.stopAll();
-                        //if (this.game.state.states.Level1.theme) this.game.state.states.Level1.theme.stop();
-
                         this.game.state.start('Menu');
                         break;
 
                     default:
+                        if (!this.player.sprite.alive) return;
+                        this.timer.resume();
+                        this.game.paused = false;
                         this.menu.kill();
                         this.game.input.onDown.remove(this.unPause,this);
-                        this.game.paused = false;
                         break;
 
 
                 }
 
             } else {
+                if (!this.player.sprite.alive) return;
                 // Remove the menu and the label
                 this.menu.kill();
                 this.game.input.onDown.remove(this.unPause,this);
                 // Unpause the game
                 this.game.paused = false;
+                this.timer.resume();
             }
         }
 
@@ -417,7 +443,6 @@ module Superhero {
             var style = { font: "40px saranaigamebold", fill: "#FDCD08", align: "center"};
             this.comboText = this.game.add.text(this.game.world.centerX, 100, "", style);
             this.comboText.anchor.set(0.5,0.5);
-
         }
 
 

@@ -53,7 +53,7 @@ module Superhero {
 
         fireWarp (): void {
 
-            if (this.timeWarps <= 0 || !this.okToShoot()) return;
+            if (this.timeWarps <= 0 || !this.sprite.alive) return;
 
             this.timewarpActive = true;
             this.game.add.tween(this.game.time).to( {slowMotion:5.0} , 300, Phaser.Easing.Linear.None, true , 0,  0 , false).onComplete.add(
@@ -93,7 +93,7 @@ module Superhero {
          */
         fireRocket (): void {
 
-            if (this.bombs <= 0 || !this.canShoot()) return;
+            if (this.bombs <= 0 || !this.sprite.alive) return;
 
             this.sprite.animations.play('shoot');
 
@@ -112,7 +112,7 @@ module Superhero {
             //rocket.scale.setTo((<Superhero.Game> this.game).conf.WORLD.sprite_scaling);
 
             //Reset the timer
-            this.bulletTimer = this.game.time.time;
+            //this.bulletTimer = this.game.time.time;
             this.bombs -= 1;
 
             if (this.fxEnabled) this.fireRocketSound.play();
@@ -126,7 +126,7 @@ module Superhero {
          */
         fireNuke (): void {
 
-            if (this.nukes <= 0 || !this.okToShoot()) return;
+            if (this.nukes <= 0 || !this.sprite.alive) return;
             //var coolDown = this.game.time.elapsedSecondsSince(this.nukeCoolDown);
             //if (coolDown < 30) return;
             //this.nukeCoolDown = this.game.time.time;
@@ -161,7 +161,6 @@ module Superhero {
                 this.fxEnabled = (<Superhero.Game> this.game).conf.ISMUSICENABLED;
                 if (this.fxEnabled) this.takeHitSound.play();
             }
-
             return dead;
         }
 

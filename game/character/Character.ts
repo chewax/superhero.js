@@ -103,7 +103,7 @@ module Superhero {
             this.bulletTimer = this.game.time.time;
             this.nukeCoolDown = this.game.time.time;
             this.warpCoolDown = this.game.time.time;
-            this.sprite.play((<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["idleAnimation"])
+            this.sprite.play((<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["idleAnimation"]);
             this.setIdleCallback(this.flyStill);
         }
 
@@ -225,7 +225,9 @@ module Superhero {
          * Wraps the stop logic
          */
         stop (): void {
-            this.sprite.animations.play('stop');
+            this.sprite.animations.play('stop').onComplete.add(function(){
+                this.sprite.animations.play('flystill');
+            },this);
         }
 
         shootTimeUp():boolean{
@@ -311,6 +313,7 @@ module Superhero {
         addAnimations (): void {
 
             var newCharAnims = (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["animations"];
+
             for (var key in newCharAnims) {
                 this.sprite.animations.add(key,newCharAnims[key]["frames"], newCharAnims[key]["frameRate"],
                     newCharAnims[key]["loop"], newCharAnims[key]["useNumericIndex"]);

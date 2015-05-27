@@ -356,5 +356,14 @@
       "hitSoundVolume": 1,
       "availableSince": 520000
     }
-  }
+  },
+
+  "POWERUPS": {
+    "nukes": 0,
+    "timeWarps": 0,
+    "rockets": 0
+  },
+
+  "SCOREBOARD": [],
+  "TOPSCORE": 0
 }

@@ -111,19 +111,20 @@ module TextInfo {
         showComboText(level:number){
             var style = { font: "30px saranaigamebold", fill: "#00FF00", align: "center"};
 
-            var frase = "Hit";
+            var frase = "Combo Lost";
+            var soundChoices = ['goodJob', 'congratulations', 'greatWork'];
+            var sound = this.game.add.audio(soundChoices[this.game.rnd.integerInRange(0,2)],0.8,false);
 
             // Set New Text
             for (var i = this.comboText.length-1; i>=0; i--){
                 if (this.comboText[i].level < level) {
                     frase = this.comboText[i].text;
+
+                    // It is inside this for to avoid playing congrat text upon loosing a level.
+                    if ((<Superhero.Game> this.game).conf.ISMUSICENABLED) sound.play();
                     break;
                 }
             }
-
-            var soundChoices = ['goodJob', 'congratulations', 'greatWork'];
-            var sound = this.game.add.audio(soundChoices[this.game.rnd.integerInRange(0,2)],0.8,false);
-            sound.play();
 
 
             var txt = this.game.add.text(this.game.world.centerX, this.game.world.centerY, frase, style);
@@ -143,6 +144,23 @@ module TextInfo {
         showCustomText(frase:string){
             var style = { font: "30px saranaigamebold", fill: "#FDCD08", align: "center"};
 
+            var txt = this.game.add.text(this.game.world.centerX, this.game.world.centerY, frase, style);
+
+            var newx = txt.x - this.xDirection * (200 * this.game.rnd.integerInRange(1,2));
+            var newy = txt.y - 100;
+
+            var tween = this.game.add.tween(txt).to({x:newx, y:newy},1000, Phaser.Easing.Default, true, 0, 0, false).onComplete.add(
+                function(){
+                    txt.destroy();
+                },this);
+
+            this.xDirection *= -1;
+        }
+
+
+        showNewRecordText(frase:string = "NEW RECORD!"){
+
+            var style = { font: "50px saranaigamebold", fill: "#27E5E8", align: "center"};
             var txt = this.game.add.text(this.game.world.centerX, this.game.world.centerY, frase, style);
 
             var newx = txt.x - this.xDirection * (200 * this.game.rnd.integerInRange(1,2));

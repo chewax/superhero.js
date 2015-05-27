@@ -47,6 +47,11 @@ module Superhero {
         enemyTextBoxGraphic: Phaser.Graphics;
         bootsCollected: boolean = false;
 
+        pcFireButton: Phaser.Key;
+        pcNukeButton: Phaser.Key;
+        pcWarpButton: Phaser.Key;
+        pcBombButton: Phaser.Key;
+
         preload () {
 
         }
@@ -84,9 +89,7 @@ module Superhero {
             //Obstacles
             this.obstacleManager.update();
 
-            //if (this.game.input.keyboard.addKey(Phaser.Keyboard.P).isDown){
-            //    this.game.paused != this.game.paused
-            //}
+            this.checkPCInput();
         }
 
         configurePhysics():void {
@@ -137,6 +140,11 @@ module Superhero {
             (<Superhero.Game> this.game).gamepad.buttonPad.button2.type = Gamepads.ButtonType.SINGLE;
             (<Superhero.Game> this.game).gamepad.buttonPad.button3.type = Gamepads.ButtonType.SINGLE;
             (<Superhero.Game> this.game).gamepad.buttonPad.button4.type = Gamepads.ButtonType.SINGLE_THEN_TURBO;
+
+            this.pcFireButton = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+            this.pcNukeButton = this.game.input.keyboard.addKey(Phaser.Keyboard.Z);
+            this.pcWarpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.X);
+            this.pcBombButton = this.game.input.keyboard.addKey(Phaser.Keyboard.C);
         }
 
         setActors(assetKey: string = "hero1"): void {
@@ -334,6 +342,13 @@ module Superhero {
                 this.theme = this.game.add.audio('introTheme', 0.5, true);
                 this.theme.play();
             }
+        }
+
+        checkPCInput(){
+            if (this.pcFireButton.isDown) this.hero.fire();
+            if (this.pcNukeButton.isDown) this.hero.fireNuke();
+            if (this.pcWarpButton.isDown) this.hero.fireWarp();
+            if (this.pcBombButton.isDown) this.hero.fireRocket();
         }
 
         checkForCollisions(): void {

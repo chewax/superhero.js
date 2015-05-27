@@ -31,6 +31,13 @@ module Superhero {
         collectableManager: Collectables.CollectableManager;
         levelID: string = "level1";
 
+        pcFireButton: Phaser.Key;
+        pcNukeButton: Phaser.Key;
+        pcWarpButton: Phaser.Key;
+        pcBombButton: Phaser.Key;
+
+        cursors: Phaser.CursorKeys;
+
         preload () {
 
         }
@@ -67,9 +74,7 @@ module Superhero {
             //Obstacles
             this.obstacleManager.update();
 
-            //if (this.game.input.keyboard.addKey(Phaser.Keyboard.P).onUp){
-            //    this.game.paused = this.game.paused? false : true;
-            //}
+            this.checkPCInput();
         }
 
         configurePhysics():void {
@@ -119,6 +124,13 @@ module Superhero {
             (<Superhero.Game> this.game).gamepad.buttonPad.button3.enableCooldown(10);
             (<Superhero.Game> this.game).gamepad.buttonPad.button4.type = Gamepads.ButtonType.SINGLE_THEN_TURBO;
             (<Superhero.Game> this.game).gamepad.stick1.settings.topSpeed = 600;
+
+            this.pcFireButton = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+            this.pcNukeButton = this.game.input.keyboard.addKey(Phaser.Keyboard.Z);
+            this.pcWarpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.X);
+            this.pcBombButton = this.game.input.keyboard.addKey(Phaser.Keyboard.C);
+
+            this.cursors = this.game.input.keyboard.createCursorKeys();
         }
 
         setActors(): void {
@@ -147,6 +159,23 @@ module Superhero {
                 this.theme = this.game.add.audio('theme', 0.5, true);
                 this.theme.play();
             }
+        }
+
+        checkPCInput(){
+            if (this.pcFireButton.isDown) this.hero.fire();
+            if (this.pcNukeButton.isDown) this.hero.fireNuke();
+            if (this.pcWarpButton.isDown) this.hero.fireWarp();
+            if (this.pcBombButton.isDown) this.hero.fireRocket();
+
+            if (this.cursors.down.isDown || this.cursors.up.isDown || this.cursors.left.isDown || this.cursors.right.isDown) {
+                var speed = {x:0, y:0};
+                if (this.cursors.up.isDown) speed.y = -400;
+                if (this.cursors.down.isDown) speed.y = 400;
+                if (this.cursors.left.isDown) speed.x = -400;
+                if (this.cursors.right.isDown) speed.x = 400;
+                this.hero.move(speed);
+            }
+
         }
 
         checkForCollisions(): void {

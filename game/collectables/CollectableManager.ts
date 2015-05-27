@@ -90,24 +90,29 @@ module Collectables {
         spawnCollectable(x:number, y:number, index?:number){
 
             // Randomly respawn 1 out of 20 times unless a specific collectable was instructed
-            //if (!index) if (this.game.rnd.integerInRange(0,12) != 10) return;
+            //if (!index) if (this.game.rnd.integerInRange(0,5) != 2) return;
 
+            var randSpawn = this.game.rnd.integerInRange(0,150);
+            var spawnItem = [0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,2,2,2,3,3,3,4,4,4,4,4,4,5,5];
+            if (randSpawn > spawnItem.length - 1) return;
+            if (!index) index = spawnItem[randSpawn];
 
             // If there are no collectables created, return
             if (this.collectables.length < 1) return;
 
             // If there is already one spawned then return
             if (this.collectables.countLiving() >= 1) return;
+            var coll = this.collectables.getAt(index);
 
-            // Otherwise spawn a random collectable
-            // For now the respawn is random
-            if (index) {
-                var coll = this.collectables.getAt(index);
-            }
-            else
-            {
-                var coll = this.collectables.getRandom();
-            }
+            //// Otherwise spawn a random collectable
+            //// For now the respawn is random
+            //if (index) {
+            //    var coll = this.collectables.getAt(index);
+            //}
+            //else
+            //{
+            //    var coll = this.collectables.getRandom();
+            //}
 
             if (!coll) return;
             if (coll.alive) return;

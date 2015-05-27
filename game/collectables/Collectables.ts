@@ -125,7 +125,7 @@ module Collectables {
 
 
         loadSound(): void{
-            this.collectSound = this.game.add.sound('shieldCollect', 0.5);
+            this.collectSound = this.game.add.sound('shieldCollect', 1);
         }
 
     }
