@@ -111,19 +111,20 @@ module TextInfo {
         showComboText(level:number){
             var style = { font: "30px saranaigamebold", fill: "#00FF00", align: "center"};
 
-            var frase = "Hit";
+            var frase = "Combo Lost";
+            var soundChoices = ['goodJob', 'congratulations', 'greatWork'];
+            var sound = this.game.add.audio(soundChoices[this.game.rnd.integerInRange(0,2)],0.8,false);
 
             // Set New Text
             for (var i = this.comboText.length-1; i>=0; i--){
                 if (this.comboText[i].level < level) {
                     frase = this.comboText[i].text;
+
+                    // It is inside this for to avoid playing congrat text upon loosing a level.
+                    sound.play();
                     break;
                 }
             }
-
-            var soundChoices = ['goodJob', 'congratulations', 'greatWork'];
-            var sound = this.game.add.audio(soundChoices[this.game.rnd.integerInRange(0,2)],0.8,false);
-            sound.play();
 
 
             var txt = this.game.add.text(this.game.world.centerX, this.game.world.centerY, frase, style);
