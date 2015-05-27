@@ -109,14 +109,16 @@ module Superhero {
                         this.hero.body.acceleration.x = 600;
 
                         this.game.time.events.add(2000, function() {
-                            this.theme.destroy();
+                            //this.theme.destroy();
+                            this.game.sound.stopAll();
                             this.game.state.start('Level1', true, false);
                         }, this);
 
                         break;
 
                     case 2:
-                        this.theme.destroy();
+                        //this.theme.destroy();
+                        this.game.sound.stopAll();
                         this.game.state.start('Intro', true, false);
                         break;
 

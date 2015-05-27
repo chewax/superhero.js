@@ -47,6 +47,7 @@ module Superhero {
             //Single Images
             this.game.load.image('fuelbar', '/assets/fuel.png');
             this.game.load.image('starfield', '/assets/starfield.png');
+            this.game.load.image('factoryEnd', '/assets/factoryEnd.png');
             this.game.load.image('steeltile', '/assets/steeltile.png');
             this.game.load.image('planets', '/assets/planets.png');
             this.game.load.image('meteos', '/assets/meteos.png');

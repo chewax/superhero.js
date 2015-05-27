@@ -39,6 +39,7 @@ module Superhero {
         enemyFace: Phaser.Sprite;
         heroFace: Phaser.Sprite;
         boots: Phaser.Sprite;
+        factoryEnd: Phaser.Sprite;
         heroText: Phaser.Text;
         enemyText: Phaser.Text;
         heroTextBoxGraphic: Phaser.Graphics;
@@ -164,7 +165,7 @@ module Superhero {
         }
 
         setIntroScene(): void {
-            this.game.time.events.add(Phaser.Timer.SECOND * 8, this.spawnMiniBoss, this);
+            this.game.time.events.add(Phaser.Timer.SECOND * 9, this.spawnMiniBoss, this);
         }
 
         spawnMiniBoss(): void {
@@ -297,8 +298,8 @@ module Superhero {
             this.bootsCollected = true;
             this.boots.animations.play("introCollected");
             var actualCoor = {x: this.hero.sprite.x, y: this.hero.sprite.y};
-            this.hero.sprite.x = -200;
-            this.hero.sprite.y = -200;
+            this.hero.sprite.x = -100;
+            this.hero.sprite.y = -150;
             this.hero.sprite.body.enable = false;
             this.setActors();
             this.hero.sprite.x = actualCoor.x;
@@ -306,12 +307,29 @@ module Superhero {
             this.hero._state = new Superhero.StateIntroFly(this.game,this.hero);
             this.hero._state.enterState();
             this.hero.sprite.body.collideWorldBounds = false;
+            this.game.physics.arcade.enable(this.paralax4);
+            this.paralax4.body.checkWorldBounds = true;
+            this.paralax4.body.outOfBoundsKill = true;
+            this.paralax4.stopScroll();
+            this.paralax4.body.velocity.x = -300;
+            this.factoryEnd = this.game.add.sprite(this.paralax4.x + this.paralax4.width, 0, "factoryEnd");
+            this.world.sendToBack(this.factoryEnd);
+            this.world.sendToBack(this.paralax2);
+            this.world.sendToBack(this.paralax1);
+            this.game.physics.arcade.enable(this.factoryEnd);
+            this.factoryEnd.body.velocity.x = -300;
+            this.game.time.events.add(Phaser.Timer.SECOND * 9, this.finishLevel, this);
+        }
+
+        finishLevel(): void {
+            this.game.sound.stopAll();
+            this.game.state.start('Level1', true, false);
         }
 
         startMusic () :void{
             if((<Superhero.Game> this.game).conf.ISMUSICENABLED) {
                 if (this.theme) this.theme.destroy();
-                this.theme = this.game.add.audio('introTheme', 0.3, true);
+                this.theme = this.game.add.audio('introTheme', 0.5, true);
                 this.theme.play();
             }
             /*this.theme = this.game.add.audio('theme', 1, true);

@@ -171,7 +171,7 @@ module Superhero {
                 false
             );
 
-            this.fireNukeSound = this.game.add.audio('heroFireNuke', 0.5);
+            this.fireNukeSound = this.game.add.audio('heroFireNuke', 0.9);
             this.fireWarpSound = this.game.add.audio('heroFireWarp', 0.8);
             this.fireRocketSound = this.game.add.audio('heroFireRocket', 0.2);
             this.warpEnd = this.game.add.audio('heroWarpEnd', 0.8);
