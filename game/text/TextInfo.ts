@@ -121,7 +121,7 @@ module TextInfo {
                     frase = this.comboText[i].text;
 
                     // It is inside this for to avoid playing congrat text upon loosing a level.
-                    sound.play();
+                    if ((<Superhero.Game> this.game).conf.ISMUSICENABLED) sound.play();
                     break;
                 }
             }

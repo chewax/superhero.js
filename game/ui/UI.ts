@@ -60,7 +60,7 @@ module Superhero {
             this.game = game;
             this.player = player;
             this.infoText = new TextInfo.InfoTextManager(this.game);
-            if(this.game.state.getCurrentState().key == "level1") {
+            if(this.game.state.current == "level1") {
                 this.game.state.states.Level1.collectableManager.onCollect.removeAll();
                 this.game.state.states.Level1.collectableManager.onCollect.add(this.dispatchPraiseText, this);
                 this.game.state.states.Level1.hero.onHit.removeAll();
@@ -81,9 +81,7 @@ module Superhero {
             this.updateCooldowns();
 
             if (!this.player.sprite.alive) {
-                this.menu.reset(this.game.world.centerX, this.game.world.centerY);
-                this.timer.stop();
-                this.game.input.onDown.add(this.unPause, this);
+                this.popUpMenu();
             }
 
 
@@ -93,6 +91,12 @@ module Superhero {
                 this.comboText.setText("");
             }
 
+        }
+
+        popUpMenu(){
+            this.menu.reset(this.game.world.centerX, this.game.world.centerY);
+            this.timer.stop();
+            this.game.input.onDown.add(this.unPause, this);
         }
 
         dispatchCriticizeText():void{
@@ -109,11 +113,7 @@ module Superhero {
             puinfo.scale.setTo(-0.5,0.5);
             puinfo.inputEnabled = true;
 
-            puinfo.events.onInputDown.add(function(){
-                this.menu.reset(this.game.world.centerX, this.game.world.centerY);
-                this.game.input.onDown.add(this.unPause, this);
-                this.game.paused = true;
-            }, this);
+            puinfo.events.onInputDown.add(this.popUpMenu, this);
 
             this.pauseButton = this.game.add.sprite(this.game.world.centerX + 15, 25, 'pauseBtn');
             this.pauseButton.inputEnabled = true;
@@ -127,11 +127,7 @@ module Superhero {
             this.menu.kill();
 
 
-            this.pauseButton.events.onInputDown.add(function(){
-                this.menu.reset(this.game.world.centerX, this.game.world.centerY);
-                this.game.input.onDown.add(this.unPause, this);
-                this.game.paused = true;
-            }, this);
+            this.pauseButton.events.onInputDown.add(this.popUpMenu, this);
 
             this.timer = this.game.time.create(false);
 

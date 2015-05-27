@@ -103,7 +103,7 @@ module Superhero {
             this.bulletTimer = this.game.time.time;
             this.nukeCoolDown = this.game.time.time;
             this.warpCoolDown = this.game.time.time;
-            this.sprite.play((<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["idleAnimation"])
+            this.sprite.play((<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["idleAnimation"]);
             this.setIdleCallback(this.flyStill);
         }
 

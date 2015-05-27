@@ -78,12 +78,12 @@ module Superhero {
                 (<Superhero.Game> this.game).conf.ISMUSICENABLED = false;
                 this.theme.stop();
                 this.musicOnOff.frame = 1;
-                localStorage.setItem('superhero.conf', JSON.stringify((<Superhero.Game> this.game).conf));
+                (<Superhero.Game> this.game).conf.save();
             } else {
                 (<Superhero.Game> this.game).conf.ISMUSICENABLED = true;
                 this.theme.play();
                 this.musicOnOff.frame = 0;
-                localStorage.setItem('superhero.conf', JSON.stringify((<Superhero.Game> this.game).conf));
+                (<Superhero.Game> this.game).conf.save();
             }
         }
 

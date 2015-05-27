@@ -56,6 +56,12 @@ module Superhero {
         "enemiesCollection": any
     }
 
+    interface IPowerUps {
+        nukes: number;
+        timeWarps: number;
+        rockets: number;
+    }
+
     export class Config {
 
         WORLD: IWorldConfig;
@@ -65,6 +71,7 @@ module Superhero {
         PLAYERISIMMORTAL: boolean;
         ENEMIES: IEnemiesConfig;
         CHARACTERSCOLLECTION: any;
+        POWERUPS: IPowerUps;
 
         constructor () {
             // Parse JSON values from game config file path
@@ -77,6 +84,15 @@ module Superhero {
             this.PLAYERISIMMORTAL = JSON.parse(remoteValues).PLAYERISIMMORTAL;
             this.ISMUSICENABLED = JSON.parse(remoteValues).ISMUSICENABLED;
             this.CHARACTERSCOLLECTION =JSON.parse(remoteValues).CHARACTERSCOLLECTION;
+            this.POWERUPS = JSON.parse(remoteValues).POWERUPS;
+        }
+
+        save(){
+            this.POWERUPS.nukes = sh.game.state.states.Level1.hero.nukes;
+            this.POWERUPS.rockets = sh.game.state.states.Level1.hero.bombs;
+            this.POWERUPS.timeWarps = sh.game.state.states.Level1.hero.timeWarps;
+
+            localStorage.setItem('superhero.conf', JSON.stringify(this));
         }
 
         private getRemote(): string {
