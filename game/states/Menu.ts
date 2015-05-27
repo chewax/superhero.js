@@ -8,6 +8,8 @@ module Superhero {
 
         returnKey: Phaser.Key;
         menu: Phaser.Sprite;
+        ranking: Phaser.Sprite;
+
         paralax1: Phaser.TileSprite;
         paralax2: Phaser.TileSprite;
         background: Phaser.TileSprite;
@@ -16,6 +18,9 @@ module Superhero {
         startSound: Phaser.Sound;
         musicOnOff: Phaser.Sprite;
         musicOnOffText: Phaser.Text;
+        rankingText: Phaser.Text[];
+
+        showing: number = 1;
 
 
         preload () {
@@ -25,6 +30,8 @@ module Superhero {
 
 
         create () {
+
+            this.rankingText = [];
 
             // Setup paralax layer
             this.paralax2 = this.game.add.tileSprite(0,0,1800,600, 'starfield');
@@ -54,6 +61,10 @@ module Superhero {
 
             this.menu = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'mainMenu');
             this.menu.anchor.setTo(0.5, 0.5);
+
+            this.ranking = this.game.add.sprite(this.game.world.width + 200, this.game.world.centerY, 'ranking');
+            this.ranking.scale.setTo(0.4);
+            this.ranking.anchor.setTo(0.5, 0.5);
 
             var musicOnOffsetX = this.world.width - this.world.width/5;
             var musicOnOffsetY = this.world.height - 100;
@@ -88,6 +99,11 @@ module Superhero {
         }
 
         parseMenu(event){
+            if (this.showing == 1) this.parseMainMenu(event);
+            else this.parseRanking(event);
+        }
+
+        parseMainMenu(event){
             // Calculate the corners of the menu
             var x1 = this.game.world.centerX - this.menu.width/2, x2 = this.game.world.centerX + this.menu.width/2,
                 y1 = this.game.world.centerY - this.menu.height/2, y2 = this.game.world.centerY + this.menu.height/2;
@@ -133,7 +149,7 @@ module Superhero {
                         break;
 
                     case 3:
-                        this.game.state.start('Ranking', false, false);
+                        this.showRanking();
                         break;
 
                     case 4:
@@ -141,6 +157,69 @@ module Superhero {
 
                 }
             }
+        }
+
+        showRanking(){
+            this.showing = 2;
+            this.game.add.tween(this.menu).to({x: -this.menu.x}, 1000, Phaser.Easing.Exponential.In,true,0,0,false);
+            this.game.add.tween(this.musicOnOff).to({x: -this.world.width + this.musicOnOff.x}, 1000, Phaser.Easing.Exponential.In,true,0,0,false);
+            this.game.add.tween(this.musicOnOffText).to({x: -this.world.width + this.musicOnOffText.x}, 1000, Phaser.Easing.Exponential.In,true,0,0,false);
+            this.game.add.tween(this.ranking).to({x: this.world.centerX}, 1000, Phaser.Easing.Exponential.In,true,0,0,false).onComplete.addOnce(function(){
+
+                var style = { font: "30px saranaigamebold", fill: "#FDCD08", align: "center"};
+                var textx = this.game.world.centerX + 20;
+                var texty = 111;
+                var scoreboard = (<Superhero.Game> this.game).conf.SCOREBOARD;
+                var scoreLength = scoreboard.length;
+                scoreboard.sort(function(a,b){
+                    return a.score - b.score;
+                });
+
+                for (var i=1; i<=5; i++){
+                    if (!scoreboard[scoreLength-i]) break;
+                    this.rankingText[i-1] = this.game.add.text(textx, texty, scoreboard[scoreLength-i].score.toString(),style);
+                    texty += 83;
+                }
+
+                }, this);
+
+
+
+
+        }
+
+
+        showMainMenu(){
+
+            for (var i = 0; i<5; i++ ){
+                if (this.rankingText[i]){
+                    this.rankingText[i].destroy();
+                }
+            }
+
+            this.showing = 1;
+            var musicOnOffsetX = this.world.width - this.world.width/5;
+            this.game.add.tween(this.menu).to({x: -this.menu.x}, 1000, Phaser.Easing.Exponential.In,true,0,0,false);
+            this.game.add.tween(this.musicOnOff).to({x: musicOnOffsetX}, 1000, Phaser.Easing.Exponential.In,true,0,0,false);
+            this.game.add.tween(this.musicOnOffText).to({x: musicOnOffsetX - 100}, 1000, Phaser.Easing.Exponential.In,true,0,0,false);
+            this.game.add.tween(this.ranking).to({x: this.world.width + 200}, 1000, Phaser.Easing.Exponential.In,true,0,0,false);
+
+        }
+
+        parseRanking(event){
+            // Calculate the corners of the menu
+            var x1 = this.game.world.centerX - this.ranking.width/2, x2 = this.game.world.centerX + this.ranking.width/2,
+                y1 = this.game.world.centerY - this.ranking.height/2, y2 = this.game.world.centerY + this.ranking.height/2;
+
+            // Check if the click was inside the menu
+            if(event.x > x1 && event.x < x2 && event.y > y1 && event.y < y2 ){
+                // Noop
+            }
+            else
+            {
+                this.showMainMenu();
+            }
+
         }
 
         shutdown() {
