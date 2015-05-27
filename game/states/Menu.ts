@@ -20,6 +20,8 @@ module Superhero {
         musicOnOffText: Phaser.Text;
         rankingText: Phaser.Text[];
 
+        controlsText: Phaser.Text;
+
         showing: number = 1;
 
 
@@ -52,6 +54,10 @@ module Superhero {
                 this.hero.animations.add(key,newCharAnims[key]["frames"], newCharAnims[key]["frameRate"],
                     newCharAnims[key]["loop"], newCharAnims[key]["useNumericIndex"]);
             };
+
+            if (this.game.device.desktop) {
+                this.showControlsInfo();
+            }
 
 
             this.hero.animations.play('fly');
@@ -164,6 +170,7 @@ module Superhero {
             this.game.add.tween(this.menu).to({x: -this.menu.x}, 1000, Phaser.Easing.Exponential.In,true,0,0,false);
             this.game.add.tween(this.musicOnOff).to({x: -this.world.width + this.musicOnOff.x}, 1000, Phaser.Easing.Exponential.In,true,0,0,false);
             this.game.add.tween(this.musicOnOffText).to({x: -this.world.width + this.musicOnOffText.x}, 1000, Phaser.Easing.Exponential.In,true,0,0,false);
+            if (this.controlsText) this.game.add.tween(this.controlsText).to({x: -this.world.width + 30}, 1000, Phaser.Easing.Exponential.In,true,0,0,false);
             this.game.add.tween(this.ranking).to({x: this.world.centerX}, 1000, Phaser.Easing.Exponential.In,true,0,0,false).onComplete.addOnce(function(){
 
                 var style = { font: "30px saranaigamebold", fill: "#FDCD08", align: "center"};
@@ -182,15 +189,9 @@ module Superhero {
                 }
 
                 }, this);
-
-
-
-
         }
 
-
         showMainMenu(){
-
             for (var i = 0; i<5; i++ ){
                 if (this.rankingText[i]){
                     this.rankingText[i].destroy();
@@ -203,6 +204,7 @@ module Superhero {
             this.game.add.tween(this.musicOnOff).to({x: musicOnOffsetX}, 1000, Phaser.Easing.Exponential.In,true,0,0,false);
             this.game.add.tween(this.musicOnOffText).to({x: musicOnOffsetX - 100}, 1000, Phaser.Easing.Exponential.In,true,0,0,false);
             this.game.add.tween(this.ranking).to({x: this.world.width + 200}, 1000, Phaser.Easing.Exponential.In,true,0,0,false);
+            if (this.controlsText) this.game.add.tween(this.controlsText).to({x: 30}, 1000, Phaser.Easing.Exponential.In,true,0,0,false);
 
         }
 
@@ -224,6 +226,11 @@ module Superhero {
 
         shutdown() {
             this.game.world.removeAll();
+        }
+
+        showControlsInfo(){
+            var style = { font: "15px saranaigamebold", fill: "#FDCD08", align: "center"};
+            this.controlsText = this.game.add.text(30, this.world.height - 30, "SPACE : Fire    Z : Nuke Bomb    X : Time Warp    C : Launch Rocket", style);
         }
 
     }
