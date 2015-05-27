@@ -49,6 +49,7 @@ module Superhero {
             this.game.load.image('starfield', '/assets/starfield.png');
             this.game.load.image('factoryEnd', '/assets/factoryEnd.png');
             this.game.load.image('steeltile', '/assets/steeltile.png');
+            this.game.load.image('spaceShipBackground', '/assets/spaceship.png');
             this.game.load.image('planets', '/assets/planets.png');
             this.game.load.image('meteos', '/assets/meteos.png');
             this.game.load.image('windowMask', '/assets/windowMask.png');
@@ -56,6 +57,7 @@ module Superhero {
             this.game.load.image('pauseBtn', '/assets/pauseBtn.png');
             this.game.load.image('menuBack', '/assets/menuBack.png');
             this.game.load.image('mainMenu', '/assets/mainMenu.png');
+            this.game.load.image('mainMenuStartDisabled', '/assets/mainMenuStartDisabled.png');
             this.game.load.image('menuBackground', '/assets/menuBackground.png');
 
             // Smoke
@@ -89,6 +91,7 @@ module Superhero {
             this.game.load.audio('heroFireNuke', '/assets/sounds/hero/fireNuke.ogg');
             this.game.load.audio('heroWarpMeanwhile','/assets/sounds/hero/duringWarp.ogg');
             this.game.load.audio('heroGetHit','/assets/sounds/hero/getHit.ogg');
+            this.game.load.audio('heroTakeOff','/assets/sounds/hero/introTakeOff.ogg');
 
 
             // PowerUps

@@ -51,8 +51,12 @@ module Superhero {
             this.game.input.onDown.add(this.parseMenu, this);
             this.game.physics.arcade.enable(this.hero);
 
+            if(!(<Superhero.Game> this.game).conf.FIRSTTIMEPLAYING) {
+                this.menu = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'mainMenu');
+            } else {
+                this.menu = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'mainMenuStartDisabled');
+            }
 
-            this.menu = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'mainMenu');
             this.menu.anchor.setTo(0.5, 0.5);
 
             var musicOnOffsetX = this.world.width - this.world.width/5;
@@ -104,18 +108,19 @@ module Superhero {
                 var choice = Math.floor((y/4)/23) + 1;
                 switch (choice){
                     case 1:
-                        if((<Superhero.Game> this.game).conf.ISMUSICENABLED) {
-                            this.game.sound.stopAll();
-                            this.startSound.play();
+                        if(!(<Superhero.Game> this.game).conf.FIRSTTIMEPLAYING) {
+                            if ((<Superhero.Game> this.game).conf.ISMUSICENABLED) {
+                                this.game.sound.stopAll();
+                                this.startSound.play();
+                            }
+                            this.theme.fadeOut(2000);
+                            this.hero.body.acceleration.x = 600;
+
+                            this.game.time.events.add(2000, function () {
+                                this.game.sound.stopAll();
+                                this.game.state.start('Level1', true, false);
+                            }, this);
                         }
-                        this.theme.fadeOut(2000);
-                        this.hero.body.acceleration.x = 600;
-
-                        this.game.time.events.add(2000, function() {
-                            this.game.sound.stopAll();
-                            this.game.state.start('Level1', true, false);
-                        }, this);
-
                         break;
 
                     case 2:

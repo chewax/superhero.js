@@ -229,7 +229,13 @@ module Superhero {
         }
 
         shootTimeUp():boolean{
-            var elapsedTime = this.game.time.elapsedSince(this.bulletTimer);
+            var bulletTimerVal = this.bulletTimer;
+            if(sh.state.getCurrentState().key != "Intro" && this.sprite.key != "hero1") {
+                if((<Superhero.Level1>sh.state.states.Level1).hero.timewarpActive) {
+                    bulletTimerVal = bulletTimerVal * 2;
+                }
+            }
+            var elapsedTime = this.game.time.elapsedSince(bulletTimerVal);
             return !(elapsedTime < this.shootDelay);
         }
 

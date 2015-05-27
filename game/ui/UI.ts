@@ -156,7 +156,7 @@ module Superhero {
                 // Get menu local coordinates for the click
                 var x = event.x - x1,
                     y = event.y - y1;
-                
+
                 // Calculate the choice
                 var choice = Math.floor(((y/4)-28)/22) + 1;
                 switch (choice){
@@ -191,7 +191,7 @@ module Superhero {
 
                 }
 
-            } else{
+            } else {
                 // Remove the menu and the label
                 this.menu.kill();
                 this.game.input.onDown.remove(this.unPause,this);

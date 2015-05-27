@@ -24,6 +24,7 @@ module Superhero {
         //paralax3: Phaser.TileSprite;
         paralax4: Phaser.TileSprite;
         paralax5: Phaser.TileSprite;
+        spaceShip: Phaser.Sprite;
 
         musicEnabled: boolean;
         fxEnabled: boolean;
@@ -101,10 +102,9 @@ module Superhero {
             this.paralax2 = this.game.add.tileSprite(0,0,3600,600, 'planets');
             this.paralax2.autoScroll(-30,0);
 
-
-            this.paralax4 = this.game.add.tileSprite(0,0,this.world.width,this.world.height, 'steeltile');
-            this.paralax4.autoScroll(-200,0);
-
+            this.spaceShip = this.game.add.sprite(0, 0, "spaceShipBackground");
+            this.game.physics.arcade.enable(this.spaceShip);
+            this.spaceShip.body.velocity.x = -200;
 
             this.paralax5 = this.game.add.tileSprite(0,this.world.height-25,this.world.width,this.world.height-25, 'steel', 'floor_c');
             this.paralax5.autoScroll(-200,0);
@@ -171,9 +171,7 @@ module Superhero {
         spawnMiniBoss(): void {
             if(this.enemyManager.totalEnemiesAlive() < 2) {
                 this.enemyManager.spawnCustomEnemy("miniBoss");
-                this.paralax1.stopScroll();
-                this.paralax2.stopScroll();
-                this.paralax4.stopScroll();
+                this.spaceShip.body.velocity.x = 0;
                 this.paralax5.stopScroll();
                 this.hero.sprite.animations.paused = true;
                 (<Superhero.StateRun>this.hero._state).isMoving = false;
@@ -235,13 +233,15 @@ module Superhero {
         displayTextScene3(): void {
             this.heroText.setText("");
             this.enemyText.x = 220;
+            this.enemyText.y -= 20;
             this.enemyText.setText("Why don't you talk with my friend here...");
             this.game.time.events.add(Phaser.Timer.SECOND * 5, this.displayTextScene4, this);
         }
 
         displayTextScene4(): void {
             this.heroText.setText("");
-            this.enemyText.setText("I'm pretty sure that you'll solve the issue...Bye");
+            this.enemyText.y += 20;
+            this.enemyText.setText("I'm pretty sure that you'll solve the issue... Bye");
             this.spawnTwoHandedEnemy();
             this.enemyManager.enemiesAlive[1].shield = 20;
             this.game.time.events.add(Phaser.Timer.SECOND * 5, this.displayTextScene5, this);
@@ -261,24 +261,21 @@ module Superhero {
             this.heroText.destroy();
             this.heroTextBoxGraphic.destroy();
             this.heroFace.kill();
-            (<Superhero.StateRun>this.hero._state).isMoving = true;
-            this.hero.sprite.animations.paused = false;
             this.enemyManager.enemiesAlive[0].fireEnabled = true;
             (<Superhero.StateEnemyHostile>this.enemyManager.enemiesAlive[0]._state).patrol(spawnEnemyPosition.DOWN);
             this.enemyManager.enemiesAlive[0].shield = 3;
             this.enemyManager.enemiesAlive[0].sprite.events.onKilled.add(function(s) {
                 this.generateBoots();
             }, this);
-
-            this.hero.sprite.play((<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.hero.sprite.key]["idleAnimation"])
-            this.paralax1.autoScroll(-10,0);
-            this.paralax2.autoScroll(-30,0);
-            this.paralax4.autoScroll(-200,0);
-            this.paralax5.autoScroll(-200,0);
         }
 
         generateBoots(): void {
             // Boots
+            (<Superhero.StateRun>this.hero._state).isMoving = true;
+            this.hero.sprite.animations.paused = false;
+            this.hero.sprite.play((<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.hero.sprite.key]["idleAnimation"])
+            this.spaceShip.body.velocity.x = -200;
+            this.paralax5.autoScroll(-200,0);
             this.bootsCollected = false;
             this.boots = this.game.add.sprite(this.game.world.width, this.game.world.height - 85, "introScene", "boots1");
             this.boots.anchor.setTo(0.5, 0);
@@ -297,6 +294,10 @@ module Superhero {
         collectBoots(): void {
             this.bootsCollected = true;
             this.boots.animations.play("introCollected");
+            if ((<Superhero.Game> this.game).conf.ISMUSICENABLED) {
+                var takeOffSound = this.game.sound.add("heroTakeOff", 0.6, false);
+                takeOffSound.play();
+            }
             var actualCoor = {x: this.hero.sprite.x, y: this.hero.sprite.y};
             this.hero.sprite.x = -100;
             this.hero.sprite.y = -150;
@@ -307,22 +308,23 @@ module Superhero {
             this.hero._state = new Superhero.StateIntroFly(this.game,this.hero);
             this.hero._state.enterState();
             this.hero.sprite.body.collideWorldBounds = false;
-            this.game.physics.arcade.enable(this.paralax4);
-            this.paralax4.body.checkWorldBounds = true;
-            this.paralax4.body.outOfBoundsKill = true;
-            this.paralax4.stopScroll();
-            this.paralax4.body.velocity.x = -300;
-            this.factoryEnd = this.game.add.sprite(this.paralax4.x + this.paralax4.width, 0, "factoryEnd");
-            this.world.sendToBack(this.factoryEnd);
-            this.world.sendToBack(this.paralax2);
-            this.world.sendToBack(this.paralax1);
-            this.game.physics.arcade.enable(this.factoryEnd);
-            this.factoryEnd.body.velocity.x = -300;
+            this.game.physics.arcade.enable(this.paralax5);
+            this.game.time.events.add(2650, this.stopGroundParalax, this);
+
             this.game.time.events.add(Phaser.Timer.SECOND * 9, this.finishLevel, this);
+        }
+
+        stopGroundParalax(): void {
+            this.paralax5.stopScroll();
+            this.paralax5.body.velocity.x = -200;
         }
 
         finishLevel(): void {
             this.game.sound.stopAll();
+            // Persist first time played
+            (<Superhero.Game> this.game).conf.FIRSTTIMEPLAYING = false;
+            localStorage.setItem('superhero.conf', JSON.stringify((<Superhero.Game> this.game).conf));
+            // Start level 1
             this.game.state.start('Level1', true, false);
         }
 
@@ -332,8 +334,6 @@ module Superhero {
                 this.theme = this.game.add.audio('introTheme', 0.5, true);
                 this.theme.play();
             }
-            /*this.theme = this.game.add.audio('theme', 1, true);
-            if (this.musicEnabled) this.theme.play();*/
         }
 
         checkForCollisions(): void {

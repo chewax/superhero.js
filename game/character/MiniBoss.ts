@@ -31,13 +31,13 @@ module Superhero {
                     if (this.sprite.animations.currentAnim.name != 'shoot' || this.sprite.animations.currentAnim.isFinished) {
 
                         //Check for shootRate
-                        var elapsedTime = this.game.time.elapsedSince(this.bulletTimer);
-                        if (elapsedTime < this.shootDelay) return;
+                        if(!this.shootTimeUp()) return;
+
                         (<Superhero.StateEnemyHostile>this._state).pausePatrol();
 
                         this.sprite.animations.play('shoot', (<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.sprite.key]["shootAnimationFrames"]);
                         // Stop tween and play new animation
-                        this.game.time.events.add(1000, function() {
+                        this.game.time.events.add(1000, function () {
                             this.fireBullet();
                         }, this);
                     }

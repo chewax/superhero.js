@@ -11,6 +11,7 @@ module Superhero {
         fireRocketSound: Phaser.Sound;
         warpEnd: Phaser.Sound;
         takeHitSound: Phaser.Sound;
+        timewarpActive: boolean;
 
         constructor (game:Phaser.Game, spriteKey?: string) {
             var sptK;
@@ -21,8 +22,8 @@ module Superhero {
             }
             super(game, sptK, game.world.centerX - 200,game.world.centerY);
             this.facing = Facing.RIGHT;
-            //this.firePower = 10;
             this.shootDelay = 500;
+            this.timewarpActive = false;
 
             this.setBulletVelocity(1000);
         }
@@ -54,25 +55,30 @@ module Superhero {
 
             if (this.timeWarps <= 0 || !this.okToShoot()) return;
 
-            //console.log(this.sprite.body.drag.multiply(this));
-            //var slowTween = this.game.add.tween(this.game.time):
+            this.timewarpActive = true;
             this.game.add.tween(this.game.time).to( {slowMotion:5.0} , 300, Phaser.Easing.Linear.None, true , 0,  0 , false).onComplete.add(
                 function(){
                     this.sprite.body.drag.x *= 3*this.game.time.slowMotion;
                     this.sprite.body.drag.y *= 3*this.game.time.slowMotion;
                 },this);
-
-            this.game.add.tween(this.game.state.states.Level1.theme).to({volume:0.05}, 300, Phaser.Easing.Linear.None, true , 0,  0 , false);
+            if((<Superhero.Game> this.game).conf.ISMUSICENABLED) {
+                this.game.add.tween(this.game.state.states.Level1.theme).to({volume: 0.05}, 300, Phaser.Easing.Linear.None, true, 0, 0, false);
+            }
 
             this.game.time.events.add(8000, function() {
                 this.sprite.body.drag.x /= 3*this.game.time.slowMotion;
                 this.sprite.body.drag.y /= 3*this.game.time.slowMotion;
                 this.game.add.tween(this.game.time).to( {slowMotion:1.0} , 1000, Phaser.Easing.Linear.None, true , 0,  0 , false);
-                this.game.add.tween(this.game.state.states.Level1.theme).to({volume:0.2}, 1000, Phaser.Easing.Linear.None, true , 0,  0 , false);
+                if((<Superhero.Game> this.game).conf.ISMUSICENABLED) {
+                    this.game.add.tween(this.game.state.states.Level1.theme).to({volume: 0.2}, 1000, Phaser.Easing.Linear.None, true, 0, 0, false);
+                }
             }, this);
 
             this.game.time.events.add(6000, function() {
                 if (this.fxEnabled) this.warpEnd.play();
+                this.game.time.events.add(2000, function() {
+                    this.timewarpActive = false;
+                }, this);
             }, this);
 
             this.timeWarps -= 1;

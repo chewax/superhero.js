@@ -65,6 +65,7 @@ module Superhero {
         PLAYERISIMMORTAL: boolean;
         ENEMIES: IEnemiesConfig;
         CHARACTERSCOLLECTION: any;
+        FIRSTTIMEPLAYING: boolean;
 
         constructor () {
             // Parse JSON values from game config file path
@@ -77,6 +78,7 @@ module Superhero {
             this.PLAYERISIMMORTAL = JSON.parse(remoteValues).PLAYERISIMMORTAL;
             this.ISMUSICENABLED = JSON.parse(remoteValues).ISMUSICENABLED;
             this.CHARACTERSCOLLECTION =JSON.parse(remoteValues).CHARACTERSCOLLECTION;
+            this.FIRSTTIMEPLAYING = JSON.parse(remoteValues).FIRSTTIMEPLAYING;
         }
 
         private getRemote(): string {

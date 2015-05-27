@@ -159,8 +159,8 @@ module Superhero {
 
             if (this.hero.sprite.alive) {
                 this.hero.sprite.play('flystill');
-                this.hero.sprite.body.velocity.y = - 50;
-                this.hero.sprite.body.velocity.x = 120;
+                this.hero.sprite.body.velocity.y = -50;
+                this.hero.sprite.body.velocity.x = 190;
             }
             return this;
         }

@@ -25,7 +25,7 @@ module Superhero {
 
             this.dieSound = this.game.add.audio(
                 "twoHandedDie",
-                0.2,
+                0.4,
                 false
             );
         }
@@ -73,8 +73,7 @@ module Superhero {
                         this.sprite.animations.currentAnim.name != 'takehit') {
 
                         //Check for shootRate
-                        var elapsedTime = this.game.time.elapsedSince(this.bulletTimer);
-                        if (elapsedTime < this.shootDelay) return;
+                        if(!this.shootTimeUp()) return;
 
                         if (this.lastFireLeft) {
                             // fire right hand
@@ -158,7 +157,9 @@ module Superhero {
             this.dieTimer = this.game.time.time;
 
             // SFX
-            this.playGetHitSound();
+            if((<Superhero.Game> this.game).conf.ISMUSICENABLED) {
+                this.playGetHitSound();
+            }
 
             if(object) {
                 this.checkRocketCollision(object);
@@ -182,7 +183,9 @@ module Superhero {
 
             this.sprite.body.checkWorldBounds = true;
             this.sprite.body.outOfBoundsKill = true;
-            this.dieSound.play();
+            if((<Superhero.Game> this.game).conf.ISMUSICENABLED) {
+                this.dieSound.play();
+            }
             this.sprite.body.angularVelocity = this.game.rnd.integerInRange(-400, -300);
             if (this.bullets) this.bullets.forEachAlive(function(b){b.kill()},this);
             this.game.physics.arcade.accelerationFromRotation(this.sprite.rotation, this.game.rnd.integerInRange(-300,-400), this.sprite.body.acceleration);

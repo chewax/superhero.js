@@ -36,6 +36,8 @@
   
   "ISMUSICENABLED": true,
 
+  "FIRSTTIMEPLAYING": true,
+
 
   "ENEMIES": {
     "multiplier": 0.1,
@@ -235,7 +237,7 @@
       "fireVolume": 1,
       "hitSound": "enemyHit",
       "hitSoundVolume": 1,
-      "availableSince": 120000
+      "availableSince": 320000
     },
 
     "twoHandedWeapon": {
@@ -276,7 +278,7 @@
       "fireVolume": 1,
       "hitSound": "enemyHit",
       "hitSoundVolume": 1,
-      "availableSince": 90000
+      "availableSince": 520000
     },
 
     "miniBoss": {
@@ -315,7 +317,7 @@
       "fireVolume": 0.5,
       "hitSound": "enemyHit",
       "hitSoundVolume": 1,
-      "availableSince": 190000
+      "availableSince": 620000
     },
     "smallMissileEnemy": {
       "mainSprite": "idle1",
@@ -352,7 +354,7 @@
       "fireVolume": 0.5,
       "hitSound": "enemyHit",
       "hitSoundVolume": 1,
-      "availableSince": 45000
+      "availableSince": 520000
     }
   }
 }
