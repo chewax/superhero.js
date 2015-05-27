@@ -52,6 +52,7 @@ module Superhero {
         warpButton:Gamepads.Button;
         bombButton:Gamepads.Button;
         heroStick:Gamepads.Joystick;
+
         fxEnabled: boolean;
         musicEnabled: boolean;
 
