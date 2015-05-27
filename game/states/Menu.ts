@@ -104,12 +104,14 @@ module Superhero {
                 var choice = Math.floor((y/4)/23) + 1;
                 switch (choice){
                     case 1:
-                        if((<Superhero.Game> this.game).conf.ISMUSICENABLED) this.startSound.play();
+                        if((<Superhero.Game> this.game).conf.ISMUSICENABLED) {
+                            this.game.sound.stopAll();
+                            this.startSound.play();
+                        }
                         this.theme.fadeOut(2000);
                         this.hero.body.acceleration.x = 600;
 
                         this.game.time.events.add(2000, function() {
-                            //this.theme.destroy();
                             this.game.sound.stopAll();
                             this.game.state.start('Level1', true, false);
                         }, this);
@@ -117,9 +119,17 @@ module Superhero {
                         break;
 
                     case 2:
-                        //this.theme.destroy();
-                        this.game.sound.stopAll();
-                        this.game.state.start('Intro', true, false);
+                        if((<Superhero.Game> this.game).conf.ISMUSICENABLED) {
+                            this.game.sound.stopAll();
+                            this.startSound.play();
+                        }
+                        this.theme.fadeOut(2000);
+                        this.hero.body.acceleration.x = 600;
+
+                        this.game.time.events.add(2000, function() {
+                            this.game.sound.stopAll();
+                            this.game.state.start('Intro', true, false);
+                        }, this);
                         break;
 
                     case 3:
