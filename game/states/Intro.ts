@@ -52,6 +52,8 @@ module Superhero {
         pcWarpButton: Phaser.Key;
         pcBombButton: Phaser.Key;
 
+        cursors: Phaser.CursorKeys;
+
         preload () {
 
         }
@@ -145,6 +147,8 @@ module Superhero {
             this.pcNukeButton = this.game.input.keyboard.addKey(Phaser.Keyboard.Z);
             this.pcWarpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.X);
             this.pcBombButton = this.game.input.keyboard.addKey(Phaser.Keyboard.C);
+
+            this.cursors = this.game.input.keyboard.createCursorKeys();
         }
 
         setActors(assetKey: string = "hero1"): void {
@@ -349,6 +353,12 @@ module Superhero {
             if (this.pcNukeButton.isDown) this.hero.fireNuke();
             if (this.pcWarpButton.isDown) this.hero.fireWarp();
             if (this.pcBombButton.isDown) this.hero.fireRocket();
+
+            if (this.cursors.up.isDown && this.hero.sprite.body.touching.down) {
+                var speed = {x:0, y:0};
+                if (this.cursors.up.isDown) speed.y = -800;
+                this.hero.move(speed);
+            }
         }
 
         checkForCollisions(): void {
