@@ -477,7 +477,7 @@ module Superhero {
                 this.flickerSprite(0xFF0000);
                 this.unShield();
                 this.onHit.dispatch();
-                window.navigator.vibrate(100);
+                //window.navigator.vibrate(100);
                 return false;
             }
 
@@ -485,7 +485,7 @@ module Superhero {
                 this.lives -= 1;
                 this.onHit.dispatch();
                 this.dieReset();
-                window.navigator.vibrate([300,300,300,300]);
+                //window.navigator.vibrate([300,300,300,300]);
                 return false;
             }
 

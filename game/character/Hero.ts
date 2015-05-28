@@ -93,7 +93,7 @@ module Superhero {
          */
         fireRocket (): void {
 
-            if (this.bombs <= 0 || !this.sprite.alive) return;
+            if (this.bombs <= 0 || !this.canShoot()) return;
 
             this.sprite.animations.play('shoot');
 
@@ -112,7 +112,7 @@ module Superhero {
             //rocket.scale.setTo((<Superhero.Game> this.game).conf.WORLD.sprite_scaling);
 
             //Reset the timer
-            //this.bulletTimer = this.game.time.time;
+            this.bulletTimer = this.game.time.time;
             this.bombs -= 1;
 
             if (this.fxEnabled) this.fireRocketSound.play();
