@@ -24,7 +24,8 @@ module Superhero {
         //paralax3: Phaser.TileSprite;
         paralax4: Phaser.TileSprite;
         paralax5: Phaser.TileSprite;
-        spaceShip: Phaser.Sprite;
+        spaceShip1: Phaser.Sprite;
+        spaceShip2: Phaser.Sprite;
 
         musicEnabled: boolean;
         fxEnabled: boolean;
@@ -107,9 +108,14 @@ module Superhero {
             this.paralax2 = this.game.add.tileSprite(0,0,3600,600, 'planets');
             this.paralax2.autoScroll(-30,0);
 
-            this.spaceShip = this.game.add.sprite(0, 0, "spaceShipBackground");
-            this.game.physics.arcade.enable(this.spaceShip);
-            this.spaceShip.body.velocity.x = -200;
+            this.spaceShip1 = this.game.add.sprite(0, 0, "spaceShipBackground1");
+            this.spaceShip2 = this.game.add.sprite(this.spaceShip1.width, 0, "spaceShipBackground2");
+
+            this.game.physics.arcade.enable(this.spaceShip1);
+            this.spaceShip1.body.velocity.x = -200;
+
+            this.game.physics.arcade.enable(this.spaceShip2);
+            this.spaceShip2.body.velocity.x = -200;
 
             this.paralax5 = this.game.add.tileSprite(0,this.world.height-25,this.world.width,this.world.height-25, 'steel', 'floor_c');
             this.paralax5.autoScroll(-200,0);
@@ -183,7 +189,8 @@ module Superhero {
         spawnMiniBoss(): void {
             if(this.enemyManager.totalEnemiesAlive() < 2) {
                 this.enemyManager.spawnCustomEnemy("miniBoss");
-                this.spaceShip.body.velocity.x = 0;
+                this.spaceShip1.body.velocity.x = 0;
+                this.spaceShip2.body.velocity.x = 0;
                 this.paralax5.stopScroll();
                 this.hero.sprite.animations.paused = true;
                 (<Superhero.StateRun>this.hero._state).isMoving = false;
@@ -238,7 +245,7 @@ module Superhero {
             this.heroFace.animations.play("introScene", 10, true, false);
             var style = { font: "30px saranaigamebold", fill: "#ffffff", align: 'left', wordWrap: true, wordWrapWidth: 650 };
             this.enemyText.setText("");
-            this.heroText = this.game.add.text(220, 330, "Watch and see", style);
+            this.heroText = this.game.add.text(220, 330, "Watch N See", style);
             this.game.time.events.add(Phaser.Timer.SECOND * 5, this.displayTextScene3, this);
         }
 
@@ -286,7 +293,8 @@ module Superhero {
             (<Superhero.StateRun>this.hero._state).isMoving = true;
             this.hero.sprite.animations.paused = false;
             this.hero.sprite.play((<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.hero.sprite.key]["idleAnimation"])
-            this.spaceShip.body.velocity.x = -200;
+            this.spaceShip1.body.velocity.x = -200;
+            this.spaceShip2.body.velocity.x = -200;
             this.paralax5.autoScroll(-200,0);
             this.bootsCollected = false;
             this.boots = this.game.add.sprite(this.game.world.width, this.game.world.height - 85, "introScene", "boots1");
