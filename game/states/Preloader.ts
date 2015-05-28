@@ -46,7 +46,8 @@ module Superhero {
 
             //Single Images
             this.game.load.image('starfield', '/assets/starfield.png');
-            this.game.load.image('spaceShipBackground', '/assets/spaceship.png');
+            this.game.load.image('spaceShipBackground1', '/assets/spaceShip1.png');
+            this.game.load.image('spaceShipBackground2', '/assets/spaceShip2.png');
             this.game.load.image('planets', '/assets/planets.png');
             this.game.load.image('puinfo', '/assets/PUInfo.png');
             this.game.load.image('pauseBtn', '/assets/pauseBtn.png');
