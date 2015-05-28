@@ -38,6 +38,8 @@
 
   "FIRSTTIMEPLAYING": true,
 
+  "GAMEVERSION": "1.0",
+
 
   "ENEMIES": {
     "multiplier": 0.1,

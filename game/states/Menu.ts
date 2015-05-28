@@ -19,6 +19,8 @@ module Superhero {
         musicOnOff: Phaser.Sprite;
         musicOnOffText: Phaser.Text;
         rankingText: Phaser.Text[];
+        mainText: Phaser.Sprite;
+        verstionText: Phaser.Text;
 
         controlsText: Phaser.Text;
 
@@ -54,6 +56,12 @@ module Superhero {
                 this.hero.animations.add(key,newCharAnims[key]["frames"], newCharAnims[key]["frameRate"],
                     newCharAnims[key]["loop"], newCharAnims[key]["useNumericIndex"]);
             };
+
+            this.mainText = this.game.add.sprite(70, this.game.height - 130, "superheroText");
+            this.mainText.scale.setTo(1.1, 1.1);
+
+            this.verstionText = this.game.add.text(this.world.width - 100, this.world.height - 25, "Version " + (<Superhero.Game>this.game).conf.GAMEVERSION,
+                { font: "9px saranaigamebold", fill: "#d3d3d3", align: "left"});
 
             if (this.game.device.desktop) {
                 this.showControlsInfo();

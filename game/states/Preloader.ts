@@ -61,6 +61,7 @@ module Superhero {
             this.game.load.image('mainMenuStartDisabled', '/assets/mainMenuStartDisabled.png');
             this.game.load.image('ranking', '/assets/ranking.png');
             this.game.load.image('menuBackground', '/assets/menuBackground.png');
+            this.game.load.image('superheroText', '/assets/superheroText.png');
 
             // Smoke
             this.game.load.image('smoke', 'assets/smoke-puff.png');

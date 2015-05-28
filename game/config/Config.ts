@@ -80,6 +80,7 @@ module Superhero {
         POWERUPS: IPowerUps;
         TOPSCORE: number;
         SCOREBOARD: IRanking[];
+        GAMEVERSION: string;
 
         constructor () {
             // Parse JSON values from game config file path
@@ -96,6 +97,7 @@ module Superhero {
             this.POWERUPS = JSON.parse(remoteValues).POWERUPS;
             this.SCOREBOARD = JSON.parse(remoteValues).SCOREBOARD;
             this.TOPSCORE = JSON.parse(remoteValues).TOPSCORE;
+            this.GAMEVERSION = JSON.parse(remoteValues).GAMEVERSION;
         }
 
         save(){
