@@ -161,6 +161,12 @@ module Superhero {
                 this.fxEnabled = (<Superhero.Game> this.game).conf.ISMUSICENABLED;
                 if (this.fxEnabled) this.takeHitSound.play();
             }
+
+            if (dead) {
+                var snd = this.game.add.audio('heroDie',0.8,false);
+                snd.play().onStop.add(this.game.state.states.Level1.ui.popUpMenu, this.game.state.states.Level1.ui);
+            }
+
             return dead;
         }
 

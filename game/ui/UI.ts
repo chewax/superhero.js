@@ -84,10 +84,10 @@ module Superhero {
             this.updatePUPIcons();
             this.updateCooldowns();
 
-            if (!this.player.sprite.alive) {
-
-                this.popUpMenu();
-            }
+            //if (!this.player.sprite.alive) {
+            //
+            //    this.popUpMenu();
+            //}
 
 
             if (Math.floor(this.player.comboLevel) > 0) {
@@ -211,8 +211,6 @@ module Superhero {
                         this.menu.kill();
                         this.game.input.onDown.remove(this.unPause,this);
                         break;
-
-
                 }
 
             } else {

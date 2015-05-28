@@ -91,6 +91,7 @@ module Superhero {
             this.game.load.audio('heroWarpMeanwhile','/assets/sounds/hero/duringWarp.ogg');
             this.game.load.audio('heroGetHit','/assets/sounds/hero/getHit.ogg');
             this.game.load.audio('heroTakeOff','/assets/sounds/hero/introTakeOff.ogg');
+            this.game.load.audio('heroDie','/assets/sounds/hero/die.ogg');
 
 
             // PowerUps
