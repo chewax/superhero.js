@@ -32,6 +32,7 @@ module Superhero {
             super.update();
             var newState = this._state.update();
 
+
             // If the update returned a different state then
             // we must exit the previous state, start the new one and assign the new one
             if (newState !== this._state) {
@@ -164,7 +165,8 @@ module Superhero {
 
             if (dead) {
                 var snd = this.game.add.audio('heroDie',0.8,false);
-                snd.play().onStop.add(this.game.state.states.Level1.ui.popUpMenu, this.game.state.states.Level1.ui);
+                var state = this.game.state.getCurrentState();
+                snd.play();
             }
 
             return dead;
