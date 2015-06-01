@@ -29,112 +29,113 @@ module Superhero {
 
         loadAssets () {
 
+            var basepath = '';
+
             //Spritesheets
-            this.game.load.atlasJSONHash('hero1', '/assets/hero1.png', '/assets/hero1.json');
-            this.game.load.atlasJSONHash('herowalking', '/assets/hero1Walking.png', '/assets/hero1.json');
-            this.game.load.atlasJSONHash('badie', '/assets/hero3.png', '/assets/hero3.json');
-            this.game.load.atlasJSONHash('pups', '/assets/pups.png', '/assets/pups.json');
-            this.game.load.atlasJSONHash('meteors', '/assets/meteors.png', '/assets/meteors.json');
-            this.game.load.atlasJSONHash('bullets', '/assets/bullets.png', '/assets/bullets.json');
-            this.game.load.atlasJSONHash('steel', '/assets/steel.png', '/assets/steel.json');
-            this.game.load.atlasJSONHash('shields', '/assets/shields.png', '/assets/shields.json');
-            this.game.load.atlasJSONHash('pupanim', '/assets/pupanim.png', '/assets/pupanim.json');
-            this.game.load.atlasJSONHash('onoff', '/assets/onoff.png', '/assets/onoff.json');
+            this.game.load.atlasJSONHash('hero1', basepath + '/assets/hero1.png', basepath + '/assets/hero1.json');
+            this.game.load.atlasJSONHash('herowalking', basepath + '/assets/hero1Walking.png', basepath + '/assets/hero1.json');
+            this.game.load.atlasJSONHash('badie', basepath + '/assets/hero3.png', basepath + '/assets/hero3.json');
+            this.game.load.atlasJSONHash('pups', basepath + '/assets/pups.png', basepath + '/assets/pups.json');
+            this.game.load.atlasJSONHash('meteors', basepath + '/assets/meteors.png', basepath + '/assets/meteors.json');
+            this.game.load.atlasJSONHash('bullets', basepath + '/assets/bullets.png', basepath + '/assets/bullets.json');
+            this.game.load.atlasJSONHash('steel', basepath + '/assets/steel.png', basepath + '/assets/steel.json');
+            this.game.load.atlasJSONHash('shields', basepath + '/assets/shields.png', basepath + '/assets/shields.json');
+            this.game.load.atlasJSONHash('pupanim', basepath + '/assets/pupanim.png', basepath + '/assets/pupanim.json');
+            this.game.load.atlasJSONHash('onoff', basepath + '/assets/onoff.png', basepath + '/assets/onoff.json');
 
             // Intro scene
-            this.game.load.atlasJSONHash('introScene', '/assets/introScene.png', '/assets/introScene.json');
+            this.game.load.atlasJSONHash('introScene', basepath + '/assets/introScene.png', basepath + '/assets/introScene.json');
 
             //Single Images
-            this.game.load.image('starfield', '/assets/starfield.png');
-            this.game.load.image('spaceShipBackground1', '/assets/spaceShip1.png');
-            this.game.load.image('spaceShipBackground2', '/assets/spaceShip2.png');
-            this.game.load.image('planets', '/assets/planets.png');
-            this.game.load.image('puinfo', '/assets/PUInfo.png');
-            this.game.load.image('pauseBtn', '/assets/pauseBtn.png');
-            this.game.load.image('menuBack', '/assets/menuBack.png');
-            this.game.load.image('menuBackDisabled', '/assets/menuBack2.png');
-            this.game.load.image('mainMenu', '/assets/mainMenu.png');
-            this.game.load.image('mainMenuStartDisabled', '/assets/mainMenuStartDisabled.png');
-            this.game.load.image('ranking', '/assets/ranking.png');
-            this.game.load.image('menuBackground', '/assets/menuBackground.png');
-            this.game.load.image('superheroText', '/assets/superheroText.png');
+            this.game.load.image('starfield', basepath + '/assets/starfield.png');
+            this.game.load.image('spaceShipBackground1', basepath + '/assets/spaceShip1.png');
+            this.game.load.image('spaceShipBackground2', basepath + '/assets/spaceShip2.png');
+            this.game.load.image('planets', basepath + '/assets/planets.png');
+            this.game.load.image('puinfo', basepath + '/assets/PUInfo.png');
+            this.game.load.image('pauseBtn', basepath + '/assets/pauseBtn.png');
+            this.game.load.image('menuBack', basepath + '/assets/menuBack.png');
+            this.game.load.image('menuBackDisabled', basepath + '/assets/menuBack2.png');
+            this.game.load.image('mainMenu', basepath + '/assets/mainMenu.png');
+            this.game.load.image('mainMenuStartDisabled', basepath + '/assets/mainMenuStartDisabled.png');
+            this.game.load.image('ranking', basepath + '/assets/ranking.png');
+            this.game.load.image('menuBackground', basepath + '/assets/menuBackground.png');
+            this.game.load.image('superheroText', basepath + '/assets/superheroText.png');
 
             // Smoke
-            this.game.load.image('smoke', 'assets/smoke-puff.png');
+            this.game.load.image('smoke',  basepath + '/assets/smoke-puff.png');
 
             /** Enemies **/
 
             // Tentacle bot
-            this.game.load.atlasJSONHash('tentabot01', 'assets/tentacleBot.png', '/assets/tentacleBot.json');
-            //this.game.load.audio('tentacleMissileLaunch', 'assets/missleLaunc1.ogg');
+            this.game.load.atlasJSONHash('tentabot01', basepath + '/assets/tentacleBot.png', basepath + '/assets/tentacleBot.json');
             // Two handed weapon enemy
-            this.game.load.atlasJSONHash('twoHandedWeapon', 'assets/twoHandedWeapon.png', '/assets/twoHandedWeapon.json');
+            this.game.load.atlasJSONHash('twoHandedWeapon', basepath + '/assets/twoHandedWeapon.png', basepath + '/assets/twoHandedWeapon.json');
             // Mini Boss
-            this.game.load.atlasJSONHash('miniBoss', 'assets/miniBoss.png', '/assets/miniBoss.json');
+            this.game.load.atlasJSONHash('miniBoss', basepath + '/assets/miniBoss.png', basepath + '/assets/miniBoss.json');
             // SmallMissileEnemy
-            this.game.load.atlasJSONHash('smallMissileEnemy', 'assets/smallMissileEnemy.png', '/assets/smallMissileEnemy.json');
+            this.game.load.atlasJSONHash('smallMissileEnemy', basepath + '/assets/smallMissileEnemy.png', basepath + '/assets/smallMissileEnemy.json');
 
             /** Audio **/
-            this.game.load.audio('theme', '/assets/sounds/demon_destroyer.ogg');
-            this.game.load.audio('introTheme', '/assets/sounds/intro/introTheme.ogg');
-            this.game.load.audio('enemyHit', '/assets/sounds/enemyHit.ogg');
+            this.game.load.audio('theme', basepath + '/assets/sounds/demon_destroyer.ogg');
+            this.game.load.audio('introTheme', basepath + '/assets/sounds/intro/introTheme.ogg');
+            this.game.load.audio('enemyHit', basepath + '/assets/sounds/enemyHit.ogg');
 
             // Menu
-            this.game.load.audio('menuTheme', '/assets/sounds/menu.ogg');
+            this.game.load.audio('menuTheme', basepath + '/assets/sounds/menu.ogg');
 
             // Hero
-            this.game.load.audio('heroFire', '/assets/sounds/hero/fire.ogg');
-            this.game.load.audio('heroFireWarp', '/assets/sounds/hero/fireWarp.ogg');
-            this.game.load.audio('heroWarpEnd', '/assets/sounds/hero/warpEnd.ogg');
-            this.game.load.audio('heroFireRocket', '/assets/sounds/hero/fireRocket.ogg');
-            this.game.load.audio('heroFireNuke', '/assets/sounds/hero/fireNuke.ogg');
-            this.game.load.audio('heroWarpMeanwhile','/assets/sounds/hero/duringWarp.ogg');
-            this.game.load.audio('heroGetHit','/assets/sounds/hero/getHit.ogg');
-            this.game.load.audio('heroTakeOff','/assets/sounds/hero/introTakeOff.ogg');
-            this.game.load.audio('heroDie','/assets/sounds/hero/die.ogg');
+            this.game.load.audio('heroFire', basepath + '/assets/sounds/hero/fire.ogg');
+            this.game.load.audio('heroFireWarp', basepath + '/assets/sounds/hero/fireWarp.ogg');
+            this.game.load.audio('heroWarpEnd', basepath + '/assets/sounds/hero/warpEnd.ogg');
+            this.game.load.audio('heroFireRocket', basepath + '/assets/sounds/hero/fireRocket.ogg');
+            this.game.load.audio('heroFireNuke', basepath + '/assets/sounds/hero/fireNuke.ogg');
+            this.game.load.audio('heroWarpMeanwhile',basepath + '/assets/sounds/hero/duringWarp.ogg');
+            this.game.load.audio('heroGetHit',basepath + '/assets/sounds/hero/getHit.ogg');
+            this.game.load.audio('heroTakeOff',basepath + '/assets/sounds/hero/introTakeOff.ogg');
+            this.game.load.audio('heroDie',basepath + '/assets/sounds/hero/die.ogg');
 
 
             // PowerUps
-            this.game.load.audio('shieldCollect', '/assets/sounds/pups/shield.ogg');
-            this.game.load.audio('extraLifeCollect', '/assets/sounds/pups/extraLife.ogg');
-            this.game.load.audio('timeWarpCollect', '/assets/sounds/pups/timeWarp.ogg');
-            this.game.load.audio('rocketCollect', '/assets/sounds/pups/rocket.ogg');
-            this.game.load.audio('nukeCollect', '/assets/sounds/pups/nuke.ogg');
-            this.game.load.audio('bulletCollect', '/assets/sounds/pups/bullet.ogg');
+            this.game.load.audio('shieldCollect', basepath + '/assets/sounds/pups/shield.ogg');
+            this.game.load.audio('extraLifeCollect', basepath + '/assets/sounds/pups/extraLife.ogg');
+            this.game.load.audio('timeWarpCollect', basepath + '/assets/sounds/pups/timeWarp.ogg');
+            this.game.load.audio('rocketCollect', basepath + '/assets/sounds/pups/rocket.ogg');
+            this.game.load.audio('nukeCollect', basepath + '/assets/sounds/pups/nuke.ogg');
+            this.game.load.audio('bulletCollect', basepath + '/assets/sounds/pups/bullet.ogg');
 
             // Cheers
-            this.game.load.audio('goodJob', '/assets/sounds/pups/goodJob.ogg');
-            this.game.load.audio('congratulations', '/assets/sounds/pups/congratulations.ogg');
-            this.game.load.audio('greatWork', '/assets/sounds/pups/greatWork.ogg');
+            this.game.load.audio('goodJob', basepath + '/assets/sounds/pups/goodJob.ogg');
+            this.game.load.audio('congratulations', basepath + '/assets/sounds/pups/congratulations.ogg');
+            this.game.load.audio('greatWork', basepath + '/assets/sounds/pups/greatWork.ogg');
 
-            this.game.load.audio('menuStart', '/assets/sounds/pups/alright.ogg');
+            this.game.load.audio('menuStart', basepath + '/assets/sounds/pups/alright.ogg');
 
             // Mini Boss
-            this.game.load.audio('miniBossFire', '/assets/sounds/miniBoss/blast.ogg');
+            this.game.load.audio('miniBossFire', basepath + '/assets/sounds/miniBoss/blast.ogg');
 
             // Two handed weapon enemy
-            this.game.load.audio('twoHandedFire', '/assets/sounds/twoHandedEnemy/twoHandedfire.ogg');
-            this.game.load.audio('twoHandedDie', '/assets/sounds/twoHandedEnemy/die.ogg');
+            this.game.load.audio('twoHandedFire', basepath + '/assets/sounds/twoHandedEnemy/twoHandedfire.ogg');
+            this.game.load.audio('twoHandedDie', basepath + '/assets/sounds/twoHandedEnemy/die.ogg');
 
             // Tentacle bot
-            this.game.load.audio('tentaBotFire', '/assets/sounds/tentacleBot/fire.ogg');
+            this.game.load.audio('tentaBotFire', basepath + '/assets/sounds/tentacleBot/fire.ogg');
 
             // Badie
-            this.game.load.audio('badieFire', '/assets/sounds/badie/badieFire.ogg');
+            this.game.load.audio('badieFire', basepath + '/assets/sounds/badie/badieFire.ogg');
 
             // Small missile enemy
-            this.game.load.audio('smallMissileWarningSound', '/assets/sounds/smallMissileEnemy/warning.ogg');
-            this.game.load.audio('smallMissileSiren', '/assets/sounds/smallMissileEnemy/siren.ogg');
-            this.game.load.audio('smallMissileMissile', '/assets/sounds/smallMissileEnemy/missile.ogg');
+            this.game.load.audio('smallMissileWarningSound', basepath + '/assets/sounds/smallMissileEnemy/warning.ogg');
+            this.game.load.audio('smallMissileSiren', basepath + '/assets/sounds/smallMissileEnemy/siren.ogg');
+            this.game.load.audio('smallMissileMissile', basepath + '/assets/sounds/smallMissileEnemy/missile.ogg');
 
             // Particles
-            this.game.load.audio("obstacle1", '/assets/sounds/obstacles/obetacle1.ogg');
-            this.game.load.audio("obstacle2", '/assets/sounds/obstacles/obetacle2.ogg');
-            this.game.load.audio("obstacle3", '/assets/sounds/obstacles/obetacle3.ogg');
-            this.game.load.audio("obstacle4", '/assets/sounds/obstacles/obetacle4.ogg');
-            this.game.load.audio("obstacle5", '/assets/sounds/obstacles/obetacle5.ogg');
+            this.game.load.audio("obstacle1", basepath + '/assets/sounds/obstacles/obetacle1.ogg');
+            this.game.load.audio("obstacle2", basepath + '/assets/sounds/obstacles/obetacle2.ogg');
+            this.game.load.audio("obstacle3", basepath + '/assets/sounds/obstacles/obetacle3.ogg');
+            this.game.load.audio("obstacle4", basepath + '/assets/sounds/obstacles/obetacle4.ogg');
+            this.game.load.audio("obstacle5", basepath + '/assets/sounds/obstacles/obetacle5.ogg');
 
-            Gamepads.GamePad.preloadAssets(this.game, '/assets');
+            Gamepads.GamePad.preloadAssets(this.game, basepath + '/assets');
         }
     }
 
