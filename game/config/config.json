@@ -79,7 +79,7 @@
     "hero1": {
       "mainSprite": "stand1",
       "childSprites": "",
-      "isImmortal": true,
+      "isImmortal": false,
       "shields": 0,
       "minShootDelay": 1515,
       "idleAnimation": "flystill",
