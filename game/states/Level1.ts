@@ -23,7 +23,7 @@ module Superhero {
         hero: Superhero.Hero;
         background: Phaser.TileSprite;
         paralax1: Phaser.TileSprite;
-        debug: Superhero.Debug;
+        //debug: Superhero.Debug;
         ui: Superhero.UI;
         theme: Phaser.Sound;
         obstacleManager: Obstacles.ObstacleManager;

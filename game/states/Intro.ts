@@ -31,7 +31,7 @@ module Superhero {
         fxEnabled: boolean;
 
 
-        debug: Superhero.Debug;
+        //debug: Superhero.Debug;
         ui: Superhero.UI;
         theme: Phaser.Sound;
         obstacleManager: Obstacles.ObstacleManager;
@@ -47,6 +47,7 @@ module Superhero {
         heroTextBoxGraphic: Phaser.Graphics;
         enemyTextBoxGraphic: Phaser.Graphics;
         bootsCollected: boolean = false;
+        playerCanInteract: boolean = true;
 
         pcFireButton: Phaser.Key;
         pcNukeButton: Phaser.Key;
@@ -75,7 +76,7 @@ module Superhero {
             this.setEnemyManager();
             this.setIntroScene();
 
-            this.debug = new Debug(this.game);
+            //this.debug = new Debug(this.game);
         }
 
         update () {
@@ -226,6 +227,8 @@ module Superhero {
             var style = { font: "30px saranaigamebold", fill: "#ffffff", align: 'left', wordWrap: true, wordWrapWidth: 650 };
             this.enemyText = this.game.add.text(410, 100, "You shall not pass :P", style);
 
+            this.playerCanInteract = true;
+
             this.game.time.events.add(Phaser.Timer.SECOND * 5, this.displayTextScene2, this);
         }
 
@@ -290,6 +293,7 @@ module Superhero {
 
         generateBoots(): void {
             // Boots
+            this.playerCanInteract = false;
             (<Superhero.StateRun>this.hero._state).isMoving = true;
             this.hero.sprite.animations.paused = false;
             this.hero.sprite.play((<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.hero.sprite.key]["idleAnimation"])
@@ -357,15 +361,17 @@ module Superhero {
         }
 
         checkPCInput(){
-            if (this.pcFireButton.isDown) this.hero.fire();
-            if (this.pcNukeButton.isDown) this.hero.fireNuke();
-            if (this.pcWarpButton.isDown) this.hero.fireWarp();
-            if (this.pcBombButton.isDown) this.hero.fireRocket();
+            if(this.playerCanInteract) {
+                if (this.pcFireButton.isDown) this.hero.fire();
+                if (this.pcNukeButton.isDown) this.hero.fireNuke();
+                if (this.pcWarpButton.isDown) this.hero.fireWarp();
+                if (this.pcBombButton.isDown) this.hero.fireRocket();
 
-            if (this.cursors.up.isDown && this.hero.sprite.body.touching.down) {
-                var speed = {x:0, y:0};
-                if (this.cursors.up.isDown) speed.y = -800;
-                this.hero.move(speed);
+                if (this.cursors.up.isDown && this.hero.sprite.body.touching.down) {
+                    var speed = {x: 0, y: 0};
+                    if (this.cursors.up.isDown) speed.y = -800;
+                    this.hero.move(speed);
+                }
             }
         }
 

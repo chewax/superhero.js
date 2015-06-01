@@ -79,7 +79,7 @@
     "hero1": {
       "mainSprite": "stand1",
       "childSprites": "",
-      "isImmortal": false,
+      "isImmortal": true,
       "shields": 0,
       "minShootDelay": 1515,
       "idleAnimation": "flystill",
@@ -239,7 +239,7 @@
       "fireVolume": 1,
       "hitSound": "enemyHit",
       "hitSoundVolume": 1,
-      "availableSince": 320000
+      "availableSince": 150000
     },
 
     "twoHandedWeapon": {
@@ -280,7 +280,7 @@
       "fireVolume": 1,
       "hitSound": "enemyHit",
       "hitSoundVolume": 1,
-      "availableSince": 520000
+      "availableSince": 229999
     },
 
     "miniBoss": {
@@ -319,7 +319,7 @@
       "fireVolume": 0.5,
       "hitSound": "enemyHit",
       "hitSoundVolume": 1,
-      "availableSince": 620000
+      "availableSince": 330000
     },
     "smallMissileEnemy": {
       "mainSprite": "idle1",
@@ -356,7 +356,7 @@
       "fireVolume": 0.5,
       "hitSound": "enemyHit",
       "hitSoundVolume": 1,
-      "availableSince": 520000
+      "availableSince": 100000
     }
   },
 
