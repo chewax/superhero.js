@@ -71,7 +71,7 @@ module Superhero {
                 this.sprite.body.drag.y /= 3*this.game.time.slowMotion;
                 this.game.add.tween(this.game.time).to( {slowMotion:1.0} , 1000, Phaser.Easing.Linear.None, true , 0,  0 , false);
                 if((<Superhero.Game> this.game).conf.ISMUSICENABLED) {
-                    this.game.add.tween(this.game.state.states.Level1.theme).to({volume: 0.2}, 1000, Phaser.Easing.Linear.None, true, 0, 0, false);
+                    this.game.add.tween(this.game.state.states.Level1.theme).to({volume: 0.5}, 1000, Phaser.Easing.Linear.None, true, 0, 0, false);
                 }
             }, this);
 
