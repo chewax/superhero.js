@@ -84,12 +84,6 @@ module Superhero {
             this.updatePUPIcons();
             this.updateCooldowns();
 
-            //if (!this.player.sprite.alive) {
-            //
-            //    this.popUpMenu();
-            //}
-
-
             if (Math.floor(this.player.comboLevel) > 0) {
                 this.comboText.setText("combo X"+Math.floor(this.player.comboLevel+1));
             } else {
@@ -101,6 +95,7 @@ module Superhero {
                 this.infoText.showNewRecordText();
             }
 
+            if (!this.player.sprite.alive) this.popUpMenu();
 
         }
 
@@ -164,9 +159,12 @@ module Superhero {
         }
 
         unPause(event){
-            // Calculate the corners of the menu
-            var x1 = this.game.world.centerX - this.menu.width/2, x2 = this.game.world.centerX + this.menu.width/2,
-                y1 = this.game.world.centerY - this.menu.height/2, y2 = this.game.world.centerY + this.menu.height/2;
+            // Calculate the corners of the menu;
+            var menu = this.player.sprite.alive ? this.menu : this.menuDisabled;
+
+
+            var x1 = this.game.world.centerX - menu.width/2, x2 = this.game.world.centerX + menu.width/2,
+                y1 = this.game.world.centerY - menu.height/2, y2 = this.game.world.centerY + menu.height/2;
 
             this.game.sound.resumeAll();
 
@@ -180,43 +178,51 @@ module Superhero {
 
                 // Calculate the choice
                 var choice = Math.floor(((y/4)-28)/22) + 1;
+
+                // Doing it this way to avoid the menu to become invisibly operated
+                this.game.input.onDown.remove(this.unPause,this);
+
                 switch (choice){
                     case 1:
+
                         if (!this.player.sprite.alive) break;
-                        this.menu.kill();
+                        menu.kill();
                         this.timer.resume();
-                        this.game.input.onDown.remove(this.unPause,this);
                         this.game.paused = false;
                         break;
 
                     case 2:
                         this.timer.resume();
                         this.game.paused = false;
-                        this.game.input.onDown.remove(this.unPause,this);
                         this.game.state.restart(true,false);
                         break;
 
                     case 3:
                         this.timer.resume();
                         this.game.paused = false;
-                        this.game.input.onDown.remove(this.unPause,this);
                         this.game.sound.stopAll();
-                        this.game.state.start('Menu');
+                        this.game.state.start('Menu', true, false);
                         break;
 
                     default:
                         if (!this.player.sprite.alive) return;
                         this.timer.resume();
                         this.game.paused = false;
-                        this.menu.kill();
-                        this.game.input.onDown.remove(this.unPause,this);
+
+                        // Remove the menu
+                        menu.kill();
+
+
                         break;
                 }
 
             } else {
                 if (!this.player.sprite.alive) return;
+
                 // Remove the menu and the label
-                this.menu.kill();
+                menu.kill();
+
+                // Doing it this way to avoid the menu to become invisibly operated
                 this.game.input.onDown.remove(this.unPause,this);
                 // Unpause the game
                 this.game.paused = false;
