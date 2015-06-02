@@ -201,7 +201,10 @@ module Superhero {
             this.paralax5.stopScroll();
             this.spaceShip1.body.velocity.x = 0;
             this.spaceShip2.body.velocity.x = 0;
+
             this.hero.sprite.animations.paused = true;
+            (<Superhero.StateRun>this.hero._state).isMoving = false;
+            this.hero.sprite.animations.play("stopWalking");
 
             if (this.game.device.desktop) this.showDesktopTutorial();
             else this.showTouchTutorial();
@@ -216,7 +219,12 @@ module Superhero {
                 this.paralax5.autoScroll(-200,0);
                 this.spaceShip1.body.velocity.x = -200;
                 this.spaceShip2.body.velocity.x = -200;
+
                 this.hero.sprite.animations.paused = false;
+                (<Superhero.StateRun>this.hero._state).isMoving = true;
+                this.hero.sprite.play((<Superhero.Game>this.game).conf.CHARACTERSCOLLECTION[this.hero.sprite.key]["idleAnimation"]);
+
+                (<Superhero.StateRun>this.hero._state).isMoving = false;
                 this.game.time.events.add(Phaser.Timer.SECOND * 4.5, this.spawnMiniBoss, this);
                 return;
             }
@@ -251,7 +259,20 @@ module Superhero {
             this.startSlideShow();
         }
 
-        showTouchTutorial(): void {}
+        showTouchTutorial(): void {
+            var pic1 = this.game.add.sprite(0,0,'tut_touch_move');
+            var pic2 = this.game.add.sprite(0,0,'tut_touch_jump');
+            var pic3 = this.game.add.sprite(0,0,'tut_touch_fire');
+
+            // To correctly use array.pop()
+            this.tutorialImages = [pic3, pic2, pic1];
+            this.tutorialImages.forEach( function(pic){
+                pic.visible = false;
+                //pic.scale = 0.6;
+            },this);
+
+            this.startSlideShow();
+        }
 
         spawnMiniBoss(): void {
             if(this.enemyManager.totalEnemiesAlive() < 2) {
