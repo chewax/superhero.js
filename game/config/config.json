@@ -239,7 +239,7 @@
       "fireVolume": 1,
       "hitSound": "enemyHit",
       "hitSoundVolume": 1,
-      "availableSince": 150000
+      "availableSince": 108000
     },
 
     "twoHandedWeapon": {
@@ -280,7 +280,7 @@
       "fireVolume": 1,
       "hitSound": "enemyHit",
       "hitSoundVolume": 1,
-      "availableSince": 229999
+      "availableSince": 160000
     },
 
     "miniBoss": {
@@ -319,7 +319,7 @@
       "fireVolume": 0.5,
       "hitSound": "enemyHit",
       "hitSoundVolume": 1,
-      "availableSince": 330000
+      "availableSince": 220000
     },
     "smallMissileEnemy": {
       "mainSprite": "idle1",
@@ -356,7 +356,7 @@
       "fireVolume": 0.5,
       "hitSound": "enemyHit",
       "hitSoundVolume": 1,
-      "availableSince": 100000
+      "availableSince": 72000
     }
   },
 
