@@ -60,6 +60,7 @@ module Superhero {
             this.game.load.image('ranking', basepath + '/assets/ranking.png');
             this.game.load.image('menuBackground', basepath + '/assets/menuBackground.png');
             this.game.load.image('superheroText', basepath + '/assets/superheroText.png');
+            this.game.load.image('skipIntro', basepath + '/assets/skipIntro.png');
 
             // Smoke
             this.game.load.image('smoke',  basepath + '/assets/smoke-puff.png');

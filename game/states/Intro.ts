@@ -48,6 +48,7 @@ module Superhero {
         enemyTextBoxGraphic: Phaser.Graphics;
         bootsCollected: boolean = false;
         playerCanInteract: boolean = true;
+        skipIntroButton: Phaser.Sprite;
 
         pcFireButton: Phaser.Key;
         pcNukeButton: Phaser.Key;
@@ -181,6 +182,10 @@ module Superhero {
             this.hero._state.enterState();
 
             this.ui = new Superhero.UI(this.game, this.hero);
+
+            this.skipIntroButton = this.game.add.sprite(this.game.width - 162, 8, "skipIntro");
+            this.skipIntroButton.inputEnabled = true;
+            this.skipIntroButton.events.onInputDown.add(this.finishLevel, this);
         }
 
         setIntroScene(): void {
