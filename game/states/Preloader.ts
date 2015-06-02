@@ -61,6 +61,14 @@ module Superhero {
             this.game.load.image('menuBackground', basepath + '/assets/menuBackground.png');
             this.game.load.image('superheroText', basepath + '/assets/superheroText.png');
             this.game.load.image('skipIntro', basepath + '/assets/skipIntro.png');
+            this.game.load.image('tut_pc_jump', basepath + '/assets/tutorial-02.png');
+            this.game.load.image('tut_pc_pups', basepath + '/assets/tutorial-01.png');
+            this.game.load.image('tut_pc_fire', basepath + '/assets/tutorial-04.png');
+            this.game.load.image('tut_pc_move', basepath + '/assets/tutorial-03.png');
+            this.game.load.image('tut_touch_move', basepath + '/assets/tutorial-05.png');
+            this.game.load.image('tut_touch_jump', basepath + '/assets/tutorial-06.png');
+            this.game.load.image('tut_touch_fire', basepath + '/assets/tutorial-07.png');
+
 
             // Smoke
             this.game.load.image('smoke',  basepath + '/assets/smoke-puff.png');

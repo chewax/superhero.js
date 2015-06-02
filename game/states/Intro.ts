@@ -56,6 +56,8 @@ module Superhero {
         pcBombButton: Phaser.Key;
 
         cursors: Phaser.CursorKeys;
+        tutorialImages: Phaser.Sprite[];
+        currentTutorialImage: Phaser.Sprite;
 
         preload () {
 
@@ -189,8 +191,67 @@ module Superhero {
         }
 
         setIntroScene(): void {
-            this.game.time.events.add(Phaser.Timer.SECOND * 9, this.spawnMiniBoss, this);
+            this.game.time.events.add((Phaser.Timer.SECOND * 2), this.showTutorial, this);
+            //this.game.time.events.add(Phaser.Timer.SECOND * 20, this.spawnMiniBoss, this);
         }
+
+        showTutorial(): void {
+            this.tutorialImages = [];
+
+            this.paralax5.stopScroll();
+            this.spaceShip1.body.velocity.x = 0;
+            this.spaceShip2.body.velocity.x = 0;
+            this.hero.sprite.animations.paused = true;
+
+            if (this.game.device.desktop) this.showDesktopTutorial();
+            else this.showTouchTutorial();
+        }
+
+        startSlideShow(): void {
+            if (this.currentTutorialImage) this.currentTutorialImage.destroy();
+            if (this.enemyTextBoxGraphic) this.enemyTextBoxGraphic.destroy();
+
+            this.currentTutorialImage = this.tutorialImages.pop();
+            if (!this.currentTutorialImage) {
+                this.paralax5.autoScroll(-200,0);
+                this.spaceShip1.body.velocity.x = -200;
+                this.spaceShip2.body.velocity.x = -200;
+                this.hero.sprite.animations.paused = false;
+                this.game.time.events.add(Phaser.Timer.SECOND * 4.5, this.spawnMiniBoss, this);
+                return;
+            }
+            this.currentTutorialImage.x = 150;
+            this.currentTutorialImage.y = 150;
+            this.currentTutorialImage.visible = true;
+
+            this.enemyTextBoxGraphic = this.game.add.graphics(0, 0);
+            this.enemyTextBoxGraphic.lineStyle(2, 0xdb6607, 1);
+            this.enemyTextBoxGraphic.beginFill(0x000000, 0.8);
+            this.enemyTextBoxGraphic.drawRect(120, 120, this.currentTutorialImage.width + 60, this.currentTutorialImage.height + 60);
+            this.enemyTextBoxGraphic.endFill();
+
+            this.game.world.bringToTop(this.currentTutorialImage);
+
+            this.game.time.events.add((Phaser.Timer.SECOND * 4.5), this.startSlideShow, this);
+        }
+
+        showDesktopTutorial(): void {
+            var pic1 = this.game.add.sprite(0,0,'tut_pc_jump');
+            var pic2 = this.game.add.sprite(0,0,'tut_pc_pups');
+            var pic3 = this.game.add.sprite(0,0,'tut_pc_fire');
+            var pic4 = this.game.add.sprite(0,0,'tut_pc_move');
+
+            // To correctly use array.pop()
+            this.tutorialImages = [pic4, pic3, pic2, pic1];
+            this.tutorialImages.forEach( function(pic){
+                pic.visible = false;
+                //pic.scale = 0.6;
+            },this);
+
+            this.startSlideShow();
+        }
+
+        showTouchTutorial(): void {}
 
         spawnMiniBoss(): void {
             if(this.enemyManager.totalEnemiesAlive() < 2) {
