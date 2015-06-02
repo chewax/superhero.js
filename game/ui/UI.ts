@@ -179,25 +179,25 @@ module Superhero {
                 // Calculate the choice
                 var choice = Math.floor(((y/4)-28)/22) + 1;
 
-                // Doing it this way to avoid the menu to become invisibly operated
-                this.game.input.onDown.remove(this.unPause,this);
-
                 switch (choice){
                     case 1:
 
-                        if (!this.player.sprite.alive) break;
+                        if (!this.player.sprite.alive) return;
+                        this.game.input.onDown.remove(this.unPause,this);
                         menu.kill();
                         this.timer.resume();
                         this.game.paused = false;
                         break;
 
                     case 2:
+                        this.game.input.onDown.remove(this.unPause,this);
                         this.timer.resume();
                         this.game.paused = false;
                         this.game.state.restart(true,false);
                         break;
 
                     case 3:
+                        this.game.input.onDown.remove(this.unPause,this);
                         this.timer.resume();
                         this.game.paused = false;
                         this.game.sound.stopAll();
@@ -206,19 +206,19 @@ module Superhero {
 
                     default:
                         if (!this.player.sprite.alive) return;
+                        this.game.input.onDown.remove(this.unPause,this);
                         this.timer.resume();
                         this.game.paused = false;
 
                         // Remove the menu
                         menu.kill();
 
-
                         break;
                 }
 
             } else {
-                if (!this.player.sprite.alive) return;
 
+                if (!this.player.sprite.alive) return;
                 // Remove the menu and the label
                 menu.kill();
 
