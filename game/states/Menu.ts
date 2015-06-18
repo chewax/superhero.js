@@ -100,6 +100,11 @@ module Superhero {
             this.theme.loop = true;
             this.startSound = this.game.add.audio('menuStart',1);
             if((<Superhero.Game> this.game).conf.ISMUSICENABLED) this.theme.play();
+
+            this.game.input.keyboard.addKey(Phaser.Keyboard.UP).onDown.add(function () { event.preventDefault(); }, this);
+            this.game.input.keyboard.addKey(Phaser.Keyboard.DOWN).onDown.add(function () { event.preventDefault(); }, this);
+            this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onDown.add(function () { event.preventDefault(); }, this);
+            this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(function () { event.preventDefault(); }, this);
         }
 
         switchMusic(){

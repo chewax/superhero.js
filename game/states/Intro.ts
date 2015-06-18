@@ -153,6 +153,11 @@ module Superhero {
             (<Superhero.Game> this.game).gamepad.buttonPad.button3.type = Gamepads.ButtonType.SINGLE;
             (<Superhero.Game> this.game).gamepad.buttonPad.button4.type = Gamepads.ButtonType.SINGLE_THEN_TURBO;
 
+            this.game.input.keyboard.addKey(Phaser.Keyboard.UP).onDown.add(function () { event.preventDefault(); }, this);
+            this.game.input.keyboard.addKey(Phaser.Keyboard.DOWN).onDown.add(function () { event.preventDefault(); }, this);
+            this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onDown.add(function () { event.preventDefault(); }, this);
+            this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(function () { event.preventDefault(); }, this);
+
             this.pcFireButton = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
             this.pcNukeButton = this.game.input.keyboard.addKey(Phaser.Keyboard.Z);
             this.pcWarpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.X);
